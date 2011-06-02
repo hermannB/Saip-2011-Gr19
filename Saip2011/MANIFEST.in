@@ -1,4 +1,0 @@
-recursive-include saip2011/public *
-include saip2011/public/favicon.ico
-recursive-include saip2011/i18n *
-recursive-include saip2011/templates *
