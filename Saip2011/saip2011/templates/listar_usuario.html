@@ -1,0 +1,52 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" 
+                      "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml"
+      xmlns:py="http://genshi.edgewall.org/"
+      xmlns:xi="http://www.w3.org/2001/XInclude">
+
+  <xi:include href="master.html" />
+
+<head>
+  <meta content="text/html; charset=UTF-8" http-equiv="content-type" py:replace="''"/>
+  <title>Sistema de Administracion de Item</title>
+</head>
+
+<body>
+  <div id="mainmenu">
+    <li class="first"><a href="${tg.url('/listar_usuario')}" class="${('', 'active')[defined('pagina') and pagina==pagina=='listar_usuario']}">Usuario</a></li>
+  </div>  
+  <div py:choose="len(usuarios)" py:strip="True" id="usuario">
+    <table class="usuarios" py:when="0">
+      <tr><th>No hay usuarios registrados..</th></tr>
+    </table>
+    <table border="1" cellspacing="1" cellpadding="5" class="usuarios" py:otherwise="">    
+      <h2>Lista de Usuarios</h2>
+      <tr align="center">
+        <th>Id</th>
+        <th>Alias</th>
+        <th>Nombre</th>
+        <th>Apellido</th>
+        <th>Rol</th>
+        <th>Nacionalidad</th>
+        <th>Nro.Documento</th>
+        <th>Email</th>
+      </tr>
+      <tr align="center" py:for="usuario in usuarios">
+        <td><a href="${tg.url('/usuario/%s/edit' % usuario.idusuario)}">${usuario.idusuario}</a></td>
+        <td><a href="${tg.url('/')}">${usuario.alias}</a></td>
+        <td>${usuario.nombre}</td>
+        <td>${usuario.apellido}</td>
+        <td>${usuario.rol}</td>
+        <td>${usuario.nacionalidad}</td>
+        <td>${usuario.nrodoc}</td>
+        <td>${usuario.email_address}</td>
+      </tr>          
+    </table>   
+    
+  </div>
+  <div class="clearingdiv" />
+  <div class="notice"> Lista las personas registradas en el sistema.
+    
+  </div>
+</body>
+</html>

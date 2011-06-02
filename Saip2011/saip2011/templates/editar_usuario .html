@@ -1,0 +1,72 @@
+<!DOCTYPE html>
+<html xmlns="http://www.w3.org/1999/xhtml"
+      xmlns:py="http://genshi.edgewall.org/"
+      xmlns:xi="http://www.w3.org/2001/XInclude">
+
+  <xi:include href="master.html" />
+
+  <head>
+  <meta content="text/html; charset=UTF-8" http-equiv="content-type" py:replace="''"/>
+  <title>Sistema de Administracion de Item</title>
+</head>
+  <body class="submit">
+    <div>
+      <h2>Modificar usuario</h2>
+    </div>
+
+    <form action="/editar_usuario" method="post">
+      <table summary=""><tbody><tr>
+        <th><label for="alias">Alias:</label></th>
+        <td>
+           <input type="text" id="alias" name="alias" />
+           <span py:if="'alias' in errors" class="fielderror">${errors.alias}</span>   
+        </td>
+      </tr><tr>
+        <th><label for="nombre">Nombre:</label></th>
+        <td>
+           <input type="text" id="nombre" name="nombre" />
+           <span py:if="'nombre' in errors" class="fielderror">${errors.nombre}</span>
+        </td>
+      </tr><tr>
+        <th><label for="apellido">Apellido:</label></th>
+        <td><input type="text" name="apellido" /></td>
+      </tr><tr>
+           
+        <th><label for="nacionalidad">Nacionalidad:</label></th>
+        <td><input type="text" name="nacionalidad" /></td>
+      </tr><tr>
+        <th><label for="nrodoc">Nro.Documento:</label></th>
+        <td><input type="text" name="nrodoc" /></td>
+      </tr><tr>
+        <th><label for="email">Email:</label></th>
+        <td>
+            <input type="text" name="email" />
+             <span py:if="'email' in errors" class="fielderror">${errors.email}</span>
+        </td>
+      </tr><tr>
+        <th><label for="password">Clave:</label></th>
+        <td>
+           <input type="password" name="clave" />
+            <span py:if="'clave' in errors" class="fielderror">${errors.clave}</span>
+           </td>
+      </tr><tr>
+        <th><label for="password">Confirmar clave:</label></th>
+        <td>
+          <input type="password" name="clave" />
+          <span py:if="'clave' in errors" class="fielderror">${errors.clave}</span>
+         </td>
+      </tr><tr> 
+        <td></td>
+        <td>
+          <input type="submit" value="Guardar" />
+          <input type="submit" name="cancel" value="Cancelar" />
+        </td>
+      </tr></tbody></table>
+    </form>
+
+    <div id="footer">
+    <p py:replace="data"></p>  
+    </div>
+  </body>
+</html>
+

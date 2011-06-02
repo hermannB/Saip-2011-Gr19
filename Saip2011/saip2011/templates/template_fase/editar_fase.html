@@ -1,0 +1,90 @@
+<!DOCTYPE html>
+<html xmlns="http://www.w3.org/1999/xhtml"
+      xmlns:py="http://genshi.edgewall.org/"
+      xmlns:xi="http://www.w3.org/2001/XInclude">
+
+  <xi:include href="master.html" />
+
+<head>
+	<meta content="text/html; charset=UTF-8" http-equiv="content-type" py:replace="''"/>
+	<script language="javascript" >
+		function mensaje(fas){
+			var nombre =fas.value
+			document.form2.nombre_fase.value=0
+			document.form2.tipo_fase.value=1
+			document.form2.estado.value=2
+			document.form2.linea_base.value=3
+			document.form2.descripcion.value=4
+			alert (nombre)
+			
+		  
+		 }
+	</script>
+
+	<title>Sistema de Administracion de Item</title>
+</head>
+
+<body> <div py:choose="len(fases)" py:strip="True" id="fase">
+	<form name="form1" id="form1" action="/editar_fase/controlventa?accion=procesa" method="post">
+		<div id="mainmenu">
+			<li class="first"><a href="${tg.url('/editar_fase')}" class="${('', 'active')[defined('pagina') and pagina==pagina=='editar_fase']}">Fase</a></li>
+		</div>  
+		
+		<tr><td>Lista Fasess</td>
+      			<td>
+		        <select class="jsrequired select-notfirst" name="list_fase" id="list_fase" onchange="mensaje(this)" >	
+				<option py:for="fase in fases"  value="$fase.id_fase">$fase.estado	
+				</option>					
+		        </select>
+		</td> </tr>
+	</form>
+
+	<div class="submit">
+		<div>
+			<h2>Editar Fase</h2>
+		</div>
+		<form name="form2" action="/agregar_fase" method="post">
+			<table summary="">
+			<tbody>
+			<tr>
+				        	<th><label for="nombre_fase">Nombre de la Fase:</label></th>
+				        <td>
+				        	<input type="text/" id="nombre_fase" name="nombre_fase" value=""/>
+						
+				        </td>
+					</tr><tr>
+						<th><label for="tipo_fase">Tipo de la Fase:</label></th>
+					<td>
+					        <input type="text" id="tipo_fase" name="tipo_fase" />
+					</td>
+					</tr><tr>
+					        <th><label for="estado">Estado:</label></th>
+				        <td>
+					        <input type="text" id="estado" name="estado" />
+				        </td>
+					</tr><tr>
+					        <th><label for="linea_base">Linea Base:</label></th>
+					<td>
+						<input type="text" name="linea_base" /></td>
+				        </tr><tr>
+						<th><label for="descripcion">Descripcion:</label></th>
+				        <td>
+					        <input type="text" id="descripcion" name="descripcion" />
+				        </td>
+					</tr><tr>
+				        <td>
+					        <input type="submit" value="Guardar" />
+					        <input type="submit" name="cancel" value="Cancelar" />
+				        </td>
+			</tr>
+			</tbody>
+			</table>
+		</form>
+		<div id="footer">
+	        </div>
+	</div> 
+</div> 
+</body>
+
+</html>
+

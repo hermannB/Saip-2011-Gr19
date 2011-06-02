@@ -1,0 +1,42 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" 
+                      "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml"
+      xmlns:py="http://genshi.edgewall.org/"
+      xmlns:xi="http://www.w3.org/2001/XInclude">
+
+  <xi:include href="master.html" />
+
+<head>
+  <meta content="text/html; charset=UTF-8" http-equiv="content-type" py:replace="''"/>
+  <title>Sistema de Administracion de Item</title>
+</head>
+
+<body>
+  <div id="mainmenu">
+    <li class="first"><a href="${tg.url('/listar_equipo')}" class="${('', 'active')[defined('pagina') and pagina==pagina=='listar_equipo']}">Equipo de Desarrollo</a></li>
+  </div>  
+  <div py:choose="len(equipos)" py:strip="True" id="equipo">
+    <table class="equipos" py:when="0">
+      <tr><th>No hay Equipo registrados..</th></tr>
+    </table>
+    <table border="1" cellspacing="1" cellpadding="5" class="equipos" py:otherwise="">    
+      <h2>Lista de Equipos de Desarrollo</h2>
+      <tr align="center">
+        <th>Id</th>
+        <th>Alias</th>
+        <th>Rol</th>
+       </tr>
+      <tr align="center" py:for="privilegio in privilegios">
+        <td><a href="${tg.url('/equipo/%s/edit' % equipo.id_equipo)}">${equipo.id_equipo}</a></td>
+        <td><a href="${tg.url('/')}">${equipo.alias}</a></td>
+        <td>${equipo.rol}</td>
+      </tr>          
+    </table>   
+    
+  </div>
+  <div class="clearingdiv" />
+  <div class="notice"> Lista los equipos registrados en el sistema.
+    
+  </div>
+</body>
+</html>

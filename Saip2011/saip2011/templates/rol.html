@@ -1,0 +1,26 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" 
+                      "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml"
+      xmlns:py="http://genshi.edgewall.org/"
+      xmlns:xi="http://www.w3.org/2001/XInclude">
+
+  <xi:include href="master.html" />
+
+<head>
+  <meta content="text/html; charset=UTF-8" http-equiv="content-type" py:replace="''"/>
+  <title>Sistema de Administracion de Item</title>
+</head>
+
+<body >
+  <div id="getting_started">
+    <h2>Mantenimiento de Roles</h2>
+    <p><a href="${tg.url('/agregar_rol')}">Agregar Rol</a></p>
+    <p><a href="${tg.url('/listar_rol')}">Listar Rol</a></p>
+    <p><a href="${tg.url('/editar_rol')}">Modificar Rol</a></p>
+    
+  </div>
+  <div class="clearingdiv" />
+  <div class="notice"> Estas en el menu de Rol. 
+  </div>
+</body>
+</html>

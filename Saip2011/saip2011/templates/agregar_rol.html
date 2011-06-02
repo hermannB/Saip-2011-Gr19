@@ -1,0 +1,50 @@
+<!DOCTYPE html>
+<html xmlns="http://www.w3.org/1999/xhtml"
+      xmlns:py="http://genshi.edgewall.org/"
+      xmlns:xi="http://www.w3.org/2001/XInclude">
+
+  <xi:include href="master.html" />
+
+  <head>
+  <meta content="text/html; charset=UTF-8" http-equiv="content-type" py:replace="''"/>
+  <title>Sistema de Administracion de Item</title>
+</head>
+  <body class="submit">
+    <div>
+      <h2>Agregar nuevo Rol</h2>
+    </div>
+
+    <form action="/agregar_rol" method="post">
+      <table summary=""><tbody><tr>
+        <th><label for="nombrerol">Nombre_Rol:</label></th>
+        <td>
+           <input type="text" id="nombrerol" name="nombrerol" />
+           <span py:if="'nombrerol' in errors" class="fielderror">${errors.nombrerol}</span>   
+        </td>
+      </tr><tr>
+        <th><label for="descripcion">Descripcion:</label></th>
+        <td>
+           <input type="text" id="descripcion" name="descripcion" />
+           <span py:if="'descripcion' in errors" class="fielderror">${errors.descripcion}</span>
+        </td>
+      </tr><tr>
+	
+        <th><label for="privilegios">Privilegios:</label>  </th>
+        <td>
+	   <input type="text" id="privilegios" name="privilegios" />
+           <span py:if="'privilegios' in errors" class="fielderror">${errors.privilegios}</span>
+        </td>
+        <td></td>
+        <td>
+          <input type="submit" value="Guardar" />
+          <input type="submit" name="cancel" value="Cancelar" />
+        </td>
+      </tr></tbody></table>
+    </form>
+
+    <div id="footer">
+    <p py:replace="data"></p>  
+    </div>
+  </body>
+</html>
+

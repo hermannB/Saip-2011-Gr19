@@ -1,0 +1,67 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" 
+                      "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml"
+      xmlns:py="http://genshi.edgewall.org/"
+      xmlns:xi="http://www.w3.org/2001/XInclude">
+
+  <xi:include href="master.html" />
+
+<head>
+  <meta content="text/html; charset=UTF-8" http-equiv="content-type" py:replace="''"/>
+  <title>Sistema de Administracion de Item</title>
+</head>
+
+<body>
+   <div id="mainmenu">
+    <li class="first"><a href="${tg.url('/editar_fase')}" class="${('', 'active')[defined('pagina') and pagina==pagina=='editar_fase']}">Fase</a></li>
+  </div>  
+   <div py:choose="len(fases)" py:strip="True" id="fase">
+	<tr><td>Lista Fases</td>
+      <td>
+        <select name="id_fase">
+            <option py:for="fase in fases" value="$fase.id_fase">$fase.nombre_fase</option>
+        </select>
+     </td> 
+     </tr>
+   <div class="submit">
+    <div>
+      <h2>Editar nueva Fase</h2>
+    </div>
+
+    <form action="/editar_fase" method="post">
+      <table summary=""><tbody><tr>
+        <th><label for="nombre_fase">Nombre de la Fase:</label></th>
+        <td>
+           <input type="text" id="nombre_fase" name="nombre_fase" />
+        </td>
+	</tr><tr>
+	<th><label for="tipo_fase">Tipo de la Fase:</label></th>
+        <td>
+           <input type="text" id="tipo_fase" name="tipo_fase" />
+        </td>
+      </tr><tr>
+        <th><label for="estado">Estado:</label></th>
+        <td>
+           <input type="text" id="estado" name="estado" />
+        </td>
+      </tr><tr>
+        <th><label for="linea_base">Linea Base:</label></th>
+        <td><input type="text" name="linea_base" /></td>
+      </tr><tr>
+        <th><label for="descripcion">Descripcion:</label></th>
+        <td>
+           <input type="text" id="descripcion" name="descripcion" />
+        </td>
+      </tr><tr>
+        <td>
+          <input type="submit" value="Guardar" />
+          <input type="submit" name="cancel" value="Cancelar" />
+        </td>
+      </tr></tbody></table>
+    </form>
+      
+  </div>
+  </div>
+</body>
+</html>
+
