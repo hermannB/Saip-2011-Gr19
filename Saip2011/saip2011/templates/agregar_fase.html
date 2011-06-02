@@ -28,7 +28,14 @@
 	      </select>
          </td></tr>
 
-	 <tr><td>Estado </td><td><input type="textfield" name="estado" value="${values.get('estado', '')}"/>${tmpl_context.form_errors.get('estado')}</td></tr>
+	 <tr><td>Estado</td>
+     	     <td>
+     	     <select name="estado">
+		       <option value="Nueva" selected="selected">Nueva</option>
+		       <option value="Activa" selected="selected">Activa</option>
+		       <option value="Finalizada" selected="selected">Finalizada</option>
+	     </select>
+         </td></tr>
 
 	 <tr><td>Linea Base </td><td><input type="textfield" name="linea_base" value="${values.get('linea_base', '')}"/>${tmpl_context.form_errors.get('linea_base')}</td></tr>
 

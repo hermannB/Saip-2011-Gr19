@@ -14,7 +14,7 @@
       <h2>Agregar nuevo Rol</h2>
     </div>
 
-    <form action="post_rol" method="POST">
+    <form action="put_rol" method="POST">
    
       <table summary=""><tbody>
          <tr><td>Nombre </td><td><input type="textfield" name="nombrerol" value="${values.get('nombrerol', '')}"/>${tmpl_context.form_errors.get('nombrerol')}</td></tr>

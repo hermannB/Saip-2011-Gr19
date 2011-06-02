@@ -34,10 +34,11 @@
       </tr>
       <tr align="center" py:for="item in items">
 	<td><a href="${tg.url('editar_item?id_item=%d' % item.id_item)}">Editar</a>
-	<a href="${tg.url('eliminar_item?id_item=%d' % item.id_item)}">Borrar</a></td>
+	<a href="${tg.url('eliminar_item?id_item=%d' % item.id_item)}">Borrar</a>
+	<a href="${tg.url('historial?id_item=%d' % item.id_item)}">Historial</a></td>
         <td>${item.id_item}</td>
         <td>${item.nombre_item}</td>
-        <td>${item.tipo_item}</td>
+        <td>${item.nombre_tipo_item}</td>
         <td>${item.fase}</td>
         <td>${item.proyecto}</td>
         <td>${item.complejidad}</td>

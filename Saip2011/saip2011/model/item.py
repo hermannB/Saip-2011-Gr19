@@ -51,6 +51,8 @@ class Item(DeclarativeBase):
 
 	estado = Column(Unicode(50), nullable=False)
 
+	estado_oculto = Column(Unicode(50), nullable=False)
+
 	#campos = Column(Text, nullable=False)
 
 	#lista_item = Column(Text)
@@ -69,15 +71,59 @@ class Item(DeclarativeBase):
 	def __unicode__(self):
 		return self.id_item
 	@classmethod
-        def get_item(self):
+        def get_item_activados(self):
 		"""
 		Obtiene la lista de todos los items
 		registrados en el sistema
 		"""
-
+		lista=[]
 		items = DBSession.query(Item).all()
-		    
-		return items
+		for item in items:
+		  if( item.estado_oculto=="Activo"):
+		     lista.append(item)  
+		return lista
+
+	@classmethod
+        def get_item_eliminados(self):
+		"""
+		Obtiene la lista de todos los items
+		registrados en el sistema
+		"""
+		lista=[]
+		items = DBSession.query(Item).all()
+		for item in items:
+		  if( item.estado_oculto=="Eliminado"):
+		     lista.append(item)  
+		return lista
+
+
+	@classmethod
+        def get_historial(self, id_item):
+		"""
+		Obtiene la lista de todos los items
+		registrados en el sistema
+		"""
+		muestra=DBSession.query(Item).get(id_item)
+		lista=[]
+		items = DBSession.query(Item).all()
+		for item in items:
+		  if( (item.nombre_item == muestra.nombre_item) and  (item.proyecto == muestra.proyecto)  and (item.fase == muestra.fase ) ):
+		     lista.append(item)  
+		return lista
+
+	@classmethod
+        def version_actual(self, id_item):
+		"""
+		Obtiene la lista de todos los items
+		registrados en el sistema
+		"""
+		
+		items = Item.get_item_activados()
+		item_viejo = DBSession.query(Item).get(id_item)
+		for item in items:
+		  if( (item.nombre_item == item_viejo.nombre_item) and  (item.proyecto == item_viejo.proyecto)  and (item.fase == item_viejo.fase ) ):
+		     return item 
+		 
 
 	#}
 

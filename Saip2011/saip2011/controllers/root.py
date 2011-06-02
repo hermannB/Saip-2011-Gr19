@@ -208,7 +208,8 @@ class RootController(BaseController):
            Metodo que usa el Id del usuario logeado
            para modificar su password
         """
-	usuario = Usuario.get_user_by_alias(self.get_username())
+	var=self.get_username()
+	usuario = Usuario.get_user_by_alias(var)
         usuario._set_password(clave)
 	flash("password modificado!")
 	redirect('/usuario')
@@ -316,6 +317,10 @@ class RootController(BaseController):
 				   _password=data.get('clave'))
 
 	    	usuario._set_password(data.get('clave'))
+		
+		rol = DBSession.query(Rol).get(1)
+		usuario.roles.append(rol)
+
                 DBSession.add(usuario)
                 DBSession.flush()
                 print usuario
@@ -580,7 +585,7 @@ class RootController(BaseController):
         fase.descripcion = descripcion
 
         DBSession.flush()
-        flash("Fase agregada!")
+        flash("Fase modificada!")
 	redirect('/fase')
 
     @expose('saip2011.templates.eliminar_fase')
@@ -746,20 +751,160 @@ class RootController(BaseController):
         """
         return dict(pagina="item")
     
-    @expose('saip2011.templates.editar_item')
-    def itemmod(self,id_item,action):
-        """
-           Metodo que recibe ID del item para
-           ser modificado
-        """
-        return "Pagina no disponible"
-    
     @expose('saip2011.templates.listar_item')
-    def listar_item(self):
+    def listar_item_activos (self):
+
+	items = Item.get_item_activados()
+	return dict(pagina="listar_item",items=items)
+
+    @expose('saip2011.templates.historial')
+    def historial (self, id_item):
+	items = Item.get_historial(id_item)
+	return dict(pagina="historial",items=items)
+
+    @expose('saip2011.templates.listar_item eliminados')
+    def listar_item_eliminados(self):
         """Lista de item 
         """
-        items = Item.get_item()
-        return dict(pagina="listar_item",items=items)
+	items = Item.get_item_eliminados()
+        return dict(pagina="listar_item eliminados",items=items)
+
+    @expose('saip2011.templates.editar_item')
+    def editar_item(self,id_item,*args, **kw):
+	
+	item = DBSession.query(Item).get(id_item)
+	
+	if request.method != 'PUT':  
+
+          values = dict(id_item=item.id_item, 
+	  	        nombre_item=item.nombre_item,
+                        nombre_tipo_item=item.nombre_tipo_item, 
+                        estado=item.estado,
+                        adjunto=item.adjunto,
+                        complejidad=item.complejidad,
+                    )
+
+	  return dict(pagina="editar_fase",values=values)
+
+    @validate({'id_item':NotEmpty,
+		'nombre_item':NotEmpty, 
+                'adjunto':Int(not_empty=True),
+		'complejidad':Int(not_empty=True), 
+                'estado':NotEmpty}, error_handler=editar_item)
+
+    @expose()
+    def put_item(self, id_item, nombre_item,  adjunto, complejidad, estado, **kw):
+	
+	item = DBSession.query(Item).get(int(id_item))
+ 	version=item.version+1
+	item.estado_oculto="Desactivado"
+
+	item2 = Item (nombre_item=nombre_item, id_tipo_item=item.id_tipo_item, 
+		      adjunto=adjunto, complejidad=complejidad, estado = estado ,
+		      fase=self.get_fase_actual(), proyecto=self.get_proyecto_actual(),
+                      creado_por =request.identity['repoze.who.userid'], fecha_creacion = item.fecha_creacion ,
+		      version =version ,estado_oculto="Activo")
+
+	DBSession.add(item2)
+	DBSession.flush()
+        flash("Item Modificado!")
+	redirect('/item')
+
+    @expose('saip2011.templates.eliminar_item')
+    def eliminar_item(self,id_item, *args, **kw):
+        item = DBSession.query(Item).get(id_item)	
+
+	values = dict(id_item=item.id_item, 
+	  	        nombre_item=item.nombre_item,
+                        nombre_tipo_item=item.nombre_tipo_item, 
+                        estado=item.estado,
+                        adjunto=item.adjunto,
+                        complejidad=item.complejidad,
+                    )
+
+        return dict(pagina="eliminar_item",values=values)
+
+    @validate({'id_item':NotEmpty,
+		'nombre_item':NotEmpty, 
+                'adjunto':Int(not_empty=True),
+		'complejidad':Int(not_empty=True), 
+                'estado':NotEmpty}, error_handler=eliminar_item)
+
+    @expose()
+    def post_delete_item(self, id_item, nombre_item,  nombre_tipo_item, estado, adjunto, complejidad, **kw):
+	item = DBSession.query(Item).get(id_item)
+        item.estado_oculto="Eliminado"
+
+        DBSession.flush()
+        flash("item eliminado!")
+	redirect('/item')
+
+    @expose('saip2011.templates.revivir_item')
+    def revivir_item(self,id_item, *args, **kw):
+        item = DBSession.query(Item).get(id_item)	
+
+	values = dict(id_item=item.id_item, 
+	  	        nombre_item=item.nombre_item,
+                        nombre_tipo_item=item.nombre_tipo_item, 
+                        estado=item.estado,
+                        adjunto=item.adjunto,
+                        complejidad=item.complejidad,
+                    )
+
+        return dict(pagina="revivir_item",values=values)
+
+    @validate({'id_item':NotEmpty,
+		'nombre_item':NotEmpty, 
+                'adjunto':Int(not_empty=True),
+		'complejidad':Int(not_empty=True), 
+                'estado':NotEmpty}, error_handler=eliminar_item)
+
+    @expose()
+    def post_revivir_item(self, id_item, nombre_item,  nombre_tipo_item, estado, adjunto, complejidad, **kw):
+	item = DBSession.query(Item).get(id_item)
+        item.estado_oculto="Activo"
+
+        DBSession.flush()
+        flash("item Revivido!")
+	redirect('/item')
+
+    @expose('saip2011.templates.recuperar_item')
+    def recuperar_item(self,id_item, *args, **kw):
+        item = DBSession.query(Item).get(id_item)	
+
+	values = dict(id_item=item.id_item, 
+	  	        nombre_item=item.nombre_item,
+                        nombre_tipo_item=item.nombre_tipo_item, 
+                        estado=item.estado,
+                        adjunto=item.adjunto,
+                        complejidad=item.complejidad,
+                    )
+
+        return dict(pagina="recuperar_item",values=values)
+
+    @validate({'id_item':NotEmpty,
+		'nombre_item':NotEmpty, 
+                'adjunto':Int(not_empty=True),
+		'complejidad':Int(not_empty=True), 
+                'estado':NotEmpty}, error_handler=eliminar_item)
+
+    @expose()
+    def post_recuperar_item(self, id_item, nombre_item,  nombre_tipo_item, estado, adjunto, complejidad, **kw):
+	item = Item.version_actual(id_item)
+	item.estado_oculto="Desactivado"
+	version= item.version+1
+	DBSession.flush()
+
+	item2 = DBSession.query(Item).get(id_item)
+        item3 = Item (nombre_item=item2.nombre_item, id_tipo_item=item2.id_tipo_item, adjunto=item2.adjunto,
+		     complejidad=item2.complejidad, estado = item2.estado ,fase=item2.fase, 
+		     proyecto=item2.proyecto,creado_por =item2.creado_por, 
+		     fecha_creacion = item2.fecha_creacion , version =version , estado_oculto="Activo")
+	
+	DBSession.add(item3)
+        DBSession.flush()
+        flash("item recuperado!")
+	redirect('/item')
 
     @expose('saip2011.templates.agregar_item')
     def agregar_item(self, *args, **kw):
@@ -783,9 +928,12 @@ class RootController(BaseController):
         #        lista_items = [lista_items]
         #   lista_items = [DBSession.query(Item).get(lista_item) for lista_item in lista_items]
         
-	fecha_creacion = datetime.strptime(fecha_creacion, "%m/%d/%y")
-        item = Item (nombre_item=nombre_item, id_tipo_item=id_tipo_item, 
-		             adjunto=adjunto, complejidad=complejidad, estado = estado ,fase=self.get_fase_actual(), proyecto=self.get_proyecto_actual(),creado_por =self.get_username(), fecha_creacion = fecha_creacion )
+	
+        item = Item (nombre_item=nombre_item, id_tipo_item=id_tipo_item, adjunto=adjunto,
+		     complejidad=complejidad, estado = estado ,fase=self.get_fase_actual(), 
+		     proyecto=self.get_proyecto_actual(),creado_por =request.identity['repoze.who.userid'], 
+		     fecha_creacion = fecha_creacion , version =1 ,estado_oculto="Activo")
+	
         DBSession.add(item)
         
         

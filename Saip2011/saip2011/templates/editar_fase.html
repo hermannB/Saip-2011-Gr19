@@ -31,7 +31,16 @@
 					      </py:for>
 					  </select>
 					</td></tr>
-				<tr><td>estado </td><td><input type="textfield" name="estado" value="${values['estado']}"/>${tmpl_context.form_errors.get('estado')}</td></tr>		
+
+				 <tr><td>Estado</td>
+				     <td>
+				     <select name="estado">
+					       <option value="Nueva" selected="selected">Nueva</option>
+					       <option value="Activa" selected="selected">Activa</option>
+					       <option value="Finalizada" selected="selected">Finalizada</option>
+				     </select>
+				</td></tr>
+				
 				<tr><td>linea_base </td><td><input type="textfield" name="linea_base" value="${values['linea_base']}"/>${tmpl_context.form_errors.get('linea_base')}</td></tr>				        	
 				<tr><td>descripcion</td><td> <textarea name="descripcion">${values.get('descripcion')}</textarea>${tmpl_context.form_errors.get('descripcion')}</td></tr>		
      		                <tr><td><input type="hidden" name="_method" value="PUT"/>
