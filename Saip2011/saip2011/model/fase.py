@@ -58,9 +58,7 @@ class Fase(DeclarativeBase):
 		Obtiene la lista de todos los usuarios
 		registrados en el sistema
 		"""
-		#Session = sessionmaker()
-		#session = Session() 
-		"""fases = session.query(cls).all()"""
+
 		fases = DBSession.query(Fase).all()
 		    
 		return fases

@@ -15,32 +15,32 @@
     </div>
 
     <form action="post_fase" method="POST">
-      <table summary=""><tbody><tr>
+    <table summary=""><tbody><tr>
        
-          <tr><td>Nombre de la Fase </td><td><input type="textfield" name="nombre_fase" value="${values.get('nombre_fase', '')}"/>${tmpl_context.form_errors.get('nombre_fase')}</td></tr>
+	<tr><td>Nombre de la Fase </td><td><input type="textfield" name="nombre_fase" value="${values.get('nombre_fase', '')}"/>${tmpl_context.form_errors.get('nombre_fase')}</td></tr>
+
          <tr><td>Tipo de Fase</td>
-        <td>
-          <select name="id_tipo_fase">
-              <py:for each="tipo_fase in tipos_fases">
-                  <option value="$tipo_fase.id_tipo_fase" selected="selected">$tipo_fase.nombre_tipo_fase</option>
-                
-              </py:for>
-          </select>
-        </td></tr>
+     	     <td>
+     	     <select name="id_tipo_fase">
+		<py:for each="tipo_fase in tipos_fases">
+         	       <option value="$tipo_fase.id_tipo_fase" selected="selected">$tipo_fase.nombre_tipo_fase</option>
+	        </py:for>
+	      </select>
+         </td></tr>
+
 	 <tr><td>Estado </td><td><input type="textfield" name="estado" value="${values.get('estado', '')}"/>${tmpl_context.form_errors.get('estado')}</td></tr>
+
 	 <tr><td>Linea Base </td><td><input type="textfield" name="linea_base" value="${values.get('linea_base', '')}"/>${tmpl_context.form_errors.get('linea_base')}</td></tr>
+
           <tr><td>descripcion</td><td> <textarea name="descripcion">${values.get('descripcion')}</textarea>${tmpl_context.form_errors.get('descripcion')}</td></tr>
 
-        <td></td>
         <td>
-          <input type="submit" value="Guardar" />
- 	
-          </td>
+        	<input type="submit" value="Guardar" />
+	</td>
+
       </tr></tbody></table>
     </form>
 
-    <div id="footer">
-    </div>
   </body>
 </html>
 

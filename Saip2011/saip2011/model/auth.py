@@ -90,8 +90,6 @@ class Rol(DeclarativeBase):
         Obtiene la lista de todos los roles
         registrados en el sistema
         """
-        #Session = sessionmaker()
-        #session = Session() 
         """roles = session.query(cls).all()"""
         roles = DBSession.query(Rol).all()
             
@@ -123,15 +121,19 @@ class Usuario(DeclarativeBase):
     idusuario = Column(Integer, autoincrement=True, primary_key=True)
     
     alias = Column(Unicode(50), unique=True, nullable=False)
+
     nombre = Column(Unicode(50), nullable=False)
+
     apellido = Column(Unicode(50), nullable=False)
+
     _password = Column('password', Unicode(80),info={'rum': {'field':'Password'}})
 
-    rol = Column(Unicode(50))
     email_address = Column(Unicode(50), unique=True, nullable=False, info={'rum': {'field':'Email'}})
 
     nacionalidad = Column(Unicode(50))
+
     tipodocumento = Column(Unicode(50), nullable=True)
+
     nrodoc = Column(Integer, unique=True, nullable=True)
 
     
@@ -217,12 +219,23 @@ class Usuario(DeclarativeBase):
         Obtiene la lista de todos los usuarios
         registrados en el sistema
         """
-        #Session = sessionmaker()
-        #session = Session() 
         """usuarios = session.query(cls).all()"""
         usuarios = DBSession.query(Usuario).all()
             
         return usuarios
+
+    @classmethod
+    def get_user_by_alias(self,name):
+        """
+        Obtiene la lista de todos los usuarios
+        registrados en el sistema
+        """
+        """usuarios = session.query(cls).all()"""
+
+        usuarios = DBSession.query(Usuario).all()
+        for usuario in usuarios:    
+	  if (usuario.alias==name):	
+	        return usuario
 
     @classmethod
     def get_user_by_id(self, iduser):
@@ -248,6 +261,8 @@ class Privilegios(DeclarativeBase):
     idprivilegio = Column(Integer, autoincrement=True, primary_key=True)
     
     nombreprivilegio = Column(Unicode(50), unique=True, nullable=False)
+    
+    var = Column(Unicode(50))
 
     descripcion = Column(Text)
     
@@ -270,8 +285,6 @@ class Privilegios(DeclarativeBase):
         Obtiene la lista de todos los usuarios
         registrados en el sistema
         """
-        #Session = sessionmaker()
-        #session = Session() 
         """privilegios = session.query(cls).all()"""
         privilegios = DBSession.query(Privilegios).all()
             

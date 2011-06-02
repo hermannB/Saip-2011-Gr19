@@ -50,9 +50,7 @@ class Proyecto(DeclarativeBase):
 		Obtiene la lista de todos los roles
 		registrados en el sistema
 		"""
-		#Session = sessionmaker()
-		#session = Session() 
-		"""proyectos = session.query(cls).all()"""
+
 		proyectos = DBSession.query(Proyecto).all()
 		    
 		return proyectos

@@ -39,26 +39,21 @@ def setup_app(command, conf, vars):
     model.DBSession.add(rol)
 
     privilegio = model.Privilegios()
-    privilegio.nombreprivilegio = u'control_total'
-    privilegio.descripcion = u'Este permiso permite el control total del sistema'
+    privilegio.nombreprivilegio = u'Control Total'
+    privilegio.var = u'control_total'
+    privilegio.descripcion = u'Este permiso otorga todas las funcionalidades del sistema'
     privilegio.roles.append(rol)
 
     model.DBSession.add(privilegio)
 
     privilegio2 = model.Privilegios()
-    privilegio2.nombreprivilegio = u'solo_lectura'
-    privilegio2.descripcion = u'Este permiso permite solo ver las consultas'
+    privilegio2.nombreprivilegio = u'Acceso de solo lectura'
+    privilegio2.var = u'solo_lectura'
+    privilegio2.descripcion = u'Este permiso solo autoriza la realizacion de consultas sin ninguna otra funcionalidad'
     privilegio2.roles.append(rol)
 
     model.DBSession.add(privilegio2)
 
-    #editor = model.User()
-    #editor.user_name = u'editor'
-    #editor.display_name = u'Example editor'
-    #editor.email_address = u'editor@somedomain.com'
-    #editor.password = u'editpass'
-
-    #model.DBSession.add(editor)
     model.DBSession.flush()
 
 #######################################################################################
@@ -70,22 +65,32 @@ def setup_app(command, conf, vars):
 
 
     priv = model.Privilegios()
-    priv.nombreprivilegio = u'Agregar Usurio'
+    priv.nombreprivilegio = u'Agregar Usuario al '
+    priv.var = u'alta_usuario'
     priv.descripcion = u'Brinda las funciones necesarias para ingresar nuevos usuarios al sistema'
     model.DBSession.add(priv)
 
     priv = model.Privilegios()
-    priv.nombreprivilegio = u'Modificar Usurio'
+    priv.nombreprivilegio = u'Listar Usuario'
+    priv.var = u'list_usuario'
+    priv.descripcion = u'Brinda las funciones necesarias para realizar un listado de los ususario del Sistema'
+    model.DBSession.add(priv)
+
+    priv = model.Privilegios()
+    priv.nombreprivilegio = u'Modificar Usuario'
+    priv.var = u'mod_usuario'
     priv.descripcion = u'Brinda las funciones necesarias para actualizar algun dato perteneciente a algun usuario del sistema'
     model.DBSession.add(priv)
 
     priv = model.Privilegios()
-    priv.nombreprivilegio = u'Eliminar Usurio'
+    priv.nombreprivilegio = u'Eliminar Usuario'
+    priv.var = u'elim_usuario'
     priv.descripcion = u'Brinda las funciones necesarias para eliminar usuarios que ya no deban tener acceso al sistema'
     model.DBSession.add(priv)
 
     priv = model.Privilegios()
     priv.nombreprivilegio = u'Cambiar Password'
+    priv.var = u'cam_pass'
     priv.descripcion = u'Brinda la funcion con la cual el usuario puede modificar su password'
     model.DBSession.add(priv)
 
@@ -95,16 +100,25 @@ def setup_app(command, conf, vars):
 
     priv = model.Privilegios()
     priv.nombreprivilegio = u'Agregar Rol'
+    priv.var = u'alta_rol'
     priv.descripcion = u'Brinda las funciones necesarias para ingresar nuevos roles al sistema'
     model.DBSession.add(priv)
 
     priv = model.Privilegios()
+    priv.nombreprivilegio = u'Listar Rol'
+    priv.var = u'list_rol'
+    priv.descripcion = u'Brinda las funciones necesarias para realizar un listado de los roles del Sistema'
+    model.DBSession.add(priv)
+
+    priv = model.Privilegios()
     priv.nombreprivilegio = u'Modificar Rol'
+    priv.var = u'mod_rol'
     priv.descripcion = u'Brinda las funciones necesarias para actualizar algun dato perteneciente a algun rol del sistema'
     model.DBSession.add(priv)
 
     priv = model.Privilegios()
     priv.nombreprivilegio = u'Eliminar Rol'
+    priv.var = u'eliminar_rol'
     priv.descripcion = u'Brinda las funciones necesarias para eliminar roles que ya no son requeridos'
     model.DBSession.add(priv)
 
@@ -114,16 +128,25 @@ def setup_app(command, conf, vars):
 
     priv = model.Privilegios()
     priv.nombreprivilegio = u'Agregar Tipo de Fase'
+    priv.var = u'alta_tipo_fase'
     priv.descripcion = u'Brinda las funciones necesarias para ingresar nuevos Tipos de Fases al sistema'
     model.DBSession.add(priv)
 
     priv = model.Privilegios()
+    priv.nombreprivilegio = u'Listar Tipo de Fase'
+    priv.var = u'list_tipo_fase'
+    priv.descripcion = u'Brinda las funciones necesarias para realizar un listado de los Tipo de fases dentro del sistema'
+    model.DBSession.add(priv)
+
+    priv = model.Privilegios()
     priv.nombreprivilegio = u'Modificar Tipo de Fase'
+    priv.var = u'mod_tipo_fase'
     priv.descripcion = u'Brinda las funciones necesarias para actualizar algun dato perteneciente a algun Tipo de Fase del sistema'
     model.DBSession.add(priv)
 
     priv = model.Privilegios()
     priv.nombreprivilegio = u'Eliminar Tipo de Fase'
+    priv.var = u'elim_tipo_fase'
     priv.descripcion = u'Brinda las funciones necesarias para eliminar algun Tipo de Fase que ya no es requerido'
     model.DBSession.add(priv)
 
@@ -133,21 +156,31 @@ def setup_app(command, conf, vars):
 
     priv = model.Privilegios()
     priv.nombreprivilegio = u'Agregar Fase'
+    priv.var = u'alta_fase'
     priv.descripcion = u'Brinda las funciones necesarias para ingresar nuevas Fases al sistema'
     model.DBSession.add(priv)
 
     priv = model.Privilegios()
+    priv.nombreprivilegio = u'Listar Fase'
+    priv.var = u'list_fase'
+    priv.descripcion = u'Brinda las funciones necesarias para realizar un listado de las Fases dentro del sistema'
+    model.DBSession.add(priv)
+
+    priv = model.Privilegios()
     priv.nombreprivilegio = u'Modificar Fase'
+    priv.var = u'mod_fase'
     priv.descripcion = u'Brinda las funciones necesarias para actualizar algun dato perteneciente a alguna Fase del sistema'
     model.DBSession.add(priv)
 
     priv = model.Privilegios()
     priv.nombreprivilegio = u'Eliminar Fase'
+    priv.var = u'elim_fase'
     priv.descripcion = u'Brinda las funciones necesarias para eliminar alguna Fase que ya no es requerida'
     model.DBSession.add(priv)
 
     priv = model.Privilegios()
     priv.nombreprivilegio = u'Crear Linea Base'
+    priv.var = u'linea_base'
     priv.descripcion = u'Brinda la funcion con la cual el Lider de un Proyecto define que una fase esta finalizadad y se puede pasar a la siguiente'
     model.DBSession.add(priv)
 
@@ -157,21 +190,43 @@ def setup_app(command, conf, vars):
 
     priv = model.Privilegios()
     priv.nombreprivilegio = u'Agregar Item'
+    priv.var = u'alta_item'
     priv.descripcion = u'Brinda las funciones necesarias para ingresar nuevos Items al sistema'
     model.DBSession.add(priv)
 
     priv = model.Privilegios()
+    priv.nombreprivilegio = u'Listar Item'
+    priv.var = u'list_item'
+    priv.descripcion = u'Brinda las funciones necesarias para realizar un listado de los Items dentro del sistema'
+    model.DBSession.add(priv)
+
+    priv = model.Privilegios()
     priv.nombreprivilegio = u'Modificar Item'
+    priv.var = u'mod_item'
     priv.descripcion = u'Brinda las funciones necesarias para actualizar algun dato perteneciente a algun Item del sistema'
     model.DBSession.add(priv)
 
     priv = model.Privilegios()
     priv.nombreprivilegio = u'Eliminar Item'
+    priv.var = u'elim_item'
     priv.descripcion = u'Brinda las funciones necesarias para eliminar algun Item que ya no es requerido (eliminacion logica)'
     model.DBSession.add(priv)
 
     priv = model.Privilegios()
+    priv.nombreprivilegio = u'Revivir Item'
+    priv.var = u'rev_item'
+    priv.descripcion = u'Brinda las funciones necesarias para eliminar algun Item que ya no es requerido (eliminacion logica)'
+    model.DBSession.add(priv)
+
+    priv = model.Privilegios()
+    priv.nombreprivilegio = u'Restablecer version de Item'
+    priv.var = u'rest_item'
+    priv.descripcion = u'Brinda las funciones necesarias para recuperar versiones anteriores de un item que fueron almacenadas en el historial)'
+    model.DBSession.add(priv)
+
+    priv = model.Privilegios()
     priv.nombreprivilegio = u'Aprobar Item'
+    priv.var = u'aprobar_item'
     priv.descripcion = u'Brinda la funcion con la cual el Lider de un Proyecto marca un Item para indicar que cumple con su finalidad'
     model.DBSession.add(priv)
 
@@ -181,16 +236,25 @@ def setup_app(command, conf, vars):
 
     priv = model.Privilegios()
     priv.nombreprivilegio = u'Agregar Tipo de Item'
+    priv.var = u'alta_tipo_item'
     priv.descripcion = u'Brinda las funciones necesarias para ingresar nuevos Tipos de Items al sistema'
     model.DBSession.add(priv)
 
     priv = model.Privilegios()
+    priv.nombreprivilegio = u'Listar Tipo de Item'
+    priv.var = u'list_tipo_item'
+    priv.descripcion = u'Brinda las funciones necesarias para realizar un listado de los Tipo de Item dentro del sistema'
+    model.DBSession.add(priv)
+
+    priv = model.Privilegios()
     priv.nombreprivilegio = u'Modificar Tipo de Item'
+    priv.var = u'mod_tipo_item'
     priv.descripcion = u'Brinda las funciones necesarias para actualizar algun dato perteneciente a algun Tipo de Item del sistema'
     model.DBSession.add(priv)
 
     priv = model.Privilegios()
     priv.nombreprivilegio = u'Eliminar Tipo de Item'
+    priv.var = u'elim_tipo_item'
     priv.descripcion = u'Brinda las funciones necesarias para eliminar algun Tipo de Item que ya no es requerido (eliminacio logica)'
     model.DBSession.add(priv)
 
@@ -200,16 +264,26 @@ def setup_app(command, conf, vars):
 
     priv = model.Privilegios()
     priv.nombreprivilegio = u'Agregar Proyecto'
+    priv.var = u'alta_proyecto'
     priv.descripcion = u'Brinda las funciones necesarias para ingresar nuevos Proyecto al sistema'
     model.DBSession.add(priv)
 
     priv = model.Privilegios()
+    priv.nombreprivilegio = u'Listar Proyecto'
+    priv.var = u'list_proyecto'
+    priv.descripcion = u'Brinda las funciones necesarias para realizar un listado de los Proyectos dentro del sistema'
+    model.DBSession.add(priv)
+
+
+    priv = model.Privilegios()
     priv.nombreprivilegio = u'Modificar Proyecto'
+    priv.var = u'mod_proyecto'
     priv.descripcion = u'Brinda las funciones necesarias para actualizar algun dato perteneciente a algun Proyecto del sistema'
     model.DBSession.add(priv)
 
     priv = model.Privilegios()
     priv.nombreprivilegio = u'Eliminar Proyecto'
+    priv.var = u'elim_proyecto'
     priv.descripcion = u'Brinda las funciones necesarias para eliminar algun Proyecto que ya no es requerido (cambio de estado)'
     model.DBSession.add(priv)
 
@@ -219,16 +293,26 @@ def setup_app(command, conf, vars):
 
     priv = model.Privilegios()
     priv.nombreprivilegio = u'Agregar Miembros de un Equipo'
+    priv.var = u'alta_equipo'
     priv.descripcion = u'Brinda las funciones necesarias para ingresar nuevos Miembros de un Equipo de Desarrollo al sistema'
     model.DBSession.add(priv)
 
     priv = model.Privilegios()
+    priv.nombreprivilegio = u'Listar Miembros de un Equipo'
+    priv.var = u'list_miembros'
+    priv.descripcion = u'Brinda las funciones necesarias para realizar un listado de los Miembros de un Proyecto del sistema'
+    model.DBSession.add(priv)
+
+
+    priv = model.Privilegios()
     priv.nombreprivilegio = u'Modificar Miembro de un Equipo'
+    priv.var = u'mod_equipo'
     priv.descripcion = u'Brinda las funciones necesarias para actualizar a algun Miembro de un Equipo de Desarrollo del sistema'
     model.DBSession.add(priv)
 
     priv = model.Privilegios()
     priv.nombreprivilegio = u'Eliminar Miembros de un Equipo'
+    priv.var = u'elim_equipo'
     priv.descripcion = u'Brinda las funciones necesarias para eliminar algun Miembro de un Equipo de Desarrollo que ya no es requerido'
     model.DBSession.add(priv)
    
@@ -239,9 +323,15 @@ def setup_app(command, conf, vars):
 
     priv = model.Privilegios()
     priv.nombreprivilegio = u'Indice de Impacto'
+    priv.var = u'impacto'
     priv.descripcion = u'Calcula el Impacto que tendra la modificacion o eliminacion de un determinado Item con relacion al proyecto'
     model.DBSession.add(priv)
 
+    priv = model.Privilegios()
+    priv.nombreprivilegio = u'Arbol de Relaciones'
+    priv.var = u'relaciones'
+    priv.descripcion = u'Realiza un impresion de todos los items relacionados con un determinado Item desde sus antecesores hasta sus sucesores actuales'
+    model.DBSession.add(priv)
 
 ###################### Tipos de Fases ##################################################
    

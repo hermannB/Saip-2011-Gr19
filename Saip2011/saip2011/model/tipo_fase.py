@@ -50,9 +50,7 @@ class Tipo_Fase(DeclarativeBase):
 		Obtiene la lista de todos los roles
 		registrados en el sistema
 		"""
-		#Session = sessionmaker()
-		#session = Session() 
-		"""tiposfases = session.query(cls).all()"""
+
 		tipos_fases = DBSession.query(Tipo_Fase).all()
 		    
 		return tipos_fases

@@ -47,9 +47,7 @@ class Tipo_Item(DeclarativeBase):
 		Obtiene la lista de todos los tipos de item
 		registrados en el sistema
 		"""
-		#Session = sessionmaker()
-		#session = Session() 
-		"""tipos_items = session.query(cls).all()"""
+
 		tipos_items = DBSession.query(Tipo_Item).all()
 		    
 		return tipos_items

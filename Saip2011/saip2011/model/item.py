@@ -70,9 +70,7 @@ class Item(DeclarativeBase):
 		Obtiene la lista de todos los items
 		registrados en el sistema
 		"""
-		#Session = sessionmaker()
-		#session = Session() 
-		"""items = session.query(cls).all()"""
+
 		items = DBSession.query(Item).all()
 		    
 		return items

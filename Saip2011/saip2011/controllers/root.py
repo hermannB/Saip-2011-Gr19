@@ -47,6 +47,9 @@ loader = TemplateLoader(
 """__all__ = ['RootController','UsuarioController','FaseController']
 usuario = "desconocido"""
 
+
+
+
 class RootController(BaseController):
     """
     The root controller for the saip2011 application.
@@ -61,6 +64,7 @@ class RootController(BaseController):
     must be wrapped around with :class:`tg.controllers.WSGIAppController`.
     
     """
+
     secc = SecureController()
     
     admin = Catwalk(model, DBSession)
@@ -68,7 +72,40 @@ class RootController(BaseController):
     
     error = ErrorController()
 
-    
+ # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # #
+ #######    Variables globales de control
+
+    username =""
+    fase_activa=""
+    proyecto_actual=""
+    rol_actual=""
+
+    def set_username(self, nombre):
+	self.username = nombre
+
+    def get_username(self):
+        return self.username
+
+    def set_fase_activa(self, fase):
+	self.fase_activa = fase
+
+    def get_fase_activa(self):
+        return self.fase_activa
+
+    def set_proyecto_actual(self, proyecto):
+	self.proyecto_actual = proyecto
+
+    def get_proyecto_actual(self):
+        return self.proyecto_actual
+
+    def set_rol_actual(self, rol):
+	self.rol_actual = rol
+
+    def get_rol_actual(self):
+        return self.rol_actual
+
+
+ # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # #
 
     @expose('saip2011.templates.index')
     def index(self):
@@ -128,7 +165,8 @@ class RootController(BaseController):
             login_counter = request.environ['repoze.who.logins'] + 1
             redirect(url('/login', came_from=came_from, __logins=login_counter))
         userid = request.identity['repoze.who.userid']
-        usuario = userid
+       	
+	RootController.username=userid
         flash(_('Bienvenido, %s!') % userid)
         redirect(came_from)
 
@@ -141,6 +179,8 @@ class RootController(BaseController):
         """
         flash(_('Hasta luego!') )
         redirect('/')
+
+ # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # #
     
     @expose('saip2011.templates.usuario')
     def usuario(self):
@@ -148,12 +188,32 @@ class RootController(BaseController):
            Menu para USUARIO
         """
         return dict(pagina="usuario")
+
+    @expose('saip2011.templates.cambiar_password')
+    def cambiar_password(self):
+        """
+           Metodo que prepara los campos para 
+           modificar el pass
+        """
+        return dict(pagina="cambiar_password")
+
+    @expose()
+    def post_cambiar_password(self,clave,clave2):
+        """
+           Metodo que usa el Id del usuario logeado
+           para modificar su password
+        """
+	usuario = Usuario.get_user_by_alias(self.get_username())
+        usuario._set_password(clave)
+	flash("password modificado!")
+	redirect('/usuario')
     
     @expose('saip2011.templates.editar_usuario')
     def editar_usuario(self,idusuario,*args, **kw):
+	
 	usuario = DBSession.query(Usuario).get(idusuario)
-
 	if request.method != 'PUT':  
+
           values = dict(idusuario=usuario.idusuario, 
 	  	        alias=usuario.alias, 
                         nombre=usuario.nombre, 
@@ -162,12 +222,8 @@ class RootController(BaseController):
                         tipodocumento=usuario.tipodocumento,
 			nrodoc=usuario.nrodoc,
 			email_address=usuario.email_address,
-			
-                     # directors = [str(director.director_id) for director in movie.directors],
-                     # release_date = datetime.strftime(movie.release_date, "%m/%d/%y"),
-                    )
+                  )
 	  return dict(pagina="editar_usuario",values=values)
-
 
     @validate({'idusuario':NotEmpty, 
 	       'alias':NotEmpty, 
@@ -177,10 +233,13 @@ class RootController(BaseController):
                'tipodocumento':NotEmpty,
                'nrodoc':NotEmpty,
                'email_address':NotEmpty}, error_handler=editar_usuario)	
+  
     @expose()
-    def put_usuario(self, idusuario, alias, nombre,  apellido, nacionalidad, tipodocumento, nrodoc , email_address, **kw):
+    def put_usuario(self, idusuario, alias, nombre,  apellido, nacionalidad, tipodocumento, nrodoc , 
+			  email_address, **kw):
 	
 	usuario = DBSession.query(Usuario).get(int(idusuario))
+
 	usuario.alias=alias, 
         usuario.nombre=nombre, 
         usuario.apellido=apellido,
@@ -188,7 +247,6 @@ class RootController(BaseController):
         usuario.tipodocumento=tipodocumento,
 	usuario.nrodoc=nrodoc,
 	usuario.email_address=email_address,
-
 
         DBSession.flush()
         flash("Usuario modificado!")
@@ -215,6 +273,7 @@ class RootController(BaseController):
 			nrodoc=usuario.nrodoc,
 			email_address=usuario.email_address
 	           )
+
         return dict(pagina="eliminar_usuario",values=values)
 
     @validate({'idusuario':NotEmpty, 
@@ -225,14 +284,15 @@ class RootController(BaseController):
                'tipodocumento':NotEmpty,
                'nrodoc':NotEmpty,
                'email_address':NotEmpty}, error_handler=eliminar_usuario)	
+    
     @expose()
-    def post_delete_usuario(self, idusuario, alias, nombre, apellido, nacionalidad, tipodocumento, nrodoc , email_address ,  **kw):
+    def post_delete_usuario(self, idusuario, alias, nombre, apellido, nacionalidad, tipodocumento, 
+				  nrodoc , email_address ,  **kw):
 	
         DBSession.delete(DBSession.query(Usuario).get(idusuario))
         DBSession.flush()
         flash("Usuario eliminado!")
 	redirect('/usuario')
-
 
     @expose('saip2011.templates.agregar_usuario')
     def agregar_usuario(self,cancel=False,**data):
@@ -244,13 +304,15 @@ class RootController(BaseController):
             form = UsuarioForm()
             try:
                 data = form.to_python(data)
-                usuario = Usuario(alias=data.get('alias'),nombre=data.get('nombre'),apellido=data.get('apellido'),email_address=data.get('email'),nacionalidad=data.get('nacionalidad'),tipodocumento=data.get('tipodocumento'),nrodoc=data.get('nrodoc'),_password=data.get('clave'))
-                #if isinstance(usuario,Usuario) :
-		usuario._set_password(data.get('clave'))
+
+                usuario = Usuario(alias=data.get('alias'),nombre=data.get('nombre'),apellido=data.get('apellido'),
+				  email_address=data.get('email'),nacionalidad=data.get('nacionalidad'),
+				  tipodocumento=data.get('tipodocumento'),nrodoc=data.get('nrodoc'),
+				   _password=data.get('clave'))
+
+	    	usuario._set_password(data.get('clave'))
                 DBSession.add(usuario)
                 DBSession.flush()
-                #DBSession.commit()
-                #transaction.commit() 
                 print usuario
                 flash("Usuario agregado!")
             except Invalid, e:
@@ -262,14 +324,8 @@ class RootController(BaseController):
                 flash("LLave duplicada")
                 DBSession.rollback()
                 redirect('/agregar_usuario')
-            
         else:
             errors = {}        
-        #aqui se debe guardar los datos obtenidos
-        #usuario = Usuario(data[0])
-        #tmpl = loader.load('agregar_usuario.html')
-        #stream = tmpl.generate()
-        #return stream.render('html',doctype='html')
         return dict(pagina='usuarios',data=data.get('alias'),errors=errors)
 
  # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # #
@@ -290,7 +346,7 @@ class RootController(BaseController):
                       nombrerol=rol.nombrerol, 
                       descripcion=rol.descripcion,
                       privilegios = [str(privilegio.idprivilegio) for privilegio in rol.privilegios],
-                        )
+                 )
                       
         if 'privilegios' in kw and not isinstance(kw['privilegios'], list):
             kw['privilegios'] = [kw['privilegios']]
@@ -301,6 +357,7 @@ class RootController(BaseController):
     @validate({'idrol':NotEmpty, 
                'nombrerol':NotEmpty, 
                'descripcion':NotEmpty}, error_handler=editar_rol)
+
     @expose()
     def put_rol(self, idrol, nombrerol, descripcion, privilegios, **kw):
         rol = DBSession.query(Rol).get(idrol)
@@ -309,15 +366,14 @@ class RootController(BaseController):
             privilegios = [privilegios]
         privilegios = [DBSession.query(Privilegios).get(privilegio) for privilegio in privilegios]
             
-       
         rol.nombrerol=nombrerol
         rol.descripcion = descripcion
         rol.privilegios = privilegios
-        
-
-        DBSession.flush()
-        redirect('../')
-    
+ 
+	DBSession.flush()
+        flash("Rol modificado!")
+	redirect('/rol')
+   
     @expose('saip2011.templates.listar_rol')
     def listar_rol(self):
         """Lista Roles 
@@ -327,14 +383,14 @@ class RootController(BaseController):
 
     @expose('saip2011.templates.eliminar_rol')
     def eliminar_rol(self,idrol, *args, **kw):
-	
         rol = DBSession.query(Rol).get(idrol)	
 
 	values = dict(idrol=rol.idrol, 
 		      nombrerol=rol.nombrerol, 
                       descripcion=rol.descripcion,
 		      privilegios=rol.privilegios
-                    )
+                )
+
         return dict(pagina="eliminar_rol",values=values)
 
     @validate({'idrol':NotEmpty, 
@@ -352,9 +408,6 @@ class RootController(BaseController):
     def agregar_rol(self, *args, **kw):
         privilegios = DBSession.query(Privilegios).all()
         
-      #  if 'privilegios' in kw and not isinstance(kw['privilegios'], list):
-       #     kw['privilegios'] = [kw['privilegios']]
-
         return dict(pagina="agregar_rol",values=kw, privilegios=privilegios)
     
     @validate({'nombrerol':NotEmpty, 
@@ -363,15 +416,17 @@ class RootController(BaseController):
    
     @expose()
     def post_rol(self, nombrerol, descripcion, privilegios=None):
-        flash("Rol agregado!")
         if privilegios is not None:
             if not isinstance(privilegios, list):
                 privilegios = [privilegios]
             privilegios = [DBSession.query(Privilegios).get(privilegio) for privilegio in privilegios]
-        rol = Rol(nombrerol=nombrerol, descripcion=descripcion, privilegios=privilegios)
-        DBSession.add(rol)
+      
+	rol = Rol(nombrerol=nombrerol, descripcion=descripcion, privilegios=privilegios)
+        
+	DBSession.add(rol)
 	DBSession.flush()
-        redirect('./')
+        flash("Rol agregado!")
+        redirect('/rol')
 
  # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # #
 
@@ -386,19 +441,20 @@ class RootController(BaseController):
     def editar_privilegio(self,idprivilegio,*args, **kw):
 	privilegio = DBSession.query(Privilegios).get(idprivilegio)
 	if request.method != 'PUT':  
+	
 	  values = dict(idprivilegio=privilegio.idprivilegio, 
 	  	       nombreprivilegio=privilegio.nombreprivilegio, 
                        descripcion=privilegio.descripcion,
                     )
-	  return dict(pagina="editar_privilegio",values=values)
 
+	  return dict(pagina="editar_privilegio",values=values)
 
     @validate({'idprivilegio':NotEmpty, 
 	       'nombreprivilegio':NotEmpty, 
                'descripcion':NotEmpty}, error_handler=editar_privilegio)	
+
     @expose()
     def put_privilegio(self, idprivilegio, nombreprivilegio, descripcion, **kw):
-	
 	privilegio = DBSession.query(Privilegios).get(int(idprivilegio))
         
         privilegio.nombreprivilegio = nombreprivilegio
@@ -417,18 +473,19 @@ class RootController(BaseController):
 
     @expose('saip2011.templates.eliminar_privilegio')
     def eliminar_privilegio(self,idprivilegio, *args, **kw):
-	
         privilegio = DBSession.query(Privilegios).get(idprivilegio)	
 
 	values = dict(idprivilegio=privilegio.idprivilegio, 
 		      nombreprivilegio=privilegio.nombreprivilegio, 
                       descripcion=privilegio.descripcion,
                     )
+
         return dict(pagina="eliminar_privilegio",values=values)
 
     @validate({'idprivilegio':NotEmpty, 
 	       'nombreprivilegio':NotEmpty, 
                'descripcion':NotEmpty}, error_handler=eliminar_privilegio)	
+
     @expose()
     def post_delete_privilegio(self, idprivilegio, nombreprivilegio, descripcion, **kw):
 	
@@ -436,7 +493,6 @@ class RootController(BaseController):
         DBSession.flush()
         flash("Privilegio eliminado!")
 	redirect('/privilegio')
-
 
     @expose('saip2011.templates.agregar_privilegio')
     def agregar_privilegio(self,cancel=False,**data):
@@ -448,12 +504,12 @@ class RootController(BaseController):
             form = PrivilegioForm()
             try:
                 data = form.to_python(data)
-                privilegio = Privilegios(nombreprivilegio=data.get('nombreprivilegio'),descripcion=data.get('descripcion'))
-                #if isinstance(usuario,Usuario) :
+
+                privilegio = Privilegios(nombreprivilegio=data.get('nombreprivilegio'),
+					 descripcion=data.get('descripcion'))
+
                 DBSession.add(privilegio)
                 DBSession.flush()
-                #DBSession.commit()
-                #transaction.commit() 
                 print privilegio
                 flash("Privilegio agregado!")
             except Invalid, e:
@@ -465,14 +521,8 @@ class RootController(BaseController):
                 flash("LLave duplicada")
                 DBSession.rollback()
                 redirect('/agregar_privilegio')
-            
         else:
             errors = {}        
-        #aqui se debe guardar los datos obtenidos
-        #usuario = Usuario(data[0])
-        #tmpl = loader.load('agregar_usuario.html')
-        #stream = tmpl.generate()
-        #return stream.render('html',doctype='html')
         return dict(pagina='agregar_privilegio',data=data.get('nombreprivilegio'),errors=errors)
 
  # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # #
@@ -495,29 +545,27 @@ class RootController(BaseController):
     def editar_fase(self,id_fase,*args, **kw):
 	tipos_fases = DBSession.query(Tipo_Fase).all()
 	fase = DBSession.query(Fase).get(id_fase)
+	
 	if request.method != 'PUT':  
-	  #genres = DBSession.query(Genre).all()
-          #directors = DBSession.query(Director).all()
+
           values = dict(id_fase=fase.id_fase, 
 	  	        nombre_fase=fase.nombre_fase, 
                         id_tipo_fase=fase.id_tipo_fase, 
                         estado=fase.estado,
                         linea_base=fase.linea_base,
                         descripcion=fase.descripcion,
-                     # directors = [str(director.director_id) for director in movie.directors],
-                     # release_date = datetime.strftime(movie.release_date, "%m/%d/%y"),
                     )
-	  return dict(pagina="editar_fase",values=values,tipos_fases=tipos_fases)
 
+	  return dict(pagina="editar_fase",values=values,tipos_fases=tipos_fases)
 
     @validate({'id_fase':NotEmpty, 
 	       'nombre_fase':NotEmpty, 
                'id_tipo_fase':NotEmpty, 
                'estado':NotEmpty, 
                'descripcion':NotEmpty}, error_handler=editar_fase)	
+
     @expose()
     def put_fase(self, id_fase, nombre_fase, id_tipo_fase, estado, linea_base, descripcion, **kw):
-	
 	fase = DBSession.query(Fase).get(int(id_fase))
         
         fase.nombre_fase = nombre_fase
@@ -532,7 +580,6 @@ class RootController(BaseController):
 
     @expose('saip2011.templates.eliminar_fase')
     def eliminar_fase(self,id_fase, *args, **kw):
-	
         fase2 = DBSession.query(Fase).get(id_fase)	
 
 	values = dict(id_fase=fase2.id_fase, 
@@ -541,9 +588,8 @@ class RootController(BaseController):
                      estado=fase2.estado,
                      linea_base=fase2.linea_base,
                      descripcion=fase2.descripcion,
-                     # directors = [str(director.director_id) for director in movie.directors],
-                     # release_date = datetime.strftime(movie.release_date, "%m/%d/%y"),
-                    )
+                  )
+
         return dict(pagina="eliminar_fase",values=values)
 
     @validate({'id_fase':NotEmpty, 
@@ -551,6 +597,7 @@ class RootController(BaseController):
                'nombre_tipo_fase':NotEmpty, 
                'estado':NotEmpty, 
                'descripcion':NotEmpty}, error_handler=eliminar_fase)	
+
     @expose()
     def post_delete_fase(self, id_fase, nombre_fase,  nombre_tipo_fase, estado, linea_base, descripcion, **kw):
 	
@@ -562,6 +609,7 @@ class RootController(BaseController):
     @expose('saip2011.templates.agregar_fase')
     def agregar_fase(self, *args, **kw):
         tipos_fases = DBSession.query(Tipo_Fase).all()
+
         return dict(pagina="agregar_fase",values=kw, tipos_fases=tipos_fases)
     
     @validate({'nombre_fase':NotEmpty, 
@@ -569,13 +617,15 @@ class RootController(BaseController):
 		'estado':NotEmpty,
                 'linea_base':NotEmpty,
 		'descripcion':NotEmpty}, error_handler=agregar_fase)
+
     @expose()
     def post_fase(self, nombre_fase, id_tipo_fase, estado ,linea_base, descripcion):
         if id_tipo_fase is not None:
            id_tipo_fase = int(id_tipo_fase)
         
-        fase = Fase (nombre_fase=nombre_fase, id_tipo_fase=id_tipo_fase, estado=estado, linea_base=linea_base, descripcion=descripcion)
-	      
+        fase = Fase (nombre_fase=nombre_fase, id_tipo_fase=id_tipo_fase, 
+		     estado=estado, linea_base=linea_base, descripcion=descripcion)
+      
 	DBSession.add(fase)
 	flash("Fase agregada!")  
         redirect('./fase')
@@ -594,19 +644,21 @@ class RootController(BaseController):
     def editar_tipo_fase(self,id_tipo_fase,*args, **kw):
 	tipo_fase = DBSession.query(Tipo_Fase).get(id_tipo_fase)
 	if request.method != 'PUT':  
+
 	  values = dict(id_tipo_fase=tipo_fase.id_tipo_fase, 
 	  	        nombre_tipo_fase=tipo_fase.nombre_tipo_fase, 
                         descripcion=tipo_fase.descripcion,
-		)
+ 		   )
+
 	  return dict(pagina="editar_tipo_fase",values=values)
 
 
     @validate({'id_tipo_fase':NotEmpty, 
 	       'nombre_tipo_fase':NotEmpty, 
                'descripcion':NotEmpty}, error_handler=editar_tipo_fase)	
+
     @expose()
     def put_tipo_fase(self, id_tipo_fase, nombre_tipo_fase, descripcion, **kw):
-	
 	tipo_fase = DBSession.query(Tipo_Fase).get(id_tipo_fase)
         
         tipo_fase.nombre_tipo_fase = nombre_tipo_fase
@@ -626,18 +678,19 @@ class RootController(BaseController):
 
     @expose('saip2011.templates.eliminar_tipo_fase')
     def eliminar_tipo_fase(self,id_tipo_fase, *args, **kw):
-	
         tipo_fase = DBSession.query(Tipo_Fase).get(id_tipo_fase)	
 
 	values = dict(id_tipo_fase=tipo_fase.id_tipo_fase, 
 		     nombre_tipo_fase=tipo_fase.nombre_tipo_fase, 
                      descripcion=tipo_fase.descripcion,
                   )
+
         return dict(pagina="eliminar_tipo_fase",values=values)
 
     @validate({'id_tipo_fase':NotEmpty, 
 	       'nombre_tipo_fase':NotEmpty, 
                'descripcion':NotEmpty}, error_handler=eliminar_tipo_fase)	
+
     @expose()
     def post_delete_tipo_fase(self, id_tipo_fase, nombre_tipo_fase, descripcion, **kw):
 	
@@ -656,31 +709,26 @@ class RootController(BaseController):
             form = TipoFaseForm()
             try:
                 data = form.to_python(data)
-                tipo_fase = Tipo_Fase(nombre_tipo_fase=data.get('nombre_tipo_fase'),descripcion=data.get('descripcion'))
-                #if isinstance(tipo_fase,Tipo_Fase) :
-                DBSession.add(tipo_fase)
+               
+		tipo_fase = Tipo_Fase(nombre_tipo_fase=data.get('nombre_tipo_fase'),descripcion=data.get('descripcion'))
+                
+		DBSession.add(tipo_fase)
                 DBSession.flush()
-                #DBSession.commit()
-                #transaction.commit() 
                 print tipo_fase
                 flash("Tipo de Fase agregada!")
+
             except Invalid, e:
                 print e
                 tipo_fase = None
                 errors = e.unpack_errors()
                 flash(_("Favor complete los datos requeridos"),'warning')
+
             except IntegrityError:
                 flash("LLave duplicada")
                 DBSession.rollback()
                 redirect('/agregar_tipo_fase')
-            
         else:
             errors = {}        
-        #aqui se debe guardar los datos obtenidos
-        #usuario = Usuario(data[0])
-        #tmpl = loader.load('agregar_usuario.html')
-        #stream = tmpl.generate()
-        #return stream.render('html',doctype='html')
         return dict(pagina='agregar_tipo_fase',data=data.get('nombre_tipo_fase'),errors=errors)
 
 
@@ -718,31 +766,30 @@ class RootController(BaseController):
             form = ItemForm()
             try:
                 data = form.to_python(data)
-                item = Item(nombre_item=data.get('nombre_item'), tipo_item=data.get('tipo_item'), fase=data.get('fase'), proyecto=data.get('proyecto'), adjunto=data.get('adjunto'), estado=data.get('estado'),campos=data.get('campos'),complejidad=data.get('complejidad'), lista_item=data.get('lista_item'),creado_por=data.get('creado_por'),fecha_creacion=data.get('fecha_creacion'))
-                #if isinstance(item,Item) :
+
+                item = Item(nombre_item=data.get('nombre_item'), tipo_item=data.get('tipo_item'), fase=data.get('fase'),
+		 	    proyecto=data.get('proyecto'), adjunto=data.get('adjunto'), estado=data.get('estado'),
+			    campos=data.get('campos'),complejidad=data.get('complejidad'), lista_item=data.get('lista_item'),
+			    creado_por=data.get('creado_por'),fecha_creacion=data.get('fecha_creacion'))
+
                 DBSession.add(item)
                 DBSession.flush()
-                #DBSession.commit()
-                #transaction.commit() 
                 print item
                 flash("Item agregado!")
+
             except Invalid, e:
                 print e
                 item = None
                 errors = e.unpack_errors()
                 flash(_("Favor complete los datos requeridos"),'warning')
+
             except IntegrityError:
                 flash("LLave duplicada")
                 DBSession.rollback()
                 redirect('/agregar_item')
-            
         else:
             errors = {}        
-        #aqui se debe guardar los datos obtenidos
-        #usuario = Usuario(data[0])
-        #tmpl = loader.load('agregar_usuario.html')
-        #stream = tmpl.generate()
-        #return stream.render('html',doctype='html')
+
         return dict(pagina='agregar_item',data=data.get('nombre_item'),errors=errors)
 
 # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # #
@@ -753,7 +800,6 @@ class RootController(BaseController):
            Menu para Tipos de Item
         """
         return dict(pagina="tipo_item")
-    
        
     @expose('saip2011.templates.listar_tipo_item')
     def listar_tipo_item(self):
@@ -765,21 +811,22 @@ class RootController(BaseController):
     @expose('saip2011.templates.editar_tipo_item')
     def editar_tipo_item(self,id_tipo_item,*args, **kw):
 	tipo_item = DBSession.query(Tipo_Item).get(id_tipo_item)
+
 	if request.method != 'PUT':  
+
 	  values = dict(id_tipo_item=tipo_item.id_tipo_item, 
 	  	        nombre_tipo_item=tipo_item.nombre_tipo_item, 
                         descripcion=tipo_item.descripcion,
-                    
                     )
-	  return dict(pagina="editar_tipo_item",values=values)
 
+	  return dict(pagina="editar_tipo_item",values=values)
 
     @validate({'id_tipo_item':NotEmpty, 
 	       'nombre_tipo_item':NotEmpty, 
                'descripcion':NotEmpty}, error_handler=editar_tipo_item)	
+
     @expose()
     def put(self, id_tipo_item, nombre_tipo_item, descripcion, **kw):
-	
 	tipo_item = DBSession.query(Tipo_Item).get(id_tipo_item)
         
         tipo_item.nombre_tipo_item = nombre_tipo_item
@@ -791,21 +838,22 @@ class RootController(BaseController):
 
     @expose('saip2011.templates.eliminar_tipo_item')
     def eliminar_tipo_item(self,id_tipo_item, *args, **kw):
-	
         tipo_item = DBSession.query(Tipo_Item).get(id_tipo_item)	
 
 	values = dict(id_tipo_item=tipo_item.id_tipo_item, 
 		     nombre_tipo_item=tipo_item.nombre_tipo_item, 
                      descripcion=tipo_item.descripcion,
-                    )
+                  )
+
         return dict(pagina="eliminar_tipo_item",values=values)
 
     @validate({'id_tipo_item':NotEmpty, 
 	       'nombre_tipo_item':NotEmpty, 
                'descripcion':NotEmpty}, error_handler=eliminar_tipo_item)	
+
     @expose()
     def post_delete(self, id_tipo_item, nombre_tipo_item, descripcion, **kw):
-	
+
         DBSession.delete(DBSession.query(Tipo_Item).get(id_tipo_item))
         DBSession.flush()
         flash("Tipo de Item eliminado!")
@@ -815,37 +863,35 @@ class RootController(BaseController):
     def agregar_tipo_item(self,cancel=False,**data):
         errors = {}
         tipo_item = None
+
         if request.method == 'POST':
             if cancel:
                 redirect('/tipo_item')
             form = TipoItemForm()
             try:
                 data = form.to_python(data)
-                tipo_item = Tipo_Item(nombre_tipo_item=data.get('nombre_tipo_item'),descripcion=data.get('descripcion'))
-                #if isinstance(tipo_item,Tipo_Item) :
+
+                tipo_item = Tipo_Item(nombre_tipo_item=data.get('nombre_tipo_item'),
+				      descripcion=data.get('descripcion'))
+
                 DBSession.add(tipo_item)
                 DBSession.flush()
-                #DBSession.commit()
-                #transaction.commit() 
                 print tipo_item
                 flash("Tipo de item agregado!")
+
             except Invalid, e:
                 print e
                 tipo_item = None
                 errors = e.unpack_errors()
                 flash(_("Favor complete los datos requeridos"),'warning')
+
             except IntegrityError:
                 flash("LLave duplicada")
                 DBSession.rollback()
                 redirect('/agregar_tipo_item')
-            
         else:
             errors = {}        
-        #aqui se debe guardar los datos obtenidos
-        #usuario = Usuario(data[0])
-        #tmpl = loader.load('agregar_usuario.html')
-        #stream = tmpl.generate()
-        #return stream.render('html',doctype='html')
+
         return dict(pagina='agregar_tipo_item',data=data.get('nombre_tipo_item'),errors=errors)
 
 # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # #
@@ -876,37 +922,34 @@ class RootController(BaseController):
     def agregar_equipo(self,cancel=False,**data):
         errors = {}
         equipo = None
+
         if request.method == 'POST':
             if cancel:
                 redirect('/equipo')
             form = EquipoForm()
             try:
                 data = form.to_python(data)
+
                 equipo = Privilegios(alias=data.get('alias'),rol=data.get('rol'))
-                #if isinstance(usuario,Usuario) :
+
                 DBSession.add(equipo)
                 DBSession.flush()
-                #DBSession.commit()
-                #transaction.commit() 
                 print equipo
                 flash("Equipo de Desarrollo agregado!")
+
             except Invalid, e:
                 print e
                 equipo = None
                 errors = e.unpack_errors()
                 flash(_("Favor complete los datos requeridos"),'warning')
+
             except IntegrityError:
                 flash("LLave duplicada")
                 DBSession.rollback()
                 redirect('/agregar_equipo')
-            
         else:
             errors = {}        
-        #aqui se debe guardar los datos obtenidos
-        #usuario = Usuario(data[0])
-        #tmpl = loader.load('agregar_usuario.html')
-        #stream = tmpl.generate()
-        #return stream.render('html',doctype='html')
+
         return dict(pagina='agregar_equipo',data=data.get('alias'),errors=errors)
 
 # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # #
@@ -937,25 +980,28 @@ class RootController(BaseController):
     def agregar_proyecto(self,cancel=False,**data):
         errors = {}
         proyecto = None
+
         if request.method == 'POST':
             if cancel:
                 redirect('/proyecto')
             form = ProyectoForm()
             try:
                 data = form.to_python(data)
-                proyecto = Proyecto(nombre_proyecto=data.get('nombre_proyecto'),equipo=data.get('equipo'),lista_Fases=data.get('lista_Fases'),descripcion=data.get('descripcion'))
-                #if isinstance(proyecto,Proyecto) :
+
+                proyecto = Proyecto(nombre_proyecto=data.get('nombre_proyecto'),equipo=data.get('equipo'),
+			    lista_Fases=data.get('lista_Fases'),descripcion=data.get('descripcion'))
+
                 DBSession.add(proyecto)
                 DBSession.flush()
-                #DBSession.commit()
-                #transaction.commit() 
                 print proyecto
                 flash("Proyecto agregado!")
+
             except Invalid, e:
                 print e
                 proyecto = None
                 errors = e.unpack_errors()
                 flash(_("Favor complete los datos requeridos"),'warning')
+
             except IntegrityError:
                 flash("LLave duplicada")
                 DBSession.rollback()
@@ -963,11 +1009,6 @@ class RootController(BaseController):
             
         else:
             errors = {}        
-        #aqui se debe guardar los datos obtenidos
-        #usuario = Usuario(data[0])
-        #tmpl = loader.load('agregar_usuario.html')
-        #stream = tmpl.generate()
-        #return stream.render('html',doctype='html')
-        return dict(pagina='agregar_proyecto',data=data.get('nombre_proyecto'),errors=errors)
 
+        return dict(pagina='agregar_proyecto',data=data.get('nombre_proyecto'),errors=errors)
 

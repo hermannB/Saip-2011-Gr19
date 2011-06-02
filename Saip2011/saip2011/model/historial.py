@@ -55,9 +55,7 @@ class Historial(DeclarativeBase):
 		Obtiene la lista de todos los historiales
 		registrados en el sistema
 		"""
-		#Session = sessionmaker()
-		#session = Session() 
-		"""historiales = session.query(cls).all()"""
+
 		historiales = DBSession.query(Historial).all()
 		    
 		return historiales

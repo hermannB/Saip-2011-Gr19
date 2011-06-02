@@ -57,11 +57,9 @@ class Equipo_Desarrollo(DeclarativeBase):
         Obtiene la lista de todos los equipos
         registrados en el sistema
         """
-        #Session = sessionmaker()
-        #session = Session() 
-        """equipos = session.query(cls).all()"""
+
         equipos = DBSession.query(Equipo_Desarrollo).all()
-            
+           
         return equipos    
     #}
 
