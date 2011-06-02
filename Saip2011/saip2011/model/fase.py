@@ -40,6 +40,8 @@ class Fase(DeclarativeBase):
 
 	estado = Column(Unicode(50), nullable=False)
 
+	orden = Column(Integer)
+
 	linea_base =Column (Unicode(50), nullable=False)
 	
 	descripcion = Column(Text)

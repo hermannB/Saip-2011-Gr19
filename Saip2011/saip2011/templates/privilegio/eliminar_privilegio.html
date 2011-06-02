@@ -11,20 +11,20 @@
 </head>
 <body>
 <div style="height:0px;">&nbsp;</div>
-<h2>Delete Confirmation</h2>
+<h2>Confirmacion de Eliminacion</h2>
 <div class="submit">
 
 <form action="post_delete_privilegio" method="DELETE">
-	Are you sure you want to delete this record?
+	Esta seguro que desea eliminar este registro?
 	<table>
-		<tr><td>idprivilegio </td><td><input readonly="readonly" type="textfield" name="idprivilegio" value="${values['idprivilegio']}"/>${tmpl_context.form_errors.get('idprivilegio')}</td></tr>
+            <tr><td><input type="hidden" name="idprivilegio" value="${values['idprivilegio']}"/>${tmpl_context.form_errors.get('idprivilegio')}</td></tr>
 	      	<tr><td>nombreprivilegio </td><td><input readonly="readonly" type="textfield" name="nombreprivilegio" value="${values['nombreprivilegio']}"/>${tmpl_context.form_errors.get('nombreprivilegio')}</td></tr>
 		<tr><td>descripcion</td><td> <textarea readonly="readonly" name="descripcion">${values.get('descripcion')}</textarea>${tmpl_context.form_errors.get('descripcion')}</td></tr>		
      		               
 	</table>
 	
 	  <input type="hidden" name='_method' value='POST_DELETE'/>
-	  <input type="submit" value="Yes, Delete"/>
+	  <input type="submit" value="Eliminar"/>
 	
 
 </form>

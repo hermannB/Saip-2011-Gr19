@@ -15,6 +15,11 @@
 </head>
 
 <body>
+  <div id="mainmenu">
+    <li class="first"><a href="${tg.url('/equipo/equipo')}" class="${('', 'active')[defined('pagina') and pagina==pagina=='equipo']}">Miembro del Equipo</a></li>
+  </div>  
+
+
   <div py:choose="len(equipos)" py:strip="True" id="equipo">
     <table class="equipos" py:when="0">
       <tr><th>No hay Miembros registrados..</th></tr>
@@ -22,17 +27,15 @@
     <table border="1" cellspacing="1" cellpadding="4" class="equipos" py:otherwise="">    
       <h2>Lista de Miembros del Proyecto</h2>
       <tr align="center">
-	<th>Accion</th>
-        <th>Id</th>
+    	<th>Accion</th>
         <th>Nombre del Usuario</th>
-	<th>Nombre del Rol</th>
+	    <th>Nombre del Rol</th>
       
       </tr>
       <tr align="center" py:for="equipo in equipos">
-	<td><a href="${tg.url('editar_miembro?id_equipo=%d' % equipo.id_equipo)}">Editar</a>
-	<a href="${tg.url('eliminar_miembro?id_equipo=%d' % equipo.id_equipo)}">Borrar</a></td>
-	<td>${equipo.id_equipo}</td>
-	<td>${equipo.nombre_usuario}</td>
+	    <td><a href="${tg.url('/equipo/editar_miembro?id_equipo=%d' % equipo.id_equipo)}">Editar</a>
+	    <a href="${tg.url('/equipo/eliminar_miembro?id_equipo=%d' % equipo.id_equipo)}">Borrar</a></td>
+	    <td>${equipo.nombre_usuario}</td>
         <td>${equipo.nombre_rol}</td>
         
       </tr>          

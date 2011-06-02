@@ -7,54 +7,25 @@
 
 <head>
   <meta content="text/html; charset=UTF-8" http-equiv="content-type" py:replace="''"/>
+    <script type="text/javascript" src="/js/jquery-1.6.1.js"></script>
 
-<!-- <script type="text/javascript" src="js/jquery-1.4.4.min.js"></script> -->
-<!-- <script type="text/javascript" src="js/jquery-1.4.3.min.js"></script> -->
-<!-- <script type="text/javascript" src="js/jquery-1.4.2.min.js"></script> -->
-<!-- <script type="text/javascript" src="js/jquery-1.4.1.min.js"></script> -->
-<script type="text/javascript" src="js/jquery-1.5.1.min.js"></script>
-
-<script type="text/javascript" src="js/jquery.sheepItPlugin.js"></script>
 
 <script type="text/javascript">
-
-$(document).ready(function() {
-     
-    var sheepItForm = $('#sheepItForm').sheepIt({
-        separator: '',
-        allowRemoveLast: true,
-        allowRemoveCurrent: true,
-        allowRemoveAll: true,
-        allowAdd: true,
-        allowAddN: true,
-        maxFormsCount: 10,
-        minFormsCount: 0,
-        iniFormsCount: 2
-    });
- 
-});
-<style>
-
-a {
-    text-decoration:underline;
-    color:#00F;
-    cursor:pointer;
+emails=0;
+function agregar() {
+	emails=emails+1;
+	$("#campos").append('<li class="campo'+emails+'"><input type="text" name="campo" size="25" />&nbsp;&nbsp;<a href="#" onclick="javascript:borrar('+emails+');">Borrar</a></li>');
 }
-
-#sheepItForm_controls div, #sheepItForm_controls div input {
-    float:left;    
-    margin-right: 10px;
+function borrar(cual) {
+	$("li.campo"+cual).remove();
+	return false;
 }
-
-
-</style>
-
 </script>
+
 
 <title>Sistema de Administracion de Item</title>
 </head>
   <body class="submit">
-
 
     <div>
       <h2>Agregar nuevo Tipo de Item</h2>
@@ -65,10 +36,12 @@ a {
 	<tr><td>Nombre del Tipo Item </td><td><input class="required" maxlength="50" type="textfield" name="nombre_tipo_item" value="${values.get('nombre_tipo_item', '')}"/>${tmpl_context.form_errors.get('nombre_tipo_item')}</td></tr>
 	
         <tr><td>descripcion</td><td> <textarea rows="10" cols="40" name="descripcion">${values.get('descripcion')}</textarea>${tmpl_context.form_errors.get('descripcion')}</td></tr>
-	<tr><td><a href="#" onclick="AgregarCampos();">Agregar Campos</a></td>
-        <td><div id="campos">    </div>	</td></tr>
-	 
-	
+        <tr><td>Campos</td>
+            <td><div id="campo">
+        	<div id="campos"> 
+			    <li><input type="text" name="campo" size="25" />&nbsp;&nbsp;<a href="javascript:agregar();">Agregar</a></li> 
+		    </div></div>
+            </td></tr>
 	<td></td>
         <td>
           <input type="submit" value="Guardar" />
@@ -76,42 +49,6 @@ a {
         </td>
       </tr></tbody></table>
     </form>
-
-
-<!-- sheepIt Form -->
-<div id="sheepItForm">
- 
-  <!-- Form template-->
-  <div id="sheepItForm_template">
-    <label for="sheepItForm_#index#_phone">Phone <span id="sheepItForm_label"></span></label>
-    <input id="sheepItForm_#index#_phone" name="person[phones][#index#][phone]" type="text" size="15" maxlength="10" />
-      <input id="vqr" />
-     <a id="sheepItForm_remove_current">
-      <img class="delete" src="/home/hermann/Saip2011/saip2011/public/images/cross.png" width="16" height="16" border="0">
-    </a>
-
-  </div>
-  <!-- /Form template-->
-   
-  <!-- No forms template -->
-  <div id="sheepItForm_noforms_template">No phones</div>
-  <!-- /No forms template-->
-   
-  <!-- Controls -->
-  <div id="sheepItForm_controls">
-    <div id="sheepItForm_add"><a><span>Add phone</span></a></div>
-    <div id="sheepItForm_remove_last"><a><span>Remove</span></a></div>
-    <div id="sheepItForm_remove_all"><a><span>Remove all</span></a></div>
-    <div id="sheepItForm_add_n">
-      <input id="sheepItForm_add_n_input" type="text" size="4" />
-      <div id="sheepItForm_add_n_button"><a><span>Add</span></a></div></div>
-  </div>
-  <!-- /Controls -->
-   
-</div>
-<!-- /sheepIt Form -->
-
-   
 
     
   </body>

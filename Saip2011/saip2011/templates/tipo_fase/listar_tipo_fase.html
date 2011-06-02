@@ -16,7 +16,7 @@
 
 <body>
   <div id="mainmenu">
-    <li class="first"><a href="${tg.url('/listar_tipo_fase')}" class="${('', 'active')[defined('pagina') and pagina==pagina=='listar_tipo_fase']}">Tipo de Fase</a></li>
+    <li class="first"><a href="${tg.url('/tipo_fase/tipo_fase')}" class="${('', 'active')[defined('pagina') and pagina==pagina=='tipo_fase']}">Tipo de Fase</a></li>
   </div>  
   <div py:choose="len(tipos_fases)" py:strip="True" id="tipos_fase">
     <table class="tipos_fases" py:when="0">
@@ -25,15 +25,13 @@
     <table border="1" cellspacing="1" cellpadding="5" class="tipos_fases" py:otherwise="">    
       <h2>Lista de Tipos de Fases</h2>
       <tr align="center">
-	<th>Accion</th>
-        <th>Id</th>
+    	<th>Accion</th>
         <th>Nombre del Tipo Fase</th>
         <th>Descripcion</th>
       </tr>
       <tr align="center" py:for="tipo_fase in tipos_fases">
-	<td><a href="${tg.url('editar_tipo_fase?id_tipo_fase=%d' % tipo_fase.id_tipo_fase)}">Editar</a>
-	<a href="${tg.url('eliminar_tipo_fase?id_tipo_fase=%d' % tipo_fase.id_tipo_fase)}">Borrar</a></td>
-        <td>${tipo_fase.id_tipo_fase}</td>
+    	<td><a href="${tg.url('/tipo_fase/editar_tipo_fase?id_tipo_fase=%d' % tipo_fase.id_tipo_fase)}">Editar</a>
+    	<a href="${tg.url('/tipo_fase/eliminar_tipo_fase?id_tipo_fase=%d' % tipo_fase.id_tipo_fase)}">Borrar</a></td>
         <td>${tipo_fase.nombre_tipo_fase}</td>
         <td>${tipo_fase.descripcion}</td>
       </tr>          

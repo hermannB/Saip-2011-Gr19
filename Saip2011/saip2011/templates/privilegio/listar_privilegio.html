@@ -26,14 +26,12 @@
       <h2>Lista de Privilegios</h2>
       <tr align="center">
         <th>Accion</th>
-        <th>Id</th>
         <th>Nombre</th>
         <th>Descripcion</th>
        </tr>
       <tr align="center" py:for="privilegio in privilegios">
-	<td><a href="${tg.url('editar_privilegio?idprivilegio=%d' % privilegio.idprivilegio)}">Editar</a>
-	<a href="${tg.url('eliminar_privilegio?idprivilegio=%d' % privilegio.idprivilegio)}">Borrar</a></td>
-	<td>${privilegio.idprivilegio}</td>
+	    <td><a href="${tg.url('editar_privilegio?idprivilegio=%d' % privilegio.idprivilegio)}">Editar</a>
+	    <a href="${tg.url('eliminar_privilegio?idprivilegio=%d' % privilegio.idprivilegio)}">Borrar</a></td>
         <td>${privilegio.nombreprivilegio}</td>
         <td>${privilegio.descripcion}</td>
       </tr>          

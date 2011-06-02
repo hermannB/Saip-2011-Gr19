@@ -60,24 +60,24 @@ class Tipo_Campos (DeclarativeBase):
 
     @classmethod
     def get_campos_by_tipo_item(self, id_tipo):
-	campos = DBSession.query(Tipo_Campos).all()
-	lista = []
-	for campo in campos:
-	   if (campo.id_tipo_item == int(4)):
-		lista.append(campo)
+        campos = DBSession.query(Tipo_Campos).all()
+        lista = []
+        for campo in campos:
+            if (campo.id_tipo_item == int(4)):
+                lista.append(campo)
 
-	return lista
+        return lista
     #}
 
     @classmethod
     def get_nombres_by_tipo_item(self, id_tipo):
-	campos = DBSession.query(Tipo_Campos).all()
-	lista = []
-	for campo in campos:
-	   if (campo.id_tipo_item == id_tipo):
-		lista.append(campo.nombre_campo)
+        campos = DBSession.query(Tipo_Campos).all()
+        lista = []
+        for campo in campos:
+            if (campo.id_tipo_item == id_tipo):
+                lista.append(campo.nombre_campo)
 
-	return lista
+        return lista
     #}
 
 #

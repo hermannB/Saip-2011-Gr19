@@ -19,12 +19,12 @@
 
 	<div class="submit">
 		<div>
-			<h2>Editar Fase</h2>
+			<h2>Editar Miembro del Equipo</h2>
 		</div>
 		  <form action="put_miembro" method="PUT">
 			<table summary="">
 			<tbody>
-				<tr><td>id_equipo </td><td><input readonly="readonly" type="textfield" name="id_equipo" value="${values['id_equipo']}"/>${tmpl_context.form_errors.get('id_equipo')}</td></tr>
+                <tr><td><input type="hidden" name="id_equipo" value="${values['id_equipo']}"/>${tmpl_context.form_errors.get('id_equipo')}</td></tr>
 				<tr><td>Nombre del usuario</td>
 					<td>
 					  <select name="idusuario">
@@ -44,7 +44,7 @@
 				</td></tr>
 					
      		                <tr><td><input type="hidden" name="_method" value="PUT"/>
-					<input type="submit" value="update"/>
+					<input type="submit" value="Actualizar"/>
 				</td></tr>
 			
 			</tbody>

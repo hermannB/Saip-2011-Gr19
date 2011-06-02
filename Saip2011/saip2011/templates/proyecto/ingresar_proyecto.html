@@ -15,6 +15,10 @@
 </head>
 
 <body>
+  <div id="mainmenu">
+    <li class="first"><a href="${tg.url('/proyecto/proyecto')}" class="${('', 'active')[defined('pagina') and pagina==pagina=='proyecto']}">Proyecto</a></li>
+  </div>  
+
   <div py:choose="len(proyectos)" py:strip="True" id="proyecto">
     <table class="proyectos" py:when="0">
       <tr><th>No hay Proyectos registrados..</th></tr>
@@ -22,17 +26,15 @@
     <table border="1" cellspacing="1" cellpadding="6" class="proyectos" py:otherwise="">    
       <h2>Lista de Proyectos</h2>
       <tr align="center">
-	<th>Accion</th>
-        <th>Id</th>
+    	<th>Accion</th>
         <th>Nombre del Poryecto</th>
-	<th>Lider del Equipo</th>
+    	<th>Lider del Equipo</th>
         <th>Lista de Fases</th>
         <th>Descripcion</th>
       </tr>
       <tr align="center" py:for="proyecto in proyectos">
-	<td><a href="${tg.url('ingresar?id_proyecto=%d' % proyecto.id_proyecto)}">Ingresar</a></td>
-	<td>${proyecto.id_proyecto}</td>
-	<td>${proyecto.nombre_proyecto}</td>
+    	<td><a href="${tg.url('/proyecto/ingresar?id_proyecto=%d' % proyecto.id_proyecto)}">Ingresar</a></td>
+    	<td>${proyecto.nombre_proyecto}</td>
         <td>${proyecto.lider_equipo}</td>
         <td>${proyecto.tipos_fases}</td>
         <td>${proyecto.descripcion}</td>

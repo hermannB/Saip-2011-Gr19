@@ -22,7 +22,7 @@
          <tr><td>Tipo de Item</td>
      	     <td>
      	     <select name="id_tipo_item">
-		<py:for each="tipo_item in tipos_items">
+        		<py:for each="tipo_item in tipos_items">
          	       <option value="$tipo_item.id_tipo_item" >$tipo_item.nombre_tipo_item</option>
 	        </py:for>
 	      </select>
@@ -35,6 +35,7 @@
 		       <option value="En_Desarrollo" >En Desarrollo</option>
 		       <option value="Listo" >Listo</option>
 		       <option value="Revisar" >Revisar</option>
+		       <option value="Aprobado" >Aprobado</option>
 	     </select>
          </td></tr>	
 

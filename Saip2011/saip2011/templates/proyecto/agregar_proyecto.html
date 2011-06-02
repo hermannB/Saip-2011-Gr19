@@ -7,9 +7,11 @@
 
   <head>
   <meta content="text/html; charset=UTF-8" http-equiv="content-type" py:replace="''"/>
-	<script type="text/javascript" src="js/jquery.js"></script>
-	<script type="text/javascript" src="js/jquery.ui.js"></script>
-	<script type="text/javascript" src="js/jquery.asmselect.js"></script>
+	<script type="text/javascript" src="/js/jquery.js"></script>
+	<script type="text/javascript" src="/js/jquery.ui.js"></script>
+	<script type="text/javascript" src="/js/jquery.asmselect.js"></script>
+	<link rel="stylesheet" type="text/css" href="/css/jquery.asmselect.css" />
+	<link rel="stylesheet" type="text/css" href="/css/example.css" />
 
 	<script type="text/javascript">
 
@@ -24,9 +26,6 @@
 		}); 
 
 	</script>
-
-	<link rel="stylesheet" type="text/css" href="css/jquery.asmselect.css" />
-	<link rel="stylesheet" type="text/css" href="css/example.css" />
 
   <title>Sistema de Administracion de Item</title>
 </head>
@@ -43,7 +42,7 @@
          <tr><td>Lider del Equipo</td>
      	     <td>
      	     <select name="idusuario">
-		<py:for each="usuario in usuarios">
+        		<py:for each="usuario in usuarios">
          	       <option value="$usuario.idusuario" >$usuario.alias</option>
 	        </py:for>
 	      </select>

@@ -16,7 +16,7 @@
 
 <body>
   <div id="mainmenu">
-    <li class="first"><a href="${tg.url('/listar_tipo_item')}" class="${('', 'active')[defined('pagina') and pagina==pagina=='listar_tipo_item']}">Tipo de Item</a></li>
+    <li class="first"><a href="${tg.url('/tipo_item/tipo_item')}" class="${('', 'active')[defined('pagina') and pagina==pagina=='/tipo_item']}">Tipo de Item</a></li>
   </div>  
   <div py:choose="len(tipos_items)" py:strip="True" id="tipos_item">
     <table class="tipos_items" py:when="0">
@@ -25,17 +25,15 @@
     <table border="1" cellspacing="1" cellpadding="5" class="tipos_fases" py:otherwise="">    
       <h2>Lista de Tipos de Item</h2>
       <tr align="center">
-	<th>Accion</th>
-        <th>Id</th>
+    	<th>Accion</th>
         <th>Nombre del Tipo Item</th>
         <th>Descripcion</th>
         <th>Campos</th>
       </tr>
       <tr align="center" py:for="tipo_item in tipos_items">
-	<td><a href="${tg.url('editar_tipo_item?id_tipo_item=%d' % tipo_item.id_tipo_item)}">Editar</a>
-	<a href="${tg.url('clonar_tipo_item?id_tipo_item=%d' % tipo_item.id_tipo_item)}">Clonar</a>
-	<a href="${tg.url('eliminar_tipo_item?id_tipo_item=%d' % tipo_item.id_tipo_item)}">Borrar</a></td>
-        <td>${tipo_item.id_tipo_item}</td>
+	    <td><a href="${tg.url('/tipo_item/editar_tipo_item?id_tipo_item=%d' % tipo_item.id_tipo_item)}">Editar</a>
+	    <a href="${tg.url('/tipo_item/clonar_tipo_item?id_tipo_item=%d' % tipo_item.id_tipo_item)}">Clonar</a>
+	    <a href="${tg.url('/tipo_item/eliminar_tipo_item?id_tipo_item=%d' % tipo_item.id_tipo_item)}">Borrar</a></td>
         <td>${tipo_item.nombre_tipo_item}</td>
         <td>${tipo_item.descripcion}</td>
         <td>${tipo_item.get_campos(tipo_item.id_tipo_item)}</td>

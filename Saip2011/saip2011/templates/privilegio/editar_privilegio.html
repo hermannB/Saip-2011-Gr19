@@ -24,11 +24,11 @@
 		  <form action="put_privilegio" method="PUT">
 			<table summary="">
 			<tbody>
-				<tr><td>idprivilegio </td><td><input type="textfield" readonly="readonly" name="idprivilegio" value="${values['idprivilegio']}"/>${tmpl_context.form_errors.get('idprivilegio')}</td></tr>
+                    <tr><td><input type="hidden" name="idprivilegio" value="${values['idprivilegio']}"/>${tmpl_context.form_errors.get('idprivilegio')}</td></tr>
 			      	<tr><td>nombreprivilegio </td><td><input class="required" maxlength="50" ype="textfield" name="nombreprivilegio" value="${values['nombreprivilegio']}"/>${tmpl_context.form_errors.get('nombreprivilegio')}</td></tr>	
 				<tr><td>descripcion</td><td> <textarea rows="10" cols="40" name="descripcion">${values.get('descripcion')}</textarea>${tmpl_context.form_errors.get('descripcion')}</td></tr>		
      		                <tr><td><input type="hidden" name="_method" value="PUT"/>
-					<input type="submit" value="update"/>
+					<input type="submit" value="Actualizar"/>
 				</td></tr>
 			
 			</tbody>

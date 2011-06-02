@@ -16,7 +16,7 @@
 
 <body>
   <div id="mainmenu">
-    <li class="first"><a href="${tg.url('/listar_item')}" class="${('', 'active')[defined('pagina') and pagina==pagina=='listar_item']}">Item</a></li>
+    <li class="first"><a href="${tg.url('/item/item')}" class="${('', 'active')[defined('pagina') and pagina==pagina=='item']}">Item</a></li>
   </div>  
   <div py:choose="len(items)" py:strip="True" id="item">
     <table class="items" py:when="0">
@@ -26,8 +26,8 @@
       <h2>Lista de Item</h2>
       <tr align="center">
 	<th>Accion</th>
-        <th>Id</th>
         <th>Nombre del Item</th>
+        <th>Codigo del Item</th>
         <th>Tipo del Item</th>
         <th>Fase</th>
         <th>Proyecto</th>
@@ -36,11 +36,11 @@
         <th>Adjunto</th>
       </tr>
       <tr align="center" py:for="item in items">
-	<td><a href="${tg.url('editar_item?id_item=%d' % item.id_item)}">Editar</a>
-	<a href="${tg.url('eliminar_item?id_item=%d' % item.id_item)}">Borrar</a>
-	<a href="${tg.url('historial?id_item=%d' % item.id_item)}">Historial</a></td>
-        <td>${item.id_item}</td>
+	<td><a href="${tg.url('/item/editar_item?id_item=%d' % item.id_item)}">Editar</a>
+	    <a href="${tg.url('/item/eliminar_item?id_item=%d' % item.id_item)}">Borrar</a>
+	    <a href="${tg.url('/item/historial?id_item=%d' % item.id_item)}">Historial</a></td>
         <td>${item.nombre_item}</td>
+        <td>${item.codigo_item}</td>
         <td>${item.nombre_tipo_item}</td>
         <td>${item.fase}</td>
         <td>${item.proyecto}</td>

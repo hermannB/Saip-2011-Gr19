@@ -16,7 +16,7 @@
 
 <body>
   <div id="mainmenu">
-    <li class="first"><a href="${tg.url('/listar_usuario')}" class="${('', 'active')[defined('pagina') and pagina==pagina=='listar_usuario']}">Usuario</a></li>
+    <li class="first"><a href="${tg.url('/usuario')}" class="${('', 'active')[defined('pagina') and pagina==pagina=='usuario']}">Usuario</a></li>
   </div>  
   <div py:choose="len(usuarios)" py:strip="True" id="usuario">
     <table class="usuarios" py:when="0">
@@ -27,25 +27,25 @@
     
      <h2>Lista de Usuarios</h2>
       <tr align="center">
-	<th>Accion</th>
-        <th>Id</th>
+  		<th>Accion</th>
         <th>Alias</th>
         <th>Nombre</th>
         <th>Apellido</th>
         <th>Nacionalidad</th>
         <th>Nro.Documento</th>
         <th>Email</th>
+
       </tr>
       <tr align="center" py:for="usuario in usuarios">
 	<td><a href="${tg.url('editar_usuario?idusuario=%d' % usuario.idusuario)}">Editar</a>
 	<a href="${tg.url('eliminar_usuario?idusuario=%d' % usuario.idusuario)}">Borrar</a></td>
-        <td>${usuario.idusuario}</td>
         <td>${usuario.alias}</td>
         <td>${usuario.nombre}</td>
         <td>${usuario.apellido}</td>
         <td>${usuario.nacionalidad}</td>
         <td>${usuario.nrodoc}</td>
         <td>${usuario.email_address}</td>
+
       </tr>
              
     </table>   

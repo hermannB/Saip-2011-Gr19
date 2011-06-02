@@ -24,8 +24,9 @@
 		  <form action="put_fase" method="PUT">
 			<table summary="">
 			<tbody>
-				<tr><td>id_fase </td><td><input readonly="readonly" type="textfield" name="id_fase" value="${values['id_fase']}"/>${tmpl_context.form_errors.get('id_fase')}</td></tr>
-			      	<tr><td>nombre_fase </td><td><input class="required" maxlength="50" type="textfield" name="nombre_fase" value="${values['nombre_fase']}"/>${tmpl_context.form_errors.get('nombre_fase')}</td></tr>	
+             <tr><td><input type="hidden" name="id_fase" value="${values['id_fase']}"/>${tmpl_context.form_errors.get('id_fase')}</td></tr>
+
+			   	<tr><td>nombre_fase </td><td><input class="required" maxlength="50" type="textfield" name="nombre_fase" value="${values['nombre_fase']}"/>${tmpl_context.form_errors.get('nombre_fase')}</td></tr>	
 				<tr><td>Tipo de Fase</td>
 					<td>
 					  <select name="id_tipo_fase">
@@ -47,7 +48,7 @@
 				<tr><td>linea_base </td><td><input class="required" maxlength="50" type="textfield" name="linea_base" value="${values['linea_base']}"/>${tmpl_context.form_errors.get('linea_base')}</td></tr>				        	
 				<tr><td>descripcion</td><td> <textarea rows="10" cols="40" name="descripcion">${values.get('descripcion')}</textarea>${tmpl_context.form_errors.get('descripcion')}</td></tr>		
      		                <tr><td><input type="hidden" name="_method" value="PUT"/>
-					<input type="submit" value="update"/>
+					<input type="submit" value="Actualizar"/>
 				</td></tr>
 			
 			</tbody>
