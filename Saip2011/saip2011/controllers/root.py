@@ -235,9 +235,7 @@ class RootController(BaseController):
 	       'alias':NotEmpty, 
                'nombre':NotEmpty, 
                'apellido':NotEmpty, 
-               'nacionalidad':NotEmpty,
-               'tipodocumento':NotEmpty,
-               'nrodoc':NotEmpty,
+               'nrodoc':Int(not_empty=True),
                'email_address':NotEmpty}, error_handler=editar_usuario)	
   
     @expose()
@@ -286,9 +284,7 @@ class RootController(BaseController):
 	       'alias':NotEmpty, 
                'nombre':NotEmpty, 
                'apellido':NotEmpty, 
-               'nacionalidad':NotEmpty,
-               'tipodocumento':NotEmpty,
-               'nrodoc':NotEmpty,
+               'nrodoc':Int(not_empty=True),
                'email_address':NotEmpty}, error_handler=eliminar_usuario)	
     
     @expose()
@@ -364,9 +360,10 @@ class RootController(BaseController):
 
         return dict(pagina="editar_rol",values=values,  privilegios=privilegios)
 
-    @validate({'idrol':NotEmpty, 
+    @validate({'idrol':Int(not_empty=True), 
                'nombrerol':NotEmpty, 
-               'descripcion':NotEmpty}, error_handler=editar_rol)
+        #       'descripcion':NotEmpty
+		}, error_handler=editar_rol)
 
     @expose()
     def put_rol(self, idrol, nombrerol, descripcion, privilegios, **kw):
@@ -405,7 +402,9 @@ class RootController(BaseController):
 
     @validate({'idrol':NotEmpty, 
 	       'nombrerol':NotEmpty, 
-               'descripcion':NotEmpty}, error_handler=eliminar_rol)	
+      #         'descripcion':NotEmpty
+		}, error_handler=eliminar_rol)	
+
     @expose()
     def post_delete_rol(self, idrol, nombrerol, descripcion, privilegios, **kw):
 	
@@ -421,8 +420,8 @@ class RootController(BaseController):
         return dict(pagina="agregar_rol",values=kw, privilegios=privilegios)
     
     @validate({'nombrerol':NotEmpty, 
-               'descripcion':NotEmpty}, 
-                error_handler=agregar_rol)
+               #'descripcion':NotEmpty
+		},error_handler=agregar_rol)
    
     @expose()
     def post_rol(self, nombrerol, descripcion, privilegios=None):
@@ -459,7 +458,7 @@ class RootController(BaseController):
 
 	  return dict(pagina="editar_privilegio",values=values)
 
-    @validate({'idprivilegio':NotEmpty, 
+    @validate({'idprivilegio':Int(not_empty=True), 
 	       'nombreprivilegio':NotEmpty, 
                'descripcion':NotEmpty}, error_handler=editar_privilegio)	
 
@@ -492,9 +491,10 @@ class RootController(BaseController):
 
         return dict(pagina="eliminar_privilegio",values=values)
 
-    @validate({'idprivilegio':NotEmpty, 
+    @validate({'idprivilegio':Int(not_empty=True), 
 	       'nombreprivilegio':NotEmpty, 
-               'descripcion':NotEmpty}, error_handler=eliminar_privilegio)	
+        #       'descripcion':NotEmpty
+		}, error_handler=eliminar_privilegio)	
 
     @expose()
     def post_delete_privilegio(self, idprivilegio, nombreprivilegio, descripcion, **kw):
@@ -568,11 +568,12 @@ class RootController(BaseController):
 
 	  return dict(pagina="editar_fase",values=values,tipos_fases=tipos_fases)
 
-    @validate({'id_fase':NotEmpty, 
+    @validate({'id_fase':Int(not_empty=True), 
 	       'nombre_fase':NotEmpty, 
-               'id_tipo_fase':NotEmpty, 
+               'id_tipo_fase':Int(not_empty=True), 
                'estado':NotEmpty, 
-               'descripcion':NotEmpty}, error_handler=editar_fase)	
+        #       'descripcion':NotEmpty
+		}, error_handler=editar_fase)	
 
     @expose()
     def put_fase(self, id_fase, nombre_fase, id_tipo_fase, estado, linea_base, descripcion, **kw):
@@ -602,11 +603,12 @@ class RootController(BaseController):
 
         return dict(pagina="eliminar_fase",values=values)
 
-    @validate({'id_fase':NotEmpty, 
+    @validate({'id_fase':Int(not_empty=True), 
 	       'nombre_fase':NotEmpty, 
                'nombre_tipo_fase':NotEmpty, 
                'estado':NotEmpty, 
-               'descripcion':NotEmpty}, error_handler=eliminar_fase)	
+          #     'descripcion':NotEmpty
+		}, error_handler=eliminar_fase)	
 
     @expose()
     def post_delete_fase(self, id_fase, nombre_fase,  nombre_tipo_fase, estado, linea_base, descripcion, **kw):
@@ -626,7 +628,8 @@ class RootController(BaseController):
                 'id_tipo_fase':Int(not_empty=True), 
 		'estado':NotEmpty,
                 'linea_base':NotEmpty,
-		'descripcion':NotEmpty}, error_handler=agregar_fase)
+#		'descripcion':NotEmpty
+		}, error_handler=agregar_fase)
 
     @expose()
     def post_fase(self, nombre_fase, id_tipo_fase, estado ,linea_base, descripcion):
@@ -663,9 +666,10 @@ class RootController(BaseController):
 	  return dict(pagina="editar_tipo_fase",values=values)
 
 
-    @validate({'id_tipo_fase':NotEmpty, 
+    @validate({'id_tipo_fase':Int(not_empty=True), 
 	       'nombre_tipo_fase':NotEmpty, 
-               'descripcion':NotEmpty}, error_handler=editar_tipo_fase)	
+            #   'descripcion':NotEmpty
+		}, error_handler=editar_tipo_fase)	
 
     @expose()
     def put_tipo_fase(self, id_tipo_fase, nombre_tipo_fase, descripcion, **kw):
@@ -697,9 +701,10 @@ class RootController(BaseController):
 
         return dict(pagina="eliminar_tipo_fase",values=values)
 
-    @validate({'id_tipo_fase':NotEmpty, 
+    @validate({'id_tipo_fase':Int(not_empty=True), 
 	       'nombre_tipo_fase':NotEmpty, 
-               'descripcion':NotEmpty}, error_handler=eliminar_tipo_fase)	
+         #      'descripcion':NotEmpty
+		}, error_handler=eliminar_tipo_fase)	
 
     @expose()
     def post_delete_tipo_fase(self, id_tipo_fase, nombre_tipo_fase, descripcion, **kw):
@@ -786,7 +791,7 @@ class RootController(BaseController):
 
 	  return dict(pagina="editar_fase",values=values)
 
-    @validate({'id_item':NotEmpty,
+    @validate({'id_item':Int(not_empty=True),
 		'nombre_item':NotEmpty, 
                 'adjunto':Int(not_empty=True),
 		'complejidad':Int(not_empty=True), 
@@ -824,7 +829,7 @@ class RootController(BaseController):
 
         return dict(pagina="eliminar_item",values=values)
 
-    @validate({'id_item':NotEmpty,
+    @validate({'id_item':Int(not_empty=True),
 		'nombre_item':NotEmpty, 
                 'adjunto':Int(not_empty=True),
 		'complejidad':Int(not_empty=True), 
@@ -853,7 +858,7 @@ class RootController(BaseController):
 
         return dict(pagina="revivir_item",values=values)
 
-    @validate({'id_item':NotEmpty,
+    @validate({'id_item':Int(not_empty=True),
 		'nombre_item':NotEmpty, 
                 'adjunto':Int(not_empty=True),
 		'complejidad':Int(not_empty=True), 
@@ -882,7 +887,7 @@ class RootController(BaseController):
 
         return dict(pagina="recuperar_item",values=values)
 
-    @validate({'id_item':NotEmpty,
+    @validate({'id_item':Int(not_empty=True),
 		'nombre_item':NotEmpty, 
                 'adjunto':Int(not_empty=True),
 		'complejidad':Int(not_empty=True), 
@@ -962,29 +967,74 @@ class RootController(BaseController):
     @expose('saip2011.templates.editar_tipo_item')
     def editar_tipo_item(self,id_tipo_item,*args, **kw):
 	tipo_item = DBSession.query(Tipo_Item).get(id_tipo_item)
-
+	campos = Tipo_Campos.get_campos_by_tipo_item(id_tipo_item)
 	if request.method != 'PUT':  
 
 	  values = dict(id_tipo_item=tipo_item.id_tipo_item, 
 	  	        nombre_tipo_item=tipo_item.nombre_tipo_item, 
-                        descripcion=tipo_item.descripcion,
+                        descripcion=tipo_item.descripcion
                     )
 
-	  return dict(pagina="editar_tipo_item",values=values)
+	  return dict(pagina="editar_tipo_item",values=values,campos=campos)
 
-    @validate({'id_tipo_item':NotEmpty, 
+    @validate({'id_tipo_item':Int(not_empty=True),
 	       'nombre_tipo_item':NotEmpty, 
-               'descripcion':NotEmpty}, error_handler=editar_tipo_item)	
+#               'descripcion':NotEmpty
+		}, error_handler=editar_tipo_item)	
 
     @expose()
-    def put(self, id_tipo_item, nombre_tipo_item, descripcion, **kw):
+    def put(self, id_tipo_item, nombre_tipo_item, descripcion, campo,**kw):
 	tipo_item = DBSession.query(Tipo_Item).get(id_tipo_item)
         
         tipo_item.nombre_tipo_item = nombre_tipo_item
         tipo_item.descripcion = descripcion
+	
+	if campo is not None:
+            if not isinstance(campo, list):
+                campo = [campo]
+
+        for camp in campo:
+	   camp =Tipo_Campos(id_tipo_item=id_tipo_item,nombre_campo=camp)
+           DBSession.add(camp)
+
 
         DBSession.flush()
         flash("Tipo de Item modificada!")
+	redirect('/tipo_item')
+
+    @expose('saip2011.templates.clonar_tipo_item')
+    def clonar_tipo_item(self,id_tipo_item,*args, **kw):
+	
+	tipo_item = DBSession.query(Tipo_Item).get(id_tipo_item)
+	campos = Tipo_Campos.get_campos_by_tipo_item(id_tipo_item)
+	if request.method != 'PUT':  
+
+	  values = dict( nombre_tipo_item=tipo_item.nombre_tipo_item, 
+                        descripcion=tipo_item.descripcion
+                    )
+
+	  return dict(pagina="clonar_tipo_item",values=values,campos=campos)
+
+    @validate({'nombre_tipo_item':NotEmpty, 
+               #'descripcion':NotEmpty
+		}, error_handler=clonar_tipo_item)	
+
+    @expose()
+    def put_item(self, nombre_tipo_item, descripcion, campo,**kw):
+	
+	tipo_item = Tipo_Item (nombre_tipo_item=nombre_tipo_item,descripcion=descripcion)
+        DBSession.add(tipo_item)
+
+	if campo is not None:
+            if not isinstance(campo, list):
+                campo = [campo]
+
+        id_tipo=Tipo_Item.get_ultimo_id()        
+        for camp in campo:
+	   camp =Tipo_Campos(id_tipo_item=id_tipo,nombre_campo=camp)
+
+        DBSession.flush()
+        flash("Tipo de Item clonada!")
 	redirect('/tipo_item')
 
     @expose('saip2011.templates.eliminar_tipo_item')
@@ -998,9 +1048,10 @@ class RootController(BaseController):
 
         return dict(pagina="eliminar_tipo_item",values=values)
 
-    @validate({'id_tipo_item':NotEmpty, 
+    @validate({'id_tipo_item':Int(not_empty=True), 
 	       'nombre_tipo_item':NotEmpty, 
-               'descripcion':NotEmpty}, error_handler=eliminar_tipo_item)	
+#               'descripcion':NotEmpty
+		}, error_handler=eliminar_tipo_item)	
 
     @expose()
     def post_delete(self, id_tipo_item, nombre_tipo_item, descripcion, **kw):
@@ -1016,8 +1067,7 @@ class RootController(BaseController):
         return dict(pagina="agregar_tipo_item",values=kw)
     
     @validate({'nombre_tipo_item':NotEmpty, 
-                'descripcion':NotEmpty
-		
+                #'descripcion':NotEmpty
 		}, error_handler=agregar_tipo_item)
 
     @expose()
@@ -1036,7 +1086,7 @@ class RootController(BaseController):
         for camp in campo:
 	   camp =Tipo_Campos(id_tipo_item=id_tipo,nombre_campo=camp)
            DBSession.add(camp)
-	flash("Item Agregado!")  
+	flash("Tipo Item Agregado!")  
         redirect('./tipo_item')
 
 # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # #
@@ -1162,7 +1212,8 @@ class RootController(BaseController):
     
     @validate({'nombre_proyecto':NotEmpty, 
                 'idusuario':Int(not_empty=True), 
-		'descripcion':NotEmpty}, error_handler=agregar_proyecto)
+#		'descripcion':NotEmpty
+		}, error_handler=agregar_proyecto)
 
     @expose()
     def post_proyecto(self, nombre_proyecto, idusuario, tipos_fases, descripcion):
@@ -1203,15 +1254,18 @@ class RootController(BaseController):
 
         return dict(values=values, usuarios=usuarios, tipos_fases=tipos_fases)
 
-    @validate({'id_proyecto':NotEmpty, 
+    @validate({'id_proyecto':Int(not_empty=True), 
 	       'nombre_proyecto':NotEmpty, 
-               'descripcion':NotEmpty, 
+#               'descripcion':NotEmpty, 
                'idusuario':Int(not_empty=True)}, error_handler=editar_proyecto)
 
     @expose()
-    def put_proyecto(self, id_proyecto, nombre_proyecto, descripcion, tipos_fases, idusuario, **kw):
+    def put_proyecto(self, id_proyecto, nombre_proyecto, idusuario, descripcion, tipos_fases,**kw):
         proyecto = DBSession.query(Proyecto).get(id_proyecto)
-        
+        miembro=Equipo_Desarrollo.get_miembro(proyecto.idusuario)
+	id_miembro=miembro.id_equipo
+        DBSession.delete(DBSession.query(Equipo_Desarrollo).get(id_miembro))
+        DBSession.flush()
 	idusuario = int(idusuario)
         if not isinstance(tipos_fases, list):
                 tipos_fases = [tipos_fases]
@@ -1223,6 +1277,10 @@ class RootController(BaseController):
         proyecto.tipos_fases = tipos_fases
      
         DBSession.flush()
+	equipo = Equipo_Desarrollo(proyecto=self.get_proyecto_actual(), idusuario=idusuario, 
+		                   idrol=2)
+        DBSession.add(equipo)
+	
 	flash("Proyecto Modificado!")  
         redirect('/proyecto')
  
@@ -1239,13 +1297,19 @@ class RootController(BaseController):
 
         return dict(pagina="eliminar_proyecto",values=values)
 
-    @validate({'id_proyecto':NotEmpty, 
+    @validate({'id_proyecto':Int(not_empty=True), 
 	       'nombre_proyecto':NotEmpty, 
-               'descripcion':NotEmpty}, error_handler=eliminar_proyecto)	
+#               'descripcion':NotEmpty
+		}, error_handler=eliminar_proyecto)	
 
     @expose()
     def post_delete_proyecto(self, id_proyecto, nombre_proyecto, descripcion, tipos_fases, **kw):
-	
+
+        proyecto = DBSession.query(Proyecto).get(id_proyecto)
+        miembro=Equipo_Desarrollo.get_miembro(proyecto.idusuario)
+        DBSession.delete(DBSession.query(Equipo_Desarrollo).get(miembro.id_equipo))
+#        DBSession.flush()
+
         DBSession.delete(DBSession.query(Proyecto).get(id_proyecto))
         DBSession.flush()
         flash("Proyecto eliminado!")
@@ -1279,9 +1343,9 @@ class RootController(BaseController):
 
 	  return dict(pagina="editar_tipo_campos",values=values)
 
-    @validate({'id_tipo_campos':NotEmpty, 
+    @validate({'id_tipo_campos':Int(not_empty=True),
 	       'nombre_campo':NotEmpty, 
-               'valor_campo':NotEmpty}, error_handler=editar_tipo_campos)	
+               'valor_campo':Int(not_empty=True),}, error_handler=editar_tipo_campos)	
 
     @expose()
     def put_tipo_campos(self, id_tipo_campos, nombre_campo, valor_campo, **kw):
@@ -1306,9 +1370,9 @@ class RootController(BaseController):
 
         return dict(pagina="eliminar_tipo_campos",values=values)
 
-    @validate({'id_tipo_campos':NotEmpty, 
+    @validate({'id_tipo_campos':Int(not_empty=True), 
 	       'nombre_campo':NotEmpty, 
-               'valor_campo':NotEmpty}, error_handler=eliminar_tipo_campos)
+               'valor_campo':Int(not_empty=True),}, error_handler=eliminar_tipo_campos)
 
     @expose()
     def post_delete_tipo_campos(self, id_tipo_campos, nombre_campo, valor_campo, **kw):

@@ -19,8 +19,8 @@
     <form action="post_rol" method="POST">
    
       <table summary=""><tbody>
-         <tr><td>Nombre </td><td><input type="textfield" name="nombrerol" value="${values.get('nombrerol', '')}"/>${tmpl_context.form_errors.get('nombrerol')}</td></tr>
-  	 <tr><td>Descripcion</td><td> <textarea name="descripcion">${values.get('descripcion')}</textarea>${tmpl_context.form_errors.get('descripcion')}</td></tr><tr>
+         <tr><td>Nombre </td><td><input class="required" maxlength="50" type="textfield" name="nombrerol" value="${values.get('nombrerol', '')}"/>${tmpl_context.form_errors.get('nombrerol')}</td></tr>
+  	 <tr><td>Descripcion</td><td> <textarea rows="10" cols="40" name="descripcion">${values.get('descripcion')}</textarea>${tmpl_context.form_errors.get('descripcion')}</td></tr><tr>
 	
         <tr><td>Privilegios</td> 
         <td>

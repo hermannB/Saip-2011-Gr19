@@ -14,19 +14,19 @@
 </head>
   <body class="submit">
     <div>
-      <h2>Agregar nueva Fase</h2>
+      <h2>Agregar nuevo Proyecto</h2>
     </div>
 
     <form action="post_proyecto" method="POST">
     <table summary=""><tbody><tr>
        
-	<tr><td>Nombre del Proyecto </td><td><input type="textfield" name="nombre_proyecto" value="${values.get('nombre_proyecto', '')}"/>${tmpl_context.form_errors.get('nombre_proyecto')}</td></tr>
+	<tr><td>Nombre del Proyecto </td><td><input class="required" maxlength="50" type="textfield" name="nombre_proyecto" value="${values.get('nombre_proyecto', '')}"/>${tmpl_context.form_errors.get('nombre_proyecto')}</td></tr>
 
          <tr><td>Lider del Equipo</td>
      	     <td>
      	     <select name="idusuario">
 		<py:for each="usuario in usuarios">
-         	       <option value="$usuario.idusuario" selected="selected">$usuario.alias</option>
+         	       <option value="$usuario.idusuario" >$usuario.alias</option>
 	        </py:for>
 	      </select>
          </td></tr>
@@ -40,7 +40,7 @@
           </select>
         </td></tr>
 
-	 <tr><td>descripcion</td><td> <textarea name="descripcion">${values.get('descripcion')}</textarea>${tmpl_context.form_errors.get('descripcion')}</td></tr>
+	 <tr><td>descripcion</td><td> <textarea rows="10" cols="40" name="descripcion">${values.get('descripcion')}</textarea>${tmpl_context.form_errors.get('descripcion')}</td></tr>
 
         <td>
         	<input type="submit" value="Guardar" />

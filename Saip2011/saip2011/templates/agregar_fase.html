@@ -7,6 +7,9 @@
 
   <head>
   <meta content="text/html; charset=UTF-8" http-equiv="content-type" py:replace="''"/>
+<script type="text/javascript" src="js/jquery-1.4.2.min.js"></script>
+	<script src="js/vanadium-min.js" type="text/javascript"></script>
+
   <title>Sistema de Administracion de Item</title>
 </head>
   <body class="submit">
@@ -14,16 +17,16 @@
       <h2>Agregar nueva Fase</h2>
     </div>
 
-    <form action="post_fase" method="POST">
+    <form action="post_fase" class="cmxform" method="POST">
     <table summary=""><tbody><tr>
        
-	<tr><td>Nombre de la Fase </td><td><input type="textfield" name="nombre_fase" value="${values.get('nombre_fase', '')}"/>${tmpl_context.form_errors.get('nombre_fase')}</td></tr>
+	<tr><td>Nombre de la Fase </td><td><input class="required" maxlength="50" type="textfield" name="nombre_fase" value="${values.get('nombre_fase', '')}"/>${tmpl_context.form_errors.get('nombre_fase')}</td></tr>
 
          <tr><td>Tipo de Fase</td>
      	     <td>
      	     <select name="id_tipo_fase">
 		<py:for each="tipo_fase in tipos_fases">
-         	       <option value="$tipo_fase.id_tipo_fase" selected="selected">$tipo_fase.nombre_tipo_fase</option>
+         	       <option value="$tipo_fase.id_tipo_fase" >$tipo_fase.nombre_tipo_fase</option>
 	        </py:for>
 	      </select>
          </td></tr>
@@ -32,14 +35,14 @@
      	     <td>
      	     <select name="estado">
 		       <option value="Nueva" selected="selected">Nueva</option>
-		       <option value="Activa" selected="selected">Activa</option>
-		       <option value="Finalizada" selected="selected">Finalizada</option>
+		       <option value="Activa" >Activa</option>
+		       <option value="Finalizada" >Finalizada</option>
 	     </select>
          </td></tr>
 
-	 <tr><td>Linea Base </td><td><input type="textfield" name="linea_base" value="${values.get('linea_base', '')}"/>${tmpl_context.form_errors.get('linea_base')}</td></tr>
+	 <tr><td>Linea Base </td><td><input  class="required" maxlength="50" type="textfield" name="linea_base" value="${values.get('linea_base', '')}"/>${tmpl_context.form_errors.get('linea_base')}</td></tr>
 
-          <tr><td>descripcion</td><td> <textarea name="descripcion">${values.get('descripcion')}</textarea>${tmpl_context.form_errors.get('descripcion')}</td></tr>
+          <tr><td>descripcion</td><td> <textarea name="descripcion" rows="10" cols="40" >${values.get('descripcion')}</textarea>${tmpl_context.form_errors.get('descripcion')}</td></tr>
 
         <td>
         	<input type="submit" value="Guardar" />

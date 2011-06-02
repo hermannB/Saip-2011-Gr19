@@ -7,6 +7,9 @@
 
 <head>
 	<meta content="text/html; charset=UTF-8" http-equiv="content-type" py:replace="''"/>
+<script type="text/javascript" src="js/jquery-1.4.2.min.js"></script>
+	<script src="js/vanadium-min.js" type="text/javascript"></script>
+
 
 
 	<title>Sistema de Administracion de Item</title>
@@ -21,9 +24,9 @@
 		  <form action="put_item" method="PUT">
 			<table summary="">
 			<tbody>
-				<tr><td>id_item </td><td><input type="textfield" name="id_item" value="${values['id_item']}"/>${tmpl_context.form_errors.get('id_item')}</td></tr>
-			      	<tr><td>nombre_item </td><td><input type="textfield" name="nombre_item" value="${values['nombre_item']}"/>${tmpl_context.form_errors.get('nombre_fase')}</td></tr>	
-				<tr><td>nombre_tipo_item </td><td><input type="textfield" name="nombre_tipo_item" value="${values['nombre_tipo_item']}"/>${tmpl_context.form_errors.get('nombre_tipo_item')}</td></tr>
+				<tr><td>id_item </td><td><input readonly="readonly" type="textfield" name="id_item" value="${values['id_item']}"/>${tmpl_context.form_errors.get('id_item')}</td></tr>
+			      	<tr><td>nombre_item </td><td><input class="required" maxlength="50" type="textfield" name="nombre_item" value="${values['nombre_item']}"/>${tmpl_context.form_errors.get('nombre_fase')}</td></tr>	
+				<tr><td>nombre_tipo_item </td><td><input readonly="readonly" class="required" maxlength="50" type="textfield" name="nombre_tipo_item" value="${values['nombre_tipo_item']}"/>${tmpl_context.form_errors.get('nombre_tipo_item')}</td></tr>
 				<tr><td>Estado</td>
 			     	     <td>
 			     	     <select name="estado">

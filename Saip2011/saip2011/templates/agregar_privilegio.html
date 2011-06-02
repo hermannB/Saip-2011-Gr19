@@ -18,13 +18,13 @@
       <table summary=""><tbody><tr>
         <th><label for="nombreprivilegio">Nombre_Privilegio:</label></th>
         <td>
-           <input type="text" id="nombreprivilegio" name="nombreprivilegio" />
+           <input class="required" maxlength="50" type="text" id="nombreprivilegio" name="nombreprivilegio" />
            <span py:if="'nombreprivilegio' in errors" class="fielderror">${errors.nombreprivilegio}</span>   
         </td>
       </tr><tr>
         <th><label for="descripcion">Descripcion:</label></th>
         <td>
-           <input type="text" id="descripcion" name="descripcion" />
+           <input type="text" id="descripcion" rows="10" cols="40" name="descripcion" />
            <span py:if="'descripcion' in errors" class="fielderror">${errors.descripcion}</span>
         </td>
       </tr><tr>

@@ -5,6 +5,9 @@
 <xi:include href="master.html" />
 <head>
 <meta content="text/html; charset=UTF-8" http-equiv="content-type" py:replace="''"/>
+<script type="text/javascript" src="js/jquery-1.4.2.min.js"></script>
+	<script src="js/vanadium-min.js" type="text/javascript"></script>
+
 </head>
 <body>
 <div style="height:0px;">&nbsp;</div>
@@ -14,12 +17,12 @@
 <form action="post_delete_fase" method="DELETE">
 	Are you sure you want to delete this record?
 	<table>
-	 <tr><td>id_fase </td><td><input type="textfield" name="id_fase" value="${values['id_fase']}"/>${tmpl_context.form_errors.get('id_fase')}</td></tr>
-			      	<tr><td>nombre_fase </td><td><input type="textfield" name="nombre_fase" value="${values['nombre_fase']}"/>${tmpl_context.form_errors.get('nombre_fase')}</td></tr>	
-				<tr><td>nombre_tipo_fase </td><td><input type="textfield" name="nombre_tipo_fase" value="${values['nombre_tipo_fase']}"/>${tmpl_context.form_errors.get('nombre_tipo_fase')}</td></tr>
-				<tr><td>estado </td><td><input type="textfield" name="estado" value="${values['estado']}"/>${tmpl_context.form_errors.get('estado')}</td></tr>		
-				<tr><td>linea_base </td><td><input type="textfield" name="linea_base" value="${values['linea_base']}"/>${tmpl_context.form_errors.get('linea_base')}</td></tr>				        	
-				<tr><td>descripcion</td><td> <textarea name="descripcion">${values.get('descripcion')}</textarea>${tmpl_context.form_errors.get('descripcion')}</td></tr>		
+	 <tr><td>id_fase </td><td><input readonly="readonly" type="textfield" name="id_fase" value="${values['id_fase']}"/>${tmpl_context.form_errors.get('id_fase')}</td></tr>
+			      	<tr><td>nombre_fase </td><td><input readonly="readonly" type="textfield" name="nombre_fase" value="${values['nombre_fase']}"/>${tmpl_context.form_errors.get('nombre_fase')}</td></tr>	
+				<tr><td>nombre_tipo_fase </td><td><input readonly="readonly" type="textfield" name="nombre_tipo_fase" value="${values['nombre_tipo_fase']}"/>${tmpl_context.form_errors.get('nombre_tipo_fase')}</td></tr>
+				<tr><td>estado </td><td><input readonly="readonly" type="textfield" name="estado" value="${values['estado']}"/>${tmpl_context.form_errors.get('estado')}</td></tr>		
+				<tr><td>linea_base </td><td><input readonly="readonly" type="textfield" name="linea_base" value="${values['linea_base']}"/>${tmpl_context.form_errors.get('linea_base')}</td></tr>				        	
+				<tr><td>descripcion</td><td> <textarea readonly="readonly" name="descripcion">${values.get('descripcion')}</textarea>${tmpl_context.form_errors.get('descripcion')}</td></tr>		
      		               
 	</table>
 	
