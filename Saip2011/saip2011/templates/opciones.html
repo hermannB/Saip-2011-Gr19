@@ -1,0 +1,72 @@
+<!DOCTYPE html>
+<html xmlns="http://www.w3.org/1999/xhtml"
+      xmlns:py="http://genshi.edgewall.org/"
+      xmlns:xi="http://www.w3.org/2001/XInclude">
+
+  <xi:include href="master.html" />
+
+<head>
+	<meta content="text/html; charset=UTF-8" http-equiv="content-type" py:replace="''"/>
+	<script language="javascript" >
+		function mensaje(fas){
+			var nombre =fas.value
+			
+			alert (nombre)
+			
+		  
+		 }
+	</script>
+
+	<title>Sistema de Administracion de Item</title>
+</head>
+
+<body> 
+
+
+	<div py:choose="len(fases)" py:strip="True" id="fase">
+	<form name="form1" id="form1" action="/editar_fase" method="PUT">
+	
+		<div id="mainmenu">
+			<li class="first"><a href="${tg.url('/opciones')}" class="${('', 'active')[defined('pagina') and pagina==pagina=='opciones']}">Fase</a></li>
+		</div>  
+		
+		<tr><td>Lista Fases</td>
+      			<td>
+		        <select class="jsrequired select-notfirst" name="id_fase" id="id_fase" onchange="mensaje(this)" >	
+				<option py:for="fase in fases"  value="$fase.id_fase">$fase.nombre_fase</option>					
+		        </select>
+		</td> </tr>
+		
+		
+			<tr><td><input type="hidden" name="_method" value="PUT"/>
+				<input type="submit" value="update"/>
+			</td></tr>
+	</form>
+	</div> 
+
+	<div py:choose="len(fases)" py:strip="True" id="fase">
+	<form name="form2" id="form2" action="/eliminar_fase" method="POST">
+	
+		<div id="mainmenu2">
+			<li class="first"><a href="${tg.url('/opciones')}" class="${('', 'active')[defined('pagina') and pagina==pagina=='opciones']}">Fase</a></li>
+		</div>  
+		
+		<tr><td>Lista Fases</td>
+      			<td>
+		        <select class="jsrequired select-notfirst" name="id_fase" id="id_fase" onchange="mensaje(this)" >	
+				<option py:for="fase in fases"  value="$fase.id_fase">$fase.nombre_fase</option>					
+		        </select>
+		</td> </tr>
+		
+		
+			<tr><td>
+	 			 <input type="hidden" name='_method' value='POST_DELETE'/>
+	 			 <input type="submit" value="Eliminar"/>
+			</td></tr>
+	</form>
+	</div> 
+
+</body>
+
+</html>
+

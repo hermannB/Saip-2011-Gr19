@@ -338,20 +338,27 @@ class RootController(BaseController):
         """
         fases = Fase.get_fase()
         return dict(pagina="listar_fase",fases=fases)
+
+    @expose('saip2011.templates.opciones')
+    def opciones(self):
+        """opciones fases 
+        """
+        fases = Fase.get_fase()
+        return dict(pagina="opciones",fases=fases)
     
     @expose('saip2011.templates.editar_fase')
     def editar_fase(self,id_fase,*args, **kw):
-	
+	#id_fase=6
 	fase = DBSession.query(Fase).get(id_fase)
 	if request.method != 'POST':  
 	  #genres = DBSession.query(Genre).all()
           #directors = DBSession.query(Director).all()
           values = dict(id_fase=fase.id_fase, 
-		     nombre_fase=fase.nombre_fase, 
-                     tipo_fase=fase.tipo_fase, 
-                     estado=fase.estado,
-                     linea_base=fase.linea_base,
-                     descripcion=fase.descripcion,
+	  	        nombre_fase=fase.nombre_fase, 
+                        tipo_fase=fase.tipo_fase, 
+                        estado=fase.estado,
+                        linea_base=fase.linea_base,
+                        descripcion=fase.descripcion,
                      # directors = [str(director.director_id) for director in movie.directors],
                      # release_date = datetime.strftime(movie.release_date, "%m/%d/%y"),
                     )
@@ -366,7 +373,7 @@ class RootController(BaseController):
     @expose()
     def put(self, id_fase, nombre_fase, tipo_fase, estado, linea_base, descripcion, **kw):
 	
-	fase = DBSession.query(Fase).get(id_fase)
+	fase = DBSession.query(Fase).get(int(id_fase))
         
         fase.nombre_fase = nombre_fase
         fase.tipo_fase=tipo_fase
@@ -378,8 +385,8 @@ class RootController(BaseController):
         flash("Fase agregada!")
 	redirect('/fase')
 
-    @expose('saip2011.templates.get_delete')
-    def get_delete(self,id_fase, *args, **kw):
+    @expose('saip2011.templates.eliminar_fase')
+    def eliminar_fase(self,id_fase, *args, **kw):
 	
         fase2 = DBSession.query(Fase).get(id_fase)	
 
@@ -392,13 +399,13 @@ class RootController(BaseController):
                      # directors = [str(director.director_id) for director in movie.directors],
                      # release_date = datetime.strftime(movie.release_date, "%m/%d/%y"),
                     )
-        return dict(pagina="get_delete",values=values)
+        return dict(pagina="eliminar_fase",values=values)
 
     @validate({'id_fase':NotEmpty, 
 	       'nombre_fase':NotEmpty, 
                'tipo_fase':NotEmpty, 
                'estado':NotEmpty, 
-               'descripcion':NotEmpty}, error_handler=get_delete)	
+               'descripcion':NotEmpty}, error_handler=eliminar_fase)	
     @expose()
     def post_delete(self, id_fase, nombre_fase, tipo_fase, estado, linea_base, descripcion, **kw):
 	
