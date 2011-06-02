@@ -17,12 +17,21 @@
   ${header()}
   <ul id="mainmenu">
     <py:if test="defined('pagina') and request.identity"> 
-        <li class="first"><a href="${tg.url('/usuario')}" class="${('', 'active')[defined('pagina') and pagina==pagina=='index']}">Usuario</a></li> 
+        <li class="first"><a href="${tg.url('/usuario')}" class="${('', 'active')[defined('pagina') and pagina==pagina=='index']}">Usuario</a></li>
+	<li class="first"><a href="${tg.url('/rol')}" class="${('', 'active')[defined('pagina') and pagina==pagina=='index']}">Rol</a></li>
+	<li class="first"><a href="${tg.url('/privilegio')}" class="${('', 'active')[defined('pagina') and pagina==pagina=='index']}">Privilegio</a></li>    
+	<li class="first"><a href="${tg.url('/fase')}" class="${('', 'active')[defined('pagina') and pagina==pagina=='index']}">Fase</a></li> 
+	<li class="first"><a href="${tg.url('/tipo_fase')}" class="${('', 'active')[defined('pagina') and pagina==pagina=='index']}">Tipo de Fase</a></li>  
+	<li class="first"><a href="${tg.url('/item')}" class="${('', 'active')[defined('pagina') and pagina==pagina=='index']}">Item</a></li>  
+	<li class="first"><a href="${tg.url('/tipo_item')}" class="${('', 'active')[defined('pagina') and pagina==pagina=='index']}">Tipo de Item </a></li>  
+	<li class="first"><a href="${tg.url('/equipo')}" class="${('', 'active')[defined('pagina') and pagina==pagina=='index']}">Equipo de Desarrollo</a></li>  
+	<li class="first"><a href="${tg.url('/proyecto')}" class="${('', 'active')[defined('pagina') and pagina==pagina=='index']}">Proyecto</a></li>
+	<li class="first"><a href="${tg.url('/reporte')}" class="${('', 'active')[defined('pagina') and pagina==pagina=='index']}">Reporte</a></li>    
     </py:if>  
     <span py:if="tg.auth_stack_enabled" py:strip="True">
         <li py:if="not request.identity" id="login" class="loginlogout"><a href="${tg.url('/login')}">Entrar</a></li>
         <li py:if="request.identity" id="login" class="loginlogout"><a href="${tg.url('/logout_handler')}">Salir</a></li>
-        <li py:if="request.identity" id="admin" class="loginlogout"><a href="${tg.url('/admin')}">Admin</a></li>
+       
     </span>
   </ul>
   <div id="content">

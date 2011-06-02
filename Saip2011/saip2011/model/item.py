@@ -33,9 +33,11 @@ class Item(DeclarativeBase):
 
 	#{ Columns
 
-	iditem = Column(Integer, autoincrement=True, primary_key=True)
+	id_item = Column(Integer, autoincrement=True, primary_key=True)
 
-	tipoitem = Column(Unicode(30), nullable=False)
+	nombre_item = Column(Unicode(30), nullable=False)	
+
+	tipo_item = Column(Unicode(30), nullable=False)
 
 	fase = Column(Unicode(30), nullable=False)
 
@@ -49,11 +51,11 @@ class Item(DeclarativeBase):
 
 	campos = Column(Text, nullable=False)
 
-	listaitem = Column(Text)
+	lista_item = Column(Text)
 
-	creadopor = Column(Unicode(30), nullable=False)
+	creado_por = Column(Unicode(30), nullable=False)
 
-	fechacreacion = Column(DateTime, default=datetime.now)
+	fecha_creacion = Column(DateTime, default=datetime.now)
 	
 	#{ Special methods
 
@@ -62,6 +64,18 @@ class Item(DeclarativeBase):
 
 	def __unicode__(self):
 		return self.iditem
+	@classmethod
+        def get_items(self):
+		"""
+		Obtiene la lista de todos los items
+		registrados en el sistema
+		"""
+		#Session = sessionmaker()
+		#session = Session() 
+		"""items = session.query(cls).all()"""
+		items = DBSession.query(Item).all()
+		    
+		return items
 
 	#}
 

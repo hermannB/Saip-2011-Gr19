@@ -25,7 +25,7 @@ class Adjunto(DeclarativeBase):
     
     #{ Columns
     
-    idadjunto = Column(Integer, autoincrement=True, primary_key=True)
+    id_adjunto = Column(Integer, autoincrement=True, primary_key=True)
     
     text = Column(Text, nullable=False)
    
@@ -33,9 +33,9 @@ class Adjunto(DeclarativeBase):
     #{ Special methods
     
     def __repr__(self):
-        return '<Adjunto: id=%s>' % self.idadjunto
+        return '<Adjunto: id=%s>' % self.id_adjunto
     
     def __unicode__(self):
-        return self.idadjunto
+        return self.id_adjunto
     #}
 

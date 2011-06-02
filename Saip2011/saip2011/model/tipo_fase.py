@@ -17,52 +17,45 @@ from sqlalchemy.orm import relation, synonym
 
 from saip2011.model import DeclarativeBase, metadata, DBSession
 
-__all__ = ['Fase']
+__all__ = ['Tipo_Fase']
 
 
-class Fase(DeclarativeBase):
+class Tipo_Fase(DeclarativeBase):
 	"""
 	Definicion de Fase.
 
 	"""
 
-	__tablename__ = 'Tabla_Fase'
+	__tablename__ = 'Tabla_Tipo_Fase'
 
 	#{ Columns
 
-	id_fase = Column(Integer, autoincrement=True, primary_key=True)
+	id_tipo_fase = Column(Integer, autoincrement=True, primary_key=True)
 
-	nombre_fase = Column(Unicode(30), unique=True, nullable=False)
+	nombre_tipo_fase = Column(Unicode(30), unique=True, nullable=False)
 
-	tipo_fase = Column(Unicode(30), nullable=False)
-
-	estado = Column(Unicode(30), nullable=False)
-
-	linea_base =Column (Unicode(30), nullable=False)
-	
 	descripcion = Column(Text)
 	
 	#{ Special methods
 
 	def __repr__(self):
-		return '<Fase: Nombre=%s>' % self.nombre_fase
+		return '<Fase: Nombre=%s>' % self.nombre_tipo_fase
 	
 	def __unicode__(self):
-		return self.nombre_fase
-       
-        @classmethod
-        def get_fase(self):
+		return self.nombre_tipo_fase
+
+	@classmethod
+	def get_tipo_fase(self):
 		"""
-		Obtiene la lista de todos los usuarios
+		Obtiene la lista de todos los roles
 		registrados en el sistema
 		"""
 		#Session = sessionmaker()
 		#session = Session() 
-		"""fases = session.query(cls).all()"""
-		fases = DBSession.query(Fase).all()
+		"""tiposfases = session.query(cls).all()"""
+		tipos_fases = DBSession.query(Tipo_Fase).all()
 		    
-		return fases
-
+		return tipos_fases
 
 	#}
 

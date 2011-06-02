@@ -76,12 +76,27 @@ class Rol(DeclarativeBase):
 
 	#{ Special methods
 
+   
+
     def __repr__(self):
         return '<Rol: nombre=%s>' % self.nombrerol
 
     def __unicode__(self):
         return self.nombrerol
     
+    @classmethod
+    def get_roles(self):
+        """
+        Obtiene la lista de todos los roles
+        registrados en el sistema
+        """
+        #Session = sessionmaker()
+        #session = Session() 
+        """roles = session.query(cls).all()"""
+        roles = DBSession.query(Rol).all()
+            
+        return roles
+
     #{ Relations
     
     usuarios = relation('Usuario', secondary=usuario_rol_tabla, backref='roles')
@@ -240,6 +255,19 @@ class Privilegios(DeclarativeBase):
     def __unicode__(self):
         return self.nombreprivilegio
     
+    @classmethod
+    def get_privilegio(self):
+        """
+        Obtiene la lista de todos los usuarios
+        registrados en el sistema
+        """
+        #Session = sessionmaker()
+        #session = Session() 
+        """privilegios = session.query(cls).all()"""
+        privilegios = DBSession.query(Privilegios).all()
+            
+        return privilegios
+
     #}
 
 

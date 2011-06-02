@@ -26,23 +26,36 @@ class Proyecto(DeclarativeBase):
 
 	#{ Columns
 
-	idproyecto = Column(Integer, autoincrement=True, primary_key=True)
+	id_proyecto = Column(Integer, autoincrement=True, primary_key=True)
 
-	nombreproyecto = Column(Unicode(30), unique=True, nullable=False)
+	nombre_proyecto = Column(Unicode(30), unique=True, nullable=False)
 
-	idequipo = Column(Integer, nullable=False)
+	id_equipo = Column(Integer, nullable=False)
 
-	listaFases = Column(Text, nullable=False)	
+	lista_Fases = Column(Text, nullable=False)	
 
 	descripcion = Column(Text)	
 
 	#{ Special methods
 
 	def __repr__(self):
-		return '<Proyecto: nombre=%s>' % self.nombreproyecto
+		return '<Proyecto: nombre=%s>' % self.nombre_proyecto
 
 	def __unicode__(self):
-		return self.nombreproyecto
+		return self.nombre_proyecto
+
+	@classmethod
+	def get_proyectos(self):
+		"""
+		Obtiene la lista de todos los roles
+		registrados en el sistema
+		"""
+		#Session = sessionmaker()
+		#session = Session() 
+		"""proyectos = session.query(cls).all()"""
+		proyectos = DBSession.query(Proyecto).all()
+		    
+		return proyectos
 
 	#}
 

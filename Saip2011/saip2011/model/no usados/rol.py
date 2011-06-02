@@ -22,8 +22,8 @@ __all__ = ['Rol']
 # esto se pone en la clase que va a usar los datos del otro
 
 tabla_rol_privilegios = Table('TB_rol_privilegios', metadata,
-	Column('idrol', Integer, ForeignKey('Tabla_Rol.idrol', onupdate="CASCADE", ondelete="CASCADE")),
-	Column('idprivilegio', Integer, ForeignKey('Tabla_Privilegios.idprivilegio', onupdate="CASCADE", ondelete="CASCADE"))
+	Column('id_rol', Integer, ForeignKey('Tabla_Rol.id_rol', onupdate="CASCADE", ondelete="CASCADE")),
+	Column('id_privilegio', Integer, ForeignKey('Tabla_Privilegios.id_privilegio', onupdate="CASCADE", ondelete="CASCADE"))
 )
 
 class Rol(DeclarativeBase):
@@ -35,22 +35,20 @@ class Rol(DeclarativeBase):
 
 	#{ Columns
 
-	idrol = Column(Integer, autoincrement=True, primary_key=True)
+	id_rol = Column(Integer, autoincrement=True, primary_key=True)
 
-	nombrerol = Column(Unicode(30), unique=True, nullable=False)
+	nombre_rol = Column(Unicode(30), unique=True, nullable=False)
 
 	descripcion = Column(Text)
 
-	listaprivilegios = Column(Text)
-
-
+	
 	#{ Special methods
 
 	def __repr__(self):
-		return '<Rol: nombre=%s>' % self.nombrerol
+		return '<Rol: nombre=%s>' % self.nombre_rol
 
 	def __unicode__(self):
-		return self.nombrerol
+		return self.nombre_rol
 	
 	#}
 	@property

@@ -14,24 +14,24 @@ from sqlalchemy.orm import relation, synonym
 
 from saip2011.model import DeclarativeBase, metadata, DBSession
 
-__all__ = ['EquipoDesarrollo']
+__all__ = ['Equipo_Desarrollo']
 
 
 #{ Association tables
 
 
 
-class EquipoDesarrollo(DeclarativeBase):
+class Equipo_Desarrollo(DeclarativeBase):
     """
    Definicion de Equipo de Desarrollo.
     
     """
     
-    __tablename__ = 'tabla_equipodesarrollo'
+    __tablename__ = 'Tabla_Equipo_Desarrollo'
     
     #{ Columns
     
-    idequipo = Column(Integer, autoincrement=True, primary_key=True)
+    id_equipo = Column(Integer, autoincrement=True, primary_key=True)
     
     alias = Column(Unicode(30), unique=True, nullable=False)
     
@@ -45,11 +45,24 @@ class EquipoDesarrollo(DeclarativeBase):
     #{ Special methods
     
     def __repr__(self):
-        return '<Equipo : id=%s>' % self.idequipo
+        return '<Equipo : id=%s>' % self.id_equipo
     
     def __unicode__(self):
-        return self.idequipo
-    
+        return self.id_equipo
+
+
+    @classmethod
+    def get_equipos(self):
+        """
+        Obtiene la lista de todos los equipos
+        registrados en el sistema
+        """
+        #Session = sessionmaker()
+        #session = Session() 
+        """equipos = session.query(cls).all()"""
+        equipos = DBSession.query(Equipo_Desarrollo).all()
+            
+        return equipos    
     #}
 
 
