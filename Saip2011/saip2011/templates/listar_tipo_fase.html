@@ -22,13 +22,16 @@
     <table border="1" cellspacing="1" cellpadding="5" class="tipos_fases" py:otherwise="">    
       <h2>Lista de Tipos de Fases</h2>
       <tr align="center">
+	<th>Accion</th>
         <th>Id</th>
         <th>Nombre del Tipo Fase</th>
         <th>Descripcion</th>
       </tr>
       <tr align="center" py:for="tipo_fase in tipos_fases">
-        <td><a href="${tg.url('/tipo_fase/%s/edit' % tipo_fase.id_tipo_fase)}">${tipo_fase.id_tipo_fase}</a></td>
-        <td><a href="${tg.url('/')}">${tipo_fase.nombre_tipo_fase}</a></td>
+	<td><a href="${tg.url('editar_tipo_fase?id_tipo_fase=%d' % tipo_fase.id_tipo_fase)}">Editar</a>
+	<a href="${tg.url('eliminar_tipo_fase?id_tipo_fase=%d' % tipo_fase.id_tipo_fase)}">Borrar</a></td>
+        <td>${tipo_fase.id_tipo_fase}</td>
+        <td>${tipo_fase.nombre_tipo_fase}</td>
         <td>${tipo_fase.descripcion}</td>
       </tr>          
     </table>   

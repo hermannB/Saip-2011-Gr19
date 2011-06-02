@@ -32,7 +32,7 @@ class Tipo_Fase(DeclarativeBase):
 
 	id_tipo_fase = Column(Integer, autoincrement=True, primary_key=True)
 
-	nombre_tipo_fase = Column(Unicode(30), unique=True, nullable=False)
+	nombre_tipo_fase = Column(Unicode(50), unique=True, nullable=False)
 
 	descripcion = Column(Text)
 	

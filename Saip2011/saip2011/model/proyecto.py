@@ -28,7 +28,7 @@ class Proyecto(DeclarativeBase):
 
 	id_proyecto = Column(Integer, autoincrement=True, primary_key=True)
 
-	nombre_proyecto = Column(Unicode(30), unique=True, nullable=False)
+	nombre_proyecto = Column(Unicode(50), unique=True, nullable=False)
 
 	equipo = Column(Integer, nullable=False)
 

@@ -22,14 +22,17 @@
     <table border="1" cellspacing="1" cellpadding="5" class="roles" py:otherwise="">    
       <h2>Lista de Roles</h2>
       <tr align="center">
+        <th>Accion</th>
         <th>Id</th>
         <th>Nombre</th>
         <th>Descripcion</th>
         <th>Lista_de_Privilegios</th>
       </tr>
       <tr align="center" py:for="rol in roles">
-        <td><a href="${tg.url('/rol/%s/edit' % rol.idrol)}">${rol.idrol}</a></td>
-        <td><a href="${tg.url('/')}">${rol.nombrerol}</a></td>
+	<td><a href="${tg.url('editar_rol?idrol=%d' % rol.idrol)}">Editar</a>
+	<a href="${tg.url('eliminar_rol?idrol=%d' % rol.idrol)}">Borrar</a></td>
+        <td>${rol.idrol}</td>
+        <td>${rol.nombrerol}</td>
         <td>${rol.descripcion}</td>
         <td>${rol.privilegios}</td>
       </tr>          

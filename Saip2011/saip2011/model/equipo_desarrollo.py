@@ -33,9 +33,9 @@ class Equipo_Desarrollo(DeclarativeBase):
     
     id_equipo = Column(Integer, autoincrement=True, primary_key=True)
     
-    alias = Column(Unicode(30), unique=True, nullable=False)
+    alias = Column(Unicode(50), unique=True, nullable=False)
     
-    rol = Column(Unicode(30), nullable=False)
+    rol = Column(Unicode(50), nullable=False)
     
     
     #{ Relations

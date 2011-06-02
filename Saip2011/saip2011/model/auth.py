@@ -22,7 +22,7 @@ except ImportError:
              'Please install it. Example: easy_install hashlib')
 
 from sqlalchemy import Table, ForeignKey, Column
-from sqlalchemy.types import Unicode, Integer, DateTime
+from sqlalchemy.types import Unicode, Integer, DateTime , Text
 from sqlalchemy.orm import relation, synonym
 
 from saip2011.model import DeclarativeBase, metadata, DBSession
@@ -69,13 +69,11 @@ class Rol(DeclarativeBase):
     
     idrol = Column(Integer, autoincrement=True, primary_key=True)
     
-    nombrerol = Column(Unicode(30), unique=True, nullable=False)
+    nombrerol = Column(Unicode(50), unique=True, nullable=False)
 
-    descripcion = Column(Unicode(255))
+    descripcion = Column(Text)
 
-    listaprivilegios = Column(Unicode(255))
-
-
+    
 	#{ Special methods
 
    
@@ -124,16 +122,16 @@ class Usuario(DeclarativeBase):
 
     idusuario = Column(Integer, autoincrement=True, primary_key=True)
     
-    alias = Column(Unicode(30), unique=True, nullable=False)
-    nombre = Column(Unicode(30), nullable=False)
-    apellido = Column(Unicode(30), nullable=False)
+    alias = Column(Unicode(50), unique=True, nullable=False)
+    nombre = Column(Unicode(50), nullable=False)
+    apellido = Column(Unicode(50), nullable=False)
     _password = Column('password', Unicode(80),info={'rum': {'field':'Password'}})
 
-    rol = Column(Unicode(30))
-    email_address = Column(Unicode(80), unique=True, nullable=False, info={'rum': {'field':'Email'}})
+    rol = Column(Unicode(50))
+    email_address = Column(Unicode(50), unique=True, nullable=False, info={'rum': {'field':'Email'}})
 
-    nacionalidad = Column(Unicode(30))
-    tipodocumento = Column(Unicode(30), nullable=True)
+    nacionalidad = Column(Unicode(50))
+    tipodocumento = Column(Unicode(50), nullable=True)
     nrodoc = Column(Integer, unique=True, nullable=True)
 
     
@@ -249,9 +247,9 @@ class Privilegios(DeclarativeBase):
 
     idprivilegio = Column(Integer, autoincrement=True, primary_key=True)
     
-    nombreprivilegio = Column(Unicode(30), unique=True, nullable=False)
+    nombreprivilegio = Column(Unicode(50), unique=True, nullable=False)
 
-    descripcion = Column(Unicode(255))
+    descripcion = Column(Text)
     
     #{ Relations
     

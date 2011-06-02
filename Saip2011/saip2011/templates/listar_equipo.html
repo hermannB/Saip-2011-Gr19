@@ -22,13 +22,16 @@
     <table border="1" cellspacing="1" cellpadding="5" class="equipos" py:otherwise="">    
       <h2>Lista de Equipos de Desarrollo</h2>
       <tr align="center">
+	<th>Accion</th>
         <th>Id</th>
         <th>Alias</th>
         <th>Rol</th>
        </tr>
-      <tr align="center" py:for="privilegio in privilegios">
-        <td><a href="${tg.url('/equipo/%s/edit' % equipo.id_equipo)}">${equipo.id_equipo}</a></td>
-        <td><a href="${tg.url('/')}">${equipo.alias}</a></td>
+      <tr align="center" py:for="equipo in equipos">
+	<td><a href="${tg.url('editar_equipo?id_equipo=%d' % equipo.id_equipo)}">Editar</a>
+	<a href="${tg.url('eliminar_equipo?id_equipo=%d' % equipo.id_equipo)}">Borrar</a></td>
+        <td>${equipo.id_equipo}</td>
+        <td>${equipo.alias}</td>
         <td>${equipo.rol}</td>
       </tr>          
     </table>   

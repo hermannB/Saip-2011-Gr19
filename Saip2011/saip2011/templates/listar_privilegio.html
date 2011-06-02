@@ -22,13 +22,16 @@
     <table border="1" cellspacing="1" cellpadding="5" class="privilegios" py:otherwise="">    
       <h2>Lista de Privilegios</h2>
       <tr align="center">
+        <th>Accion</th>
         <th>Id</th>
         <th>Nombre</th>
         <th>Descripcion</th>
        </tr>
       <tr align="center" py:for="privilegio in privilegios">
-        <td><a href="${tg.url('/privilegio/%s/edit' % privilegio.idprivilegio)}">${privilegio.idprivilegio}</a></td>
-        <td><a href="${tg.url('/')}">${privilegio.nombreprivilegio}</a></td>
+	<td><a href="${tg.url('editar_privilegio?idprivilegio=%d' % privilegio.idprivilegio)}">Editar</a>
+	<a href="${tg.url('eliminar_privilegio?idprivilegio=%d' % privilegio.idprivilegio)}">Borrar</a></td>
+	<td>${privilegio.idprivilegio}</td>
+        <td>${privilegio.nombreprivilegio}</td>
         <td>${privilegio.descripcion}</td>
       </tr>          
     </table>   

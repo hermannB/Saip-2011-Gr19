@@ -150,53 +150,89 @@ class RootController(BaseController):
         return dict(pagina="usuario")
     
     @expose('saip2011.templates.editar_usuario')
-    def editar_usuario(self,iduser=1,cancel=False,**data):
-        """
-           Metodo que recibe ID de usuario para
-           ser modificado
-        """
-        errors = {}
-        
-        if request.method == 'POST':
-            if cancel:
-                redirect('/usuario')
-            form = UsuarioForm()
-            try:
-                data = form.to_python(data)
-                usuario = Usuario(alias=data.get('alias'),nombre=data.get('nombre'),apellido=data.get('apellido'),email_address=data.get('email'),nacionalidad=data.get('nacionalidad'),tipodocumento=data.get('tipodocumento'),nrodoc=data.get('nrodoc'),_password=data.get('clave'))
-                #if isinstance(usuario,Usuario) :
-		usuario._set_password(data.get('clave'))
-                DBSession.add(usuario)
-                DBSession.flush()
-                #DBSession.commit()
-                #transaction.commit() 
-                print usuario
-                flash("Usuario guardado!")
-            except Invalid, e:
-                print e
-                usuario = None
-                errors = e.unpack_errors()
-                flash(_("Favor complete los datos requeridos"),'warning')
-            except IntegrityError:
-                flash("LLave duplicada")
-                DBSession.rollback()
-                redirect('/listar_usuario')
-            
-        else:
-            errors = {} 
-            try:
-                usuario = Usuario.get_user_by_id(iduser)
-                roles = Rol.get_roles()
-            except e:
-                print e
-        return dict(pagina="editar_usuario",usuario=usuario,errors=errors,roles=roles)
-    
+    def editar_usuario(self,idusuario,*args, **kw):
+	usuario = DBSession.query(Usuario).get(idusuario)
+
+	if request.method != 'PUT':  
+          values = dict(idusuario=usuario.idusuario, 
+	  	        alias=usuario.alias, 
+                        nombre=usuario.nombre, 
+                        apellido=usuario.apellido,
+                        nacionalidad=usuario.nacionalidad,
+                        tipodocumento=usuario.tipodocumento,
+			nrodoc=usuario.nrodoc,
+			email_address=usuario.email_address,
+			
+                     # directors = [str(director.director_id) for director in movie.directors],
+                     # release_date = datetime.strftime(movie.release_date, "%m/%d/%y"),
+                    )
+	  return dict(pagina="editar_usuario",values=values)
+
+
+    @validate({'idusuario':NotEmpty, 
+	       'alias':NotEmpty, 
+               'nombre':NotEmpty, 
+               'apellido':NotEmpty, 
+               'nacionalidad':NotEmpty,
+               'tipodocumento':NotEmpty,
+               'nrodoc':NotEmpty,
+               'email_address':NotEmpty}, error_handler=editar_usuario)	
+    @expose()
+    def put_usuario(self, idusuario, alias, nombre,  apellido, nacionalidad, tipodocumento, nrodoc , email_address, **kw):
+	
+	usuario = DBSession.query(Usuario).get(int(idusuario))
+	usuario.alias=alias, 
+        usuario.nombre=nombre, 
+        usuario.apellido=apellido,
+        usuario.nacionalidad=nacionalidad,
+        usuario.tipodocumento=tipodocumento,
+	usuario.nrodoc=nrodoc,
+	usuario.email_address=email_address,
+
+
+        DBSession.flush()
+        flash("Usuario modificado!")
+	redirect('/usuario')
+
     @expose('saip2011.templates.listar_usuario')
     def listar_usuario(self):
         """Lista usuarios 
         """
         usuarios = Usuario.get_usuarios()
         return dict(pagina="listar_usuario",usuarios=usuarios)
+
+    @expose('saip2011.templates.eliminar_usuario')
+    def eliminar_usuario(self,idusuario, *args, **kw):
+	
+        usuario = DBSession.query(Usuario).get(idusuario)	
+
+	values = dict(idusuario=usuario.idusuario, 
+	  	        alias=usuario.alias, 
+                        nombre=usuario.nombre, 
+                        apellido=usuario.apellido,
+                        nacionalidad=usuario.nacionalidad,
+                        tipodocumento=usuario.tipodocumento,
+			nrodoc=usuario.nrodoc,
+			email_address=usuario.email_address
+	           )
+        return dict(pagina="eliminar_usuario",values=values)
+
+    @validate({'idusuario':NotEmpty, 
+	       'alias':NotEmpty, 
+               'nombre':NotEmpty, 
+               'apellido':NotEmpty, 
+               'nacionalidad':NotEmpty,
+               'tipodocumento':NotEmpty,
+               'nrodoc':NotEmpty,
+               'email_address':NotEmpty}, error_handler=eliminar_usuario)	
+    @expose()
+    def post_delete_usuario(self, idusuario, alias, nombre, apellido, nacionalidad, tipodocumento, nrodoc , email_address ,  **kw):
+	
+        DBSession.delete(DBSession.query(Usuario).get(idusuario))
+        DBSession.flush()
+        flash("Usuario eliminado!")
+	redirect('/usuario')
+
 
     @expose('saip2011.templates.agregar_usuario')
     def agregar_usuario(self,cancel=False,**data):
@@ -246,12 +282,41 @@ class RootController(BaseController):
         return dict(pagina="rol")
     
     @expose('saip2011.templates.editar_rol')
-    def rolmod(self,idrol,action):
-        """
-           Metodo que recibe ID del rol para
-           ser modificado
-        """
-        return "Pagina no disponible"
+    def editar_rol(self, idrol, *args, **kw):
+        privilegios = DBSession.query(Privilegios).all()
+        rol = DBSession.query(Rol).get(idrol)
+        
+        values = dict(idrol=rol.idrol, 
+                      nombrerol=rol.nombrerol, 
+                      descripcion=rol.descripcion,
+                      privilegios = [str(privilegio.idprivilegio) for privilegio in rol.privilegios],
+                        )
+                      
+        if 'privilegios' in kw and not isinstance(kw['privilegios'], list):
+            kw['privilegios'] = [kw['privilegios']]
+        values.update(kw)
+
+        return dict(pagina="editar_rol",values=values,  privilegios=privilegios)
+
+    @validate({'idrol':NotEmpty, 
+               'nombrerol':NotEmpty, 
+               'descripcion':NotEmpty}, error_handler=editar_rol)
+    @expose()
+    def put_rol(self, idrol, nombrerol, descripcion, privilegios, **kw):
+        rol = DBSession.query(Rol).get(idrol)
+       
+        if not isinstance(privilegios, list):
+            privilegios = [privilegios]
+        privilegios = [DBSession.query(Privilegios).get(privilegio) for privilegio in privilegios]
+            
+       
+        rol.nombrerol=nombrerol
+        rol.descripcion = descripcion
+        rol.privilegios = privilegios
+        
+
+        DBSession.flush()
+        redirect('../')
     
     @expose('saip2011.templates.listar_rol')
     def listar_rol(self):
@@ -260,6 +325,28 @@ class RootController(BaseController):
         roles = Rol.get_roles()
         return dict(pagina="listar_rol",roles=roles)
 
+    @expose('saip2011.templates.eliminar_rol')
+    def eliminar_rol(self,idrol, *args, **kw):
+	
+        rol = DBSession.query(Rol).get(idrol)	
+
+	values = dict(idrol=rol.idrol, 
+		      nombrerol=rol.nombrerol, 
+                      descripcion=rol.descripcion,
+		      privilegios=rol.privilegios
+                    )
+        return dict(pagina="eliminar_rol",values=values)
+
+    @validate({'idrol':NotEmpty, 
+	       'nombrerol':NotEmpty, 
+               'descripcion':NotEmpty}, error_handler=eliminar_rol)	
+    @expose()
+    def post_delete_rol(self, idrol, nombrerol, descripcion, privilegios, **kw):
+	
+        DBSession.delete(DBSession.query(Rol).get(idrol))
+        DBSession.flush()
+        flash("Rol eliminado!")
+	redirect('/rol')
 
     @expose('saip2011.templates.agregar_rol')
     def agregar_rol(self, *args, **kw):
@@ -275,7 +362,7 @@ class RootController(BaseController):
                 error_handler=agregar_rol)
    
     @expose()
-    def post(self, nombrerol, descripcion, privilegios=None):
+    def post_rol(self, nombrerol, descripcion, privilegios=None):
         flash("Rol agregado!")
         if privilegios is not None:
             if not isinstance(privilegios, list):
@@ -285,44 +372,6 @@ class RootController(BaseController):
         DBSession.add(rol)
 	DBSession.flush()
         redirect('./')
- 
-#   @expose('saip2011.templates.agregar_rol')
-#    def agregar_rol(self,cancel=False,**data):
-#        errors = {}
-#       	rol = None
-#        if request.method == 'POST':
-#            if cancel:
-#                redirect('/rol')
-#            form = RolForm()
-#            try:
-#                data = form.to_python(data)
-#                rol = Rol(nombrerol=data.get('nombrerol'),descripcion=data.get('descripcion'),privilegios=data.get('privilegios'))
-#                #if isinstance(usuario,Usuario) :
-#                DBSession.add(rol)
-#                DBSession.flush()
-#                #DBSession.commit()
-#                #transaction.commit() 
-#                print rol
-#                flash("Rol agregado!")
-#            except Invalid, e:
-#                print e
-#                rol = None
-#                errors = e.unpack_errors()
-#                flash(_("Favor complete los datos requeridos"),'warning')
-#            except IntegrityError:
-#                flash("LLave duplicada")
-#                DBSession.rollback()
-#                redirect('/agregar_rol')
-#            
-#        else:
-#            errors = {}        
-#        #aqui se debe guardar los datos obtenidos
-#        #usuario = Usuario(data[0])
-#        #tmpl = loader.load('agregar_usuario.html')
-#        #stream = tmpl.generate()
-#        #return stream.render('html',doctype='html')
-#        return dict(pagina='agregar_rol',data=data.get('nombrerol'),errors=errors)
-#
 
  # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # #
 
@@ -331,22 +380,63 @@ class RootController(BaseController):
         """
            Menu para Privilegio
         """
-        return dict(pagina="privilegio")
+        return dict(pagina="privilegenres = DBSession.query(Genre).all()gio")
     
     @expose('saip2011.templates.editar_privilegio')
-    def privilegiomod(self,idprivilegio,action):
-        """
-           Metodo que recibe ID de privilegio para
-           ser modificado
-        """
-        return "Pagina no disponible"
-    
+    def editar_privilegio(self,idprivilegio,*args, **kw):
+	privilegio = DBSession.query(Privilegios).get(idprivilegio)
+	if request.method != 'PUT':  
+	  values = dict(idprivilegio=privilegio.idprivilegio, 
+	  	       nombreprivilegio=privilegio.nombreprivilegio, 
+                       descripcion=privilegio.descripcion,
+                    )
+	  return dict(pagina="editar_privilegio",values=values)
+
+
+    @validate({'idprivilegio':NotEmpty, 
+	       'nombreprivilegio':NotEmpty, 
+               'descripcion':NotEmpty}, error_handler=editar_privilegio)	
+    @expose()
+    def put_privilegio(self, idprivilegio, nombreprivilegio, descripcion, **kw):
+	
+	privilegio = DBSession.query(Privilegios).get(int(idprivilegio))
+        
+        privilegio.nombreprivilegio = nombreprivilegio
+        privilegio.descripcion = descripcion
+
+        DBSession.flush()
+        flash("Privilegio modificado!")
+	redirect('/privilegio') 
+
     @expose('saip2011.templates.listar_privilegio')
     def listar_privilegio(self):
         """Lista privilegios 
         """
         privilegios = Privilegios.get_privilegio()
         return dict(pagina="listar_privilegio",privilegios=privilegios)
+
+    @expose('saip2011.templates.eliminar_privilegio')
+    def eliminar_privilegio(self,idprivilegio, *args, **kw):
+	
+        privilegio = DBSession.query(Privilegios).get(idprivilegio)	
+
+	values = dict(idprivilegio=privilegio.idprivilegio, 
+		      nombreprivilegio=privilegio.nombreprivilegio, 
+                      descripcion=privilegio.descripcion,
+                    )
+        return dict(pagina="eliminar_privilegio",values=values)
+
+    @validate({'idprivilegio':NotEmpty, 
+	       'nombreprivilegio':NotEmpty, 
+               'descripcion':NotEmpty}, error_handler=eliminar_privilegio)	
+    @expose()
+    def post_delete_privilegio(self, idprivilegio, nombreprivilegio, descripcion, **kw):
+	
+        DBSession.delete(DBSession.query(Privilegios).get(idprivilegio))
+        DBSession.flush()
+        flash("Privilegio eliminado!")
+	redirect('/privilegio')
+
 
     @expose('saip2011.templates.agregar_privilegio')
     def agregar_privilegio(self,cancel=False,**data):
@@ -401,44 +491,37 @@ class RootController(BaseController):
         fases = Fase.get_fase()
         return dict(pagina="listar_fase",fases=fases)
 
-    @expose('saip2011.templates.opciones')
-    def opciones(self):
-        """opciones fases 
-        """
-        fases = Fase.get_fase()
-        return dict(pagina="opciones",fases=fases)
-    
     @expose('saip2011.templates.editar_fase')
     def editar_fase(self,id_fase,*args, **kw):
-	#id_fase=6
+	tipos_fases = DBSession.query(Tipo_Fase).all()
 	fase = DBSession.query(Fase).get(id_fase)
-	if request.method != 'POST':  
+	if request.method != 'PUT':  
 	  #genres = DBSession.query(Genre).all()
           #directors = DBSession.query(Director).all()
           values = dict(id_fase=fase.id_fase, 
 	  	        nombre_fase=fase.nombre_fase, 
-                        tipo_fase=fase.tipo_fase, 
+                        id_tipo_fase=fase.id_tipo_fase, 
                         estado=fase.estado,
                         linea_base=fase.linea_base,
                         descripcion=fase.descripcion,
                      # directors = [str(director.director_id) for director in movie.directors],
                      # release_date = datetime.strftime(movie.release_date, "%m/%d/%y"),
                     )
-	  return dict(pagina="editar_fase",values=values)
+	  return dict(pagina="editar_fase",values=values,tipos_fases=tipos_fases)
 
 
     @validate({'id_fase':NotEmpty, 
 	       'nombre_fase':NotEmpty, 
-               'tipo_fase':NotEmpty, 
+               'id_tipo_fase':NotEmpty, 
                'estado':NotEmpty, 
                'descripcion':NotEmpty}, error_handler=editar_fase)	
     @expose()
-    def put(self, id_fase, nombre_fase, tipo_fase, estado, linea_base, descripcion, **kw):
+    def put_fase(self, id_fase, nombre_fase, id_tipo_fase, estado, linea_base, descripcion, **kw):
 	
 	fase = DBSession.query(Fase).get(int(id_fase))
         
         fase.nombre_fase = nombre_fase
-        fase.tipo_fase=tipo_fase
+        fase.id_tipo_fase=id_tipo_fase
         fase.estado = estado
         fase.linea_base = linea_base
         fase.descripcion = descripcion
@@ -454,7 +537,7 @@ class RootController(BaseController):
 
 	values = dict(id_fase=fase2.id_fase, 
 		     nombre_fase=fase2.nombre_fase, 
-                     tipo_fase=fase2.tipo_fase, 
+                     nombre_tipo_fase=fase2.nombre_tipo_fase, 
                      estado=fase2.estado,
                      linea_base=fase2.linea_base,
                      descripcion=fase2.descripcion,
@@ -465,11 +548,11 @@ class RootController(BaseController):
 
     @validate({'id_fase':NotEmpty, 
 	       'nombre_fase':NotEmpty, 
-               'tipo_fase':NotEmpty, 
+               'nombre_tipo_fase':NotEmpty, 
                'estado':NotEmpty, 
                'descripcion':NotEmpty}, error_handler=eliminar_fase)	
     @expose()
-    def post_delete(self, id_fase, nombre_fase, tipo_fase, estado, linea_base, descripcion, **kw):
+    def post_delete_fase(self, id_fase, nombre_fase,  nombre_tipo_fase, estado, linea_base, descripcion, **kw):
 	
         DBSession.delete(DBSession.query(Fase).get(id_fase))
         DBSession.flush()
@@ -477,42 +560,26 @@ class RootController(BaseController):
 	redirect('/fase')
 
     @expose('saip2011.templates.agregar_fase')
-    def agregar_fase(self,cancel=False,**data):
-        errors = {}
-        fase = None
-        if request.method == 'POST':
-            if cancel:
-                redirect('/fase')
-            form = FaseForm()
-            try:
-                data = form.to_python(data)
-                fase = Fase(nombre_fase=data.get('nombre_fase'),tipo_fase=data.get('tipo_fase'),estado=data.get('estado'),linea_base=data.get('linea_base'),descripcion=data.get('descripcion'))
-                #if isinstance(fase,Fase) :
-                DBSession.add(fase)
-                DBSession.flush()
-                #DBSession.commit()
-                #transaction.commit() 
-                print fase
-                flash("Fase agregada!")
-            except Invalid, e:
-                print e
-                fase = None
-                errors = e.unpack_errors()
-                flash(_("Favor complete los datos requeridos"),'warning')
-            except IntegrityError:
-                flash("LLave duplicada")
-                DBSession.rollback()
-                redirect('/agregar_fase')
-            
-        else:
-            errors = {}        
-        #aqui se debe guardar los datos obtenidos
-        #usuario = Usuario(data[0])
-        #tmpl = loader.load('agregar_usuario.html')
-        #stream = tmpl.generate()
-        #return stream.render('html',doctype='html')
-        return dict(pagina='agregar_fase',data=data.get('nombre_fase'),errors=errors)
-
+    def agregar_fase(self, *args, **kw):
+        tipos_fases = DBSession.query(Tipo_Fase).all()
+        return dict(pagina="agregar_fase",values=kw, tipos_fases=tipos_fases)
+    
+    @validate({'nombre_fase':NotEmpty, 
+                'id_tipo_fase':Int(not_empty=True), 
+		'estado':NotEmpty,
+                'linea_base':NotEmpty,
+		'descripcion':NotEmpty}, error_handler=agregar_fase)
+    @expose()
+    def post_fase(self, nombre_fase, id_tipo_fase, estado ,linea_base, descripcion):
+        if id_tipo_fase is not None:
+           id_tipo_fase = int(id_tipo_fase)
+        
+        fase = Fase (nombre_fase=nombre_fase, id_tipo_fase=id_tipo_fase, estado=estado, linea_base=linea_base, descripcion=descripcion)
+	      
+	DBSession.add(fase)
+	flash("Fase agregada!")  
+        redirect('./fase')
+  
   
  # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # #
 
@@ -524,12 +591,31 @@ class RootController(BaseController):
         return dict(pagina="tipo_fase")
     
     @expose('saip2011.templates.editar_tipo_fase')
-    def tipo_fasemod(self,id_tipo_fase,action):
-        """
-           Metodo que recibe ID de tipos de fases para
-           ser modificado
-        """
-        return "Pagina no disponible"
+    def editar_tipo_fase(self,id_tipo_fase,*args, **kw):
+	tipo_fase = DBSession.query(Tipo_Fase).get(id_tipo_fase)
+	if request.method != 'PUT':  
+	  values = dict(id_tipo_fase=tipo_fase.id_tipo_fase, 
+	  	        nombre_tipo_fase=tipo_fase.nombre_tipo_fase, 
+                        descripcion=tipo_fase.descripcion,
+		)
+	  return dict(pagina="editar_tipo_fase",values=values)
+
+
+    @validate({'id_tipo_fase':NotEmpty, 
+	       'nombre_tipo_fase':NotEmpty, 
+               'descripcion':NotEmpty}, error_handler=editar_tipo_fase)	
+    @expose()
+    def put_tipo_fase(self, id_tipo_fase, nombre_tipo_fase, descripcion, **kw):
+	
+	tipo_fase = DBSession.query(Tipo_Fase).get(id_tipo_fase)
+        
+        tipo_fase.nombre_tipo_fase = nombre_tipo_fase
+        tipo_fase.descripcion = descripcion
+
+        DBSession.flush()
+        flash("Tipo de Fase modificada!")
+	redirect('/tipo_fase')
+
     
     @expose('saip2011.templates.listar_tipo_fase')
     def listar_tipo_fase(self):
@@ -537,6 +623,28 @@ class RootController(BaseController):
         """
         tipos_fases = Tipo_Fase.get_tipo_fase()
         return dict(pagina="listar_tipo_fase",tipos_fases=tipos_fases)
+
+    @expose('saip2011.templates.eliminar_tipo_fase')
+    def eliminar_tipo_fase(self,id_tipo_fase, *args, **kw):
+	
+        tipo_fase = DBSession.query(Tipo_Fase).get(id_tipo_fase)	
+
+	values = dict(id_tipo_fase=tipo_fase.id_tipo_fase, 
+		     nombre_tipo_fase=tipo_fase.nombre_tipo_fase, 
+                     descripcion=tipo_fase.descripcion,
+                  )
+        return dict(pagina="eliminar_tipo_fase",values=values)
+
+    @validate({'id_tipo_fase':NotEmpty, 
+	       'nombre_tipo_fase':NotEmpty, 
+               'descripcion':NotEmpty}, error_handler=eliminar_tipo_fase)	
+    @expose()
+    def post_delete_tipo_fase(self, id_tipo_fase, nombre_tipo_fase, descripcion, **kw):
+	
+        DBSession.delete(DBSession.query(Tipo_Fase).get(id_tipo_fase))
+        DBSession.flush()
+        flash("Tipo de Fase eliminada!")
+	redirect('/tipo_fase')
 
     @expose('saip2011.templates.agregar_tipo_fase')
     def agregar_tipo_fase(self,cancel=False,**data):
@@ -646,20 +754,62 @@ class RootController(BaseController):
         """
         return dict(pagina="tipo_item")
     
-    @expose('saip2011.templates.editar_tipo_item')
-    def tipo_itemmod(self,id_tipo_item,action):
-        """
-           Metodo que recibe ID de tipos de item para
-           ser modificado
-        """
-        return "Pagina no disponible"
-    
+       
     @expose('saip2011.templates.listar_tipo_item')
     def listar_tipo_item(self):
         """Lista tipos de items 
         """
         tipos_items = Tipo_Item.get_tipo_item()
         return dict(pagina="listar_tipo_item",tipos_items=tipos_items)
+
+    @expose('saip2011.templates.editar_tipo_item')
+    def editar_tipo_item(self,id_tipo_item,*args, **kw):
+	tipo_item = DBSession.query(Tipo_Item).get(id_tipo_item)
+	if request.method != 'PUT':  
+	  values = dict(id_tipo_item=tipo_item.id_tipo_item, 
+	  	        nombre_tipo_item=tipo_item.nombre_tipo_item, 
+                        descripcion=tipo_item.descripcion,
+                    
+                    )
+	  return dict(pagina="editar_tipo_item",values=values)
+
+
+    @validate({'id_tipo_item':NotEmpty, 
+	       'nombre_tipo_item':NotEmpty, 
+               'descripcion':NotEmpty}, error_handler=editar_tipo_item)	
+    @expose()
+    def put(self, id_tipo_item, nombre_tipo_item, descripcion, **kw):
+	
+	tipo_item = DBSession.query(Tipo_Item).get(id_tipo_item)
+        
+        tipo_item.nombre_tipo_item = nombre_tipo_item
+        tipo_item.descripcion = descripcion
+
+        DBSession.flush()
+        flash("Tipo de Item modificada!")
+	redirect('/tipo_item')
+
+    @expose('saip2011.templates.eliminar_tipo_item')
+    def eliminar_tipo_item(self,id_tipo_item, *args, **kw):
+	
+        tipo_item = DBSession.query(Tipo_Item).get(id_tipo_item)	
+
+	values = dict(id_tipo_item=tipo_item.id_tipo_item, 
+		     nombre_tipo_item=tipo_item.nombre_tipo_item, 
+                     descripcion=tipo_item.descripcion,
+                    )
+        return dict(pagina="eliminar_tipo_item",values=values)
+
+    @validate({'id_tipo_item':NotEmpty, 
+	       'nombre_tipo_item':NotEmpty, 
+               'descripcion':NotEmpty}, error_handler=eliminar_tipo_item)	
+    @expose()
+    def post_delete(self, id_tipo_item, nombre_tipo_item, descripcion, **kw):
+	
+        DBSession.delete(DBSession.query(Tipo_Item).get(id_tipo_item))
+        DBSession.flush()
+        flash("Tipo de Item eliminado!")
+	redirect('/tipo_item')
 
     @expose('saip2011.templates.agregar_tipo_item')
     def agregar_tipo_item(self,cancel=False,**data):

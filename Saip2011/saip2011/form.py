@@ -5,6 +5,7 @@ class UsuarioForm(Schema):
     nombre = validators.UnicodeString(not_empty=True)
     apellido = validators.UnicodeString(not_empty=True)
     nacionalidad = validators.UnicodeString(not_empty=False)
+    tipodocumento = validators.UnicodeString(not_empty=False)
     nrodoc = validators.UnicodeString(not_empty=False)
     clave = validators.UnicodeString(not_empty=True)
     clave2 = validators.UnicodeString(not_empty=True)

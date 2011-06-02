@@ -22,6 +22,7 @@
     <table border="1" cellspacing="1" cellpadding="5" class="items" py:otherwise="">    
       <h2>Lista de Item</h2>
       <tr align="center">
+	<th>Accion</th>
         <th>Id</th>
         <th>Nombre del Item</th>
         <th>Tipo del Item</th>
@@ -32,8 +33,10 @@
         <th>Adjunto</th>
       </tr>
       <tr align="center" py:for="item in items">
-        <td><a href="${tg.url('/item/%s/edit' % item.id_item)}">${item.id_item}</a></td>
-        <td><a href="${tg.url('/')}">${item.nombre_item}</a></td>
+	<td><a href="${tg.url('editar_item?id_item=%d' % item.id_item)}">Editar</a>
+	<a href="${tg.url('eliminar_item?id_item=%d' % item.id_item)}">Borrar</a></td>
+        <td>${item.id_item}</td>
+        <td>${item.nombre_item}</td>
         <td>${item.tipo_item}</td>
         <td>${item.fase}</td>
         <td>${item.proyecto}</td>

@@ -14,79 +14,26 @@
       <h2>Modificar usuario</h2>
     </div>
 
-    <form action="/editar_usuario" method="post">
-     <fieldset><legend>Datos de Usuario</legend> 
-      <table summary=""><tbody><tr>
-        <th><label for="id">Id:</label></th>
-        <td>
-           <input type="text" id="id" name="id" value="${usuario.idusuario}" disabled="disabled"/>
-           
-        </td>
-        </tr><tr>
-        <th><label for="alias">Alias:</label></th>
-        <td>
-           <input type="text" id="alias" name="alias" value="${usuario.alias}"/>
-           <span py:if="'alias' in errors" class="fielderror">${errors.alias}</span>   
-        </td>
-      </tr><tr>
-        <th><label for="nombre">Nombre:</label></th>
-        <td>
-           <input type="text" id="nombre" name="nombre" value="${usuario.nombre}"/>
-           <span py:if="'nombre' in errors" class="fielderror">${errors.nombre}</span>
-        </td>
-      </tr><tr>
-        <th><label for="apellido">Apellido:</label></th>
-        <td><input type="text" name="apellido" value="${usuario.apellido}"/></td>
-      </tr><tr>
-           
-        <th><label for="nacionalidad">Nacionalidad:</label></th>
-        <td><input type="text" name="nacionalidad" value="${usuario.nacionalidad}"/></td>
-      </tr><tr>
-        <th><label for="nrodoc">Nro.Documento:</label></th>
-        <td><input type="text" name="nrodoc" value="${usuario.nrodoc}"/></td>
-      </tr><tr>
-        <th><label for="email">Email:</label></th>
-        <td>
-            <input type="text" name="email" value="${usuario.email_address}"/>
-             <span py:if="'email' in errors" class="fielderror">${errors.email}</span>
-        </td>
-      </tr><tr>
-        <th><label for="password">Clave:</label></th>
-        <td>
-           <input type="password" name="clave" value="${usuario._password}"/>
-            <span py:if="'clave' in errors" class="fielderror">${errors.clave}</span>
-           </td>
-      </tr><tr>
-        <th><label for="password">Confirmar clave:</label></th>
-        <td>
-          <input type="password" name="clave" value="${usuario._password}"/>
-          <span py:if="'clave' in errors" class="fielderror">${errors.clave}</span>
-         </td>
-      </tr><tr>
-        <th><label for="Roles">Roles:</label></th>
-        <td>
-          <div py:choose="len(roles)" py:strip="True" id="rol">
-          <label for="Roles" py:when="0">No rol</label>
-          <select class="roles" py:otherwise="" size="5">
-              <option id="ninguno" selected="selected" value="">Seleccione algun rol</option>         
-              <option id="roles" py:for="rol in roles" value="${rol.idrol}">${rol.nombrerol}</option>  
-             
-          </select>
-         </div>
-         </td>
-      </tr><tr> 
-        <td></td>
-        <td>
-          <input type="submit" value="Guardar" />
+      <form action="put_usuario" method="PUT">
+      <table summary=""><tbody>
+
+	<tr><td>idusuario </td><td><input type="textfield" name="idusuario" value="${values['idusuario']}"/>${tmpl_context.form_errors.get('idusuario')}</td></tr>
+      	<tr><td>alias </td><td><input type="textfield" name="alias" value="${values['alias']}"/>${tmpl_context.form_errors.get('alias')}</td></tr>	        	<tr><td>nombre </td><td><input type="textfield" name="nombre" value="${values['nombre']}"/>${tmpl_context.form_errors.get('nombre')}</td></tr>
+      	<tr><td>apellido </td><td><input type="textfield" name="apellido" value="${values['apellido']}"/>${tmpl_context.form_errors.get('apellido')}</td></tr>
+	<tr><td>nacionalidad </td><td><input type="textfield" name="nacionalidad" value="${values['nacionalidad']}"/>${tmpl_context.form_errors.get('nacionalidad')}</td></tr>
+      	<tr><td>tipodocumento </td><td><input type="textfield" name="tipodocumento" value="${values['tipodocumento']}"/>${tmpl_context.form_errors.get('tipodocumento')}</td></tr>
+	<tr><td>nrodoc </td><td><input type="textfield" name="nrodoc" value="${values['nrodoc']}"/>${tmpl_context.form_errors.get('nrodoc')}</td></tr>
+	<tr><td>email_address </td><td><input type="email" name="email_address" value="${values['email_address']}"/>${tmpl_context.form_errors.get('email_address')}</td></tr>
+      
+          <tr><td><input type="hidden" name="_method" value="PUT"/>
+	  <input type="submit" value="update"/>
           <input type="submit" name="cancel" value="Cancelar" />
-        </td>
-      </tr></tbody></table>
-     </fieldset>
+        </td></tr>
+     </tbody></table>
+ 
     </form>
 
-    <div id="footer">
-      
-    </div>
+    
   </body>
 </html>
 

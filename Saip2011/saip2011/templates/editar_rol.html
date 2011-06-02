@@ -11,16 +11,17 @@
 </head>
   <body class="submit">
     <div>
-      <h2>Agregar nuevo Rol</h2>
+      <h2>Editar Rol</h2>
     </div>
 
-    <form action="post_rol" method="POST">
+    <form action="put_rol" method="PUT">
    
       <table summary=""><tbody>
-         <tr><td>Nombre </td><td><input type="textfield" name="nombrerol" value="${values.get('nombrerol', '')}"/>${tmpl_context.form_errors.get('nombrerol')}</td></tr>
-  	 <tr><td>Descripcion</td><td> <textarea name="descripcion">${values.get('descripcion')}</textarea>${tmpl_context.form_errors.get('descripcion')}</td></tr><tr>
+	<tr><td>Id </td><td><input type="textfield" name="idrol" value="${values['idrol']}"/>${tmpl_context.form_errors.get('idrol')}</td></tr>
+         <tr><td>Nombre </td><td><input type="textfield" name="nombrerol" value="${values['nombrerol']}"/>${tmpl_context.form_errors.get('nombrerol')}</td></tr>
+  	 <tr><td>Descripcion</td><td> <textarea name="descripcion">"${values['descripcion']}"</textarea>${tmpl_context.form_errors.get('descripcion')}</td></tr>
 	
-        <tr><td>Privilegios</td> 
+        <tr><td>Privilegios</td>
         <td>
           <select multiple="true" name="privilegios">
    	       <py:for each="privilegio in privilegios">
@@ -28,11 +29,11 @@
 	       </py:for>
           </select>
         </td></tr>
-        <td>
-	  <input type="submit" value="Guardar" />
-          <input type="submit" name="cancel" value="Cancelar" />
-        </td>
-      </tr></tbody></table>
+        
+	  <tr><td><input type="hidden" name="_method" value="PUT"/>
+	  <input type="submit" value="update"/>
+        </td></tr>
+      </tbody></table>
     </form>
 
     <div id="footer">

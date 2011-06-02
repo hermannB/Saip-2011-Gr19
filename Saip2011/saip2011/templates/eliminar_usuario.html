@@ -1,0 +1,34 @@
+<html xmlns="http://www.w3.org/1999/xhtml"
+      xmlns:py="http://genshi.edgewall.org/"
+      xmlns:xi="http://www.w3.org/2001/XInclude">
+
+<xi:include href="master.html" />
+<head>
+<meta content="text/html; charset=UTF-8" http-equiv="content-type" py:replace="''"/>
+</head>
+<body>
+<div style="height:0px;">&nbsp;</div>
+<h2>Delete Confirmation</h2>
+<div class="submit">
+
+<form action="post_delete_usuario" method="DELETE">
+	Are you sure you want to delete this record?
+	<table>
+	 <tr><td>idusuario </td><td><input type="textfield" name="idusuario" value="${values['idusuario']}"/>${tmpl_context.form_errors.get('idusuario')}</td></tr>
+	 <tr><td>alias </td><td><input type="textfield" name="alias" value="${values['alias']}"/>${tmpl_context.form_errors.get('alias')}</td></tr>	
+	 <tr><td>nombre </td><td><input type="textfield" name="nombre" value="${values['nombre']}"/>${tmpl_context.form_errors.get('nombre')}</td></tr>
+	 <tr><td>apellido </td><td><input type="textfield" name="apellido" value="${values['apellido']}"/>${tmpl_context.form_errors.get('apellido')}</td></tr>		
+     	 <tr><td>nacionalidad </td><td><input type="textfield" name="nacionalidad" value="${values['nacionalidad']}"/>${tmpl_context.form_errors.get('nacionalidad')}</td></tr>
+	<tr><td>tipodocumento </td><td><input type="textfield" name="tipodocumento" value="${values['tipodocumento']}"/>${tmpl_context.form_errors.get('tipodocumento')}</td></tr>	               
+	<tr><td>nrodoc </td><td><input type="textfield" name="nrodoc" value="${values['nrodoc']}"/>${tmpl_context.form_errors.get('nrodoc')}</td></tr>
+	<tr><td>email_address </td><td><input type="email" name="email_address" value="${values['email_address']}"/>${tmpl_context.form_errors.get('email_address')}	</td></tr>
+	</table>
+	
+	  <input type="hidden" name='_method' value='POST_DELETE'/>
+	  <input type="submit" value="Yes, Delete"/>
+	
+
+</form>
+</div>
+</body>
+</html>

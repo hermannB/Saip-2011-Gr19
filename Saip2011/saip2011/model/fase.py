@@ -32,13 +32,15 @@ class Fase(DeclarativeBase):
 
 	id_fase = Column(Integer, autoincrement=True, primary_key=True)
 
-	nombre_fase = Column(Unicode(30), unique=True, nullable=False)
+	nombre_fase = Column(Unicode(50), unique=True, nullable=False)
 
-	tipo_fase = Column(Unicode(30), nullable=False)
+   	id_tipo_fase = Column(Integer, ForeignKey('Tabla_Tipo_Fase.id_tipo_fase'))
 
-	estado = Column(Unicode(30), nullable=False)
+  	nombre_tipo_fase = relation('Tipo_Fase', backref='Fase')
 
-	linea_base =Column (Unicode(30), nullable=False)
+	estado = Column(Unicode(50), nullable=False)
+
+	linea_base =Column (Unicode(50), nullable=False)
 	
 	descripcion = Column(Text)
 	

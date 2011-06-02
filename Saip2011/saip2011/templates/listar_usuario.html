@@ -19,32 +19,34 @@
     <table class="usuarios" py:when="0">
       <tr><th>No hay usuarios registrados..</th></tr>
     </table>
-    <table border="1" cellspacing="1" cellpadding="5" class="usuarios" py:otherwise="">    
+<form name="form1" id="form1" action="/editar_fase" method="PUT"> 
+   <table border="1" cellspacing="1" cellpadding="8" class="usuarios" py:otherwise="">    
     
      <h2>Lista de Usuarios</h2>
       <tr align="center">
+	<th>Accion</th>
         <th>Id</th>
         <th>Alias</th>
         <th>Nombre</th>
         <th>Apellido</th>
-        <th>Rol</th>
         <th>Nacionalidad</th>
         <th>Nro.Documento</th>
         <th>Email</th>
       </tr>
       <tr align="center" py:for="usuario in usuarios">
-        <td><a href="${tg.url('/editar_usuario/%s' % usuario.idusuario)}">${usuario.idusuario}</a></td>
-        <td><a href="${tg.url('/')}">${usuario.alias}</a></td>
+	<td><a href="${tg.url('editar_usuario?idusuario=%d' % usuario.idusuario)}">Editar</a>
+	<a href="${tg.url('eliminar_usuario?idusuario=%d' % usuario.idusuario)}">Borrar</a></td>
+        <td>${usuario.idusuario}</td>
+        <td>${usuario.alias}</td>
         <td>${usuario.nombre}</td>
         <td>${usuario.apellido}</td>
-        <td>${usuario.roles}</td>
         <td>${usuario.nacionalidad}</td>
         <td>${usuario.nrodoc}</td>
         <td>${usuario.email_address}</td>
       </tr>
              
     </table>   
-    
+   </form> 
   </div>
   <div class="clearingdiv" />
   <div class="notice"> Lista las personas registradas en el sistema.

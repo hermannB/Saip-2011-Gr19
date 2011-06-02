@@ -35,25 +35,25 @@ class Item(DeclarativeBase):
 
 	id_item = Column(Integer, autoincrement=True, primary_key=True)
 
-	nombre_item = Column(Unicode(30), nullable=False)	
+	nombre_item = Column(Unicode(50), nullable=False)	
 
-	tipo_item = Column(Unicode(30), nullable=False)
+	tipo_item = Column(Unicode(50), nullable=False)
 
-	fase = Column(Unicode(30), nullable=False)
+	fase = Column(Unicode(50), nullable=False)
 
-	proyecto = Column(Unicode(30), nullable=False)
+	proyecto = Column(Unicode(50), nullable=False)
 
 	adjunto = Column(Integer)
 
 	complejidad = Column(Integer, nullable=False)
 
-	estado = Column(Unicode(30), nullable=False)
+	estado = Column(Unicode(50), nullable=False)
 
 	campos = Column(Text, nullable=False)
 
 	lista_item = Column(Text)
 
-	creado_por = Column(Unicode(30), nullable=False)
+	creado_por = Column(Unicode(50), nullable=False)
 
 	fecha_creacion = Column(DateTime, default=datetime.now)
 	

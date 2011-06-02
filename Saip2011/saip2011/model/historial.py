@@ -35,7 +35,7 @@ class Historial(DeclarativeBase):
 	
 	version = Column(Integer, nullable=False)
 
-	creado_por = Column(Unicode(30), nullable=False)
+	creado_por = Column(Unicode(50), nullable=False)
 
 	fecha_creacion = Column(DateTime, default=datetime.now)
 	

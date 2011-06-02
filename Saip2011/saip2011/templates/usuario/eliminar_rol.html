@@ -1,0 +1,42 @@
+<html xmlns="http://www.w3.org/1999/xhtml"
+      xmlns:py="http://genshi.edgewall.org/"
+      xmlns:xi="http://www.w3.org/2001/XInclude">
+
+<xi:include href="master.html" />
+<head>
+<meta content="text/html; charset=UTF-8" http-equiv="content-type" py:replace="''"/>
+</head>
+<body>
+<div style="height:0px;">&nbsp;</div>
+<h2>Delete Confirmation</h2>
+Are you sure you want to delete this record?
+<div class="submit">
+
+<form action="post_delete_rol" method="DELETE">
+<table>
+  <tr>
+  <th>Id Rol</th>
+  <th>Nombre Rol</th>
+  <th>Descripcion</th>
+  <th>Privilegios</th>
+  </tr>
+  <tr>
+    <td>${rol.idrol}</td>
+    <td>${rol.nombrerol}</td>
+    <td>${rol.descripcion}</td>
+    <td>
+    <py:for each="privilegio in rol.privilegios">
+   	 ${privilegio.nombreprivilegio},
+    </py:for>
+    </td>
+   
+  </tr>
+</table>
+
+  <input type="hidden" name='_method' value='POST_DELETE'/>
+  <input type="submit" value="Yes, Delete"/>
+
+</form>
+</div>
+</body>
+</html>

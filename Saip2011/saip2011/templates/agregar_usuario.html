@@ -30,13 +30,20 @@
       </tr><tr>
         <th><label for="apellido">Apellido:</label></th>
         <td><input type="text" name="apellido" /></td>
+	<span py:if="'apellido' in errors" class="fielderror">${errors.apellido}</span>
       </tr><tr>
            
         <th><label for="nacionalidad">Nacionalidad:</label></th>
-        <td><input type="text" name="nacionalidad" /></td>
+	<td><input type="text" name="nacionalidad" /></td>
+	<span py:if="'nacionalidad' in errors" class="fielderror">${errors.nacionalidad}</span>
+      </tr><tr>
+	<th><label for="tipodocumento">Tipo de Documento:</label></th>
+        <td><input type="text" name="tipodocumento" /></td>
+	<span py:if="'tipodocumento' in errors" class="fielderror">${errors.tipodocumento}</span>	
       </tr><tr>
         <th><label for="nrodoc">Nro.Documento:</label></th>
         <td><input type="text" name="nrodoc" /></td>
+	<span py:if="'nrodoc' in errors" class="fielderror">${errors.nrodoc}</span>
       </tr><tr>
         <th><label for="email">Email:</label></th>
         <td>

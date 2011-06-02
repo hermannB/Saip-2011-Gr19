@@ -1,0 +1,40 @@
+<!DOCTYPE html>
+<html xmlns="http://www.w3.org/1999/xhtml"
+      xmlns:py="http://genshi.edgewall.org/"
+      xmlns:xi="http://www.w3.org/2001/XInclude">
+
+  <xi:include href="master.html" />
+
+<head>
+	<meta content="text/html; charset=UTF-8" http-equiv="content-type" py:replace="''"/>
+
+
+	<title>Sistema de Administracion de Item</title>
+</head>
+
+<body> 
+
+	<div class="submit">
+		<div>
+			<h2>Editar Privilegio</h2>
+		</div>
+		  <form action="put_privilegio" method="PUT">
+			<table summary="">
+			<tbody>
+				<tr><td>idprivilegio </td><td><input type="textfield" name="idprivilegio" value="${values['idprivilegio']}"/>${tmpl_context.form_errors.get('idprivilegio')}</td></tr>
+			      	<tr><td>nombreprivilegio </td><td><input type="textfield" name="nombreprivilegio" value="${values['nombreprivilegio']}"/>${tmpl_context.form_errors.get('nombreprivilegio')}</td></tr>	
+				<tr><td>descripcion</td><td> <textarea name="descripcion">${values.get('descripcion')}</textarea>${tmpl_context.form_errors.get('descripcion')}</td></tr>		
+     		                <tr><td><input type="hidden" name="_method" value="PUT"/>
+					<input type="submit" value="update"/>
+				</td></tr>
+			
+			</tbody>
+			</table>
+		</form>
+		
+	</div> 
+ 
+</body>
+
+</html>
+

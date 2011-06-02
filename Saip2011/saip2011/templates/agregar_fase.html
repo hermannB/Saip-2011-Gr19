@@ -14,45 +14,32 @@
       <h2>Agregar nueva Fase</h2>
     </div>
 
-    <form action="/agregar_fase" method="post">
+    <form action="post_fase" method="POST">
       <table summary=""><tbody><tr>
-        <th><label for="nombre_fase">Nombre de la Fase:</label></th>
+       
+          <tr><td>Nombre de la Fase </td><td><input type="textfield" name="nombre_fase" value="${values.get('nombre_fase', '')}"/>${tmpl_context.form_errors.get('nombre_fase')}</td></tr>
+         <tr><td>Tipo de Fase</td>
         <td>
-           <input type="text" id="nombre_fase" name="nombre_fase" />
-           <span py:if="'nombre_fase' in errors" class="fielderror">${errors.nombre_fase}</span>   
-        </td>
-	</tr><tr>
-	<th><label for="tipo_fase">Tipo de la Fase:</label></th>
-        <td>
-           <input type="text" id="tipo_fase" name="tipo_fase" />
-           <span py:if="'tipo_fase' in errors" class="fielderror">${errors.tipo_fase}</span>   
-        </td>
-      </tr><tr>
-        <th><label for="estado">Estado:</label></th>
-        <td>
-           <input type="text" id="estado" name="estado" />
-           <span py:if="'estado' in errors" class="fielderror">${errors.estado}</span>
-        </td>
-      </tr><tr>
-        <th><label for="linea_base">Linea Base:</label></th>
-        <td><input type="text" name="linea_base" /></td>
-      </tr><tr>
-        <th><label for="descripcion">Descripcion:</label></th>
-        <td>
-           <input type="text" id="descripcion" name="descripcion" />
-           <span py:if="'descripcion' in errors" class="fielderror">${errors.descripcion}</span>
-        </td>
-      </tr><tr>
+          <select name="id_tipo_fase">
+              <py:for each="tipo_fase in tipos_fases">
+                  <option value="$tipo_fase.id_tipo_fase" selected="selected">$tipo_fase.nombre_tipo_fase</option>
+                
+              </py:for>
+          </select>
+        </td></tr>
+	 <tr><td>Estado </td><td><input type="textfield" name="estado" value="${values.get('estado', '')}"/>${tmpl_context.form_errors.get('estado')}</td></tr>
+	 <tr><td>Linea Base </td><td><input type="textfield" name="linea_base" value="${values.get('linea_base', '')}"/>${tmpl_context.form_errors.get('linea_base')}</td></tr>
+          <tr><td>descripcion</td><td> <textarea name="descripcion">${values.get('descripcion')}</textarea>${tmpl_context.form_errors.get('descripcion')}</td></tr>
+
         <td></td>
         <td>
           <input type="submit" value="Guardar" />
-          <input type="submit" name="cancel" value="Cancelar" />
-        </td>
+ 	
+          </td>
       </tr></tbody></table>
     </form>
 
     <div id="footer">
-    <p py:replace="data"></p>  
     </div>
   </body>
 </html>
