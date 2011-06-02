@@ -9,8 +9,10 @@ It's perfectly fine to re-use this definition in the Saip2011 application,
 though.
 
 """
+
 import os
 from datetime import datetime
+import transaction
 import sys
 try:
     from hashlib import sha1

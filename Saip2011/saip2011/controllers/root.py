@@ -174,8 +174,9 @@ class RootController(BaseController):
             form = UsuarioForm()
             try:
                 data = form.to_python(data)
-                usuario = Usuario(alias=data.get('alias'),nombre=data.get('nombre'),apellido=data.get('apellido'),email_address=data.get('email'),_password=data.get('clave'))
+                usuario = Usuario(alias=data.get('alias'),nombre=data.get('nombre'),apellido=data.get('apellido'),email_address=data.get('email'),nacionalidad=data.get('nacionalidad'),tipodocumento=data.get('tipodocumento'),nrodoc=data.get('nrodoc'),_password=data.get('clave'))
                 #if isinstance(usuario,Usuario) :
+		usuario._set_password(data.get('clave'))
                 DBSession.add(usuario)
                 DBSession.flush()
                 #DBSession.commit()
@@ -225,42 +226,69 @@ class RootController(BaseController):
         roles = Rol.get_roles()
         return dict(pagina="listar_rol",roles=roles)
 
+
     @expose('saip2011.templates.agregar_rol')
-    def agregar_rol(self,cancel=False,**data):
-        errors = {}
-       	rol = None
-        if request.method == 'POST':
-            if cancel:
-                redirect('/rol')
-            form = RolForm()
-            try:
-                data = form.to_python(data)
-                rol = Rol(nombrerol=data.get('nombrerol'),descripcion=data.get('descripcion'),privilegios=data.get('privilegios'))
-                #if isinstance(usuario,Usuario) :
-                DBSession.add(rol)
-                DBSession.flush()
-                #DBSession.commit()
-                #transaction.commit() 
-                print rol
-                flash("Rol agregado!")
-            except Invalid, e:
-                print e
-                rol = None
-                errors = e.unpack_errors()
-                flash(_("Favor complete los datos requeridos"),'warning')
-            except IntegrityError:
-                flash("LLave duplicada")
-                DBSession.rollback()
-                redirect('/agregar_rol')
-            
-        else:
-            errors = {}        
-        #aqui se debe guardar los datos obtenidos
-        #usuario = Usuario(data[0])
-        #tmpl = loader.load('agregar_usuario.html')
-        #stream = tmpl.generate()
-        #return stream.render('html',doctype='html')
-        return dict(pagina='agregar_rol',data=data.get('nombrerol'),errors=errors)
+    def agregar_rol(self, *args, **kw):
+        privilegios = DBSession.query(Privilegios).all()
+        
+      #  if 'privilegios' in kw and not isinstance(kw['privilegios'], list):
+       #     kw['privilegios'] = [kw['privilegios']]
+
+        return dict(pagina="agregar_rol",values=kw, privilegios=privilegios)
+    
+    @validate({'nombrerol':NotEmpty, 
+               'descripcion':NotEmpty}, 
+                error_handler=agregar_rol)
+   
+    @expose()
+    def post(self, nombrerol, descripcion, privilegios=None):
+        flash("Rol agregado!")
+        if privilegios is not None:
+            if not isinstance(privilegios, list):
+                privilegios = [privilegios]
+            privilegios = [DBSession.query(Privilegios).get(privilegio) for privilegio in privilegios]
+        rol = Rol(nombrerol=nombrerol, descripcion=descripcion, privilegios=privilegios)
+        DBSession.add(rol)
+	DBSession.flush()
+        redirect('./')
+ 
+#   @expose('saip2011.templates.agregar_rol')
+#    def agregar_rol(self,cancel=False,**data):
+#        errors = {}
+#       	rol = None
+#        if request.method == 'POST':
+#            if cancel:
+#                redirect('/rol')
+#            form = RolForm()
+#            try:
+#                data = form.to_python(data)
+#                rol = Rol(nombrerol=data.get('nombrerol'),descripcion=data.get('descripcion'),privilegios=data.get('privilegios'))
+#                #if isinstance(usuario,Usuario) :
+#                DBSession.add(rol)
+#                DBSession.flush()
+#                #DBSession.commit()
+#                #transaction.commit() 
+#                print rol
+#                flash("Rol agregado!")
+#            except Invalid, e:
+#                print e
+#                rol = None
+#                errors = e.unpack_errors()
+#                flash(_("Favor complete los datos requeridos"),'warning')
+#            except IntegrityError:
+#                flash("LLave duplicada")
+#                DBSession.rollback()
+#                redirect('/agregar_rol')
+#            
+#        else:
+#            errors = {}        
+#        #aqui se debe guardar los datos obtenidos
+#        #usuario = Usuario(data[0])
+#        #tmpl = loader.load('agregar_usuario.html')
+#        #stream = tmpl.generate()
+#        #return stream.render('html',doctype='html')
+#        return dict(pagina='agregar_rol',data=data.get('nombrerol'),errors=errors)
+#
 
  # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # #
 

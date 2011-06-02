@@ -14,37 +14,29 @@
       <h2>Agregar nuevo Rol</h2>
     </div>
 
-    <form action="/agregar_rol" method="post">
-      <table summary=""><tbody><tr>
-        <th><label for="nombrerol">Nombre_Rol:</label></th>
-        <td>
-           <input type="text" id="nombrerol" name="nombrerol" />
-           <span py:if="'nombrerol' in errors" class="fielderror">${errors.nombrerol}</span>   
-        </td>
-      </tr><tr>
-        <th><label for="descripcion">Descripcion:</label></th>
-        <td>
-           <input type="text" id="descripcion" name="descripcion" />
-           <span py:if="'descripcion' in errors" class="fielderror">${errors.descripcion}</span>
-        </td>
-      </tr><tr>
+    <form action="post" method="POST">
+   
+      <table summary=""><tbody>
+         <tr><td>Nombre </td><td><input type="textfield" name="nombrerol" value="${values.get('nombrerol', '')}"/>${tmpl_context.form_errors.get('nombrerol')}</td></tr>
+  	 <tr><td>Descripcion</td><td> <textarea name="descripcion">${values.get('descripcion')}</textarea>${tmpl_context.form_errors.get('descripcion')}</td></tr><tr>
 	
-        <th><label for="privilegios">Privilegios:</label>  </th>
+        <tr><td>Privilegios</td>
         <td>
-	   <input type="text" id="privilegios" name="privilegios" />
-           <span py:if="'privilegios' in errors" class="fielderror">${errors.privilegios}</span>
-        </td>
-        <td></td>
+          <select multiple="true" name="privilegios">
+   	       <py:for each="privilegio in privilegios">
+                   <option value="$privilegio.idprivilegio" selected="selected">$privilegio.nombreprivilegio</option>
+	       </py:for>
+          </select>
+        </td></tr>
         <td>
-          <input type="submit" value="Guardar" />
+	  <input type="submit" value="Guardar" />
           <input type="submit" name="cancel" value="Cancelar" />
         </td>
       </tr></tbody></table>
     </form>
 
     <div id="footer">
-    <p py:replace="data"></p>  
-    </div>
+       </div>
   </body>
 </html>
 
