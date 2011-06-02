@@ -76,6 +76,11 @@ class Tipo_ItemController(BaseController):
 	@expose()
 	def put(self, id_tipo_item, nombre_tipo_item, descripcion, campo,**kw):
 		tipo_item = DBSession.query(Tipo_Item).get(id_tipo_item)
+		campos2=Tipo_Campos.get_campos_by_tipo_item(tipo_item.id_tipo_item)
+
+		for cam in campos2:
+			DBSession.delete(DBSession.query(Tipo_Campos).get(cam.id_tipo_campos))
+			DBSession.flush()
 
 		tipo_item.nombre_tipo_item = nombre_tipo_item
 		tipo_item.descripcion = descripcion
@@ -85,8 +90,9 @@ class Tipo_ItemController(BaseController):
 				campo = [campo]
 
 		for camp in campo:
-			campoG =Tipo_Campos(id_tipo_item=id_tipo_item,nombre_campo=camp)
-			DBSession.add(campoG)
+			if camp != "":
+				campoG =Tipo_Campos(id_tipo_item=id_tipo_item,nombre_campo=camp)
+				DBSession.add(campoG)
 		DBSession.flush()
 		flash("Tipo de Item modificada!")
 		redirect('/tipo_item/tipo_item')
@@ -94,9 +100,11 @@ class Tipo_ItemController(BaseController):
 	@expose('saip2011.templates.tipo_item.clonar_tipo_item')
 	def clonar_tipo_item(self,id_tipo_item,*args, **kw):
 		tipo_item = DBSession.query(Tipo_Item).get(id_tipo_item)
-		campos = Tipo_Campos.get_campos_by_tipo_item(id_tipo_item)
+		campos = Tipo_Campos.get_nombres_by_tipo_item(tipo_item.id_tipo_item)
+
 		if request.method != 'PUT':  
-			values = dict( nombre_tipo_item=tipo_item.nombre_tipo_item, 
+			values = dict( id_tipo_item=tipo_item.id_tipo_item, 
+							nombre_tipo_item=tipo_item.nombre_tipo_item, 
 							descripcion=tipo_item.descripcion
 							)
 
@@ -117,8 +125,9 @@ class Tipo_ItemController(BaseController):
 
 		id_tipo=Tipo_Item.get_ultimo_id()        
 		for camp in campo:
-			camp =Tipo_Campos(id_tipo_item=id_tipo,nombre_campo=camp)
-
+			if camp != "":
+				camp =Tipo_Campos(id_tipo_item=id_tipo,nombre_campo=camp)
+				DBSession.add(camp)
 		DBSession.flush()
 		flash("Tipo de Item clonada!")
 		redirect('/tipo_item/tipo_item')
@@ -132,6 +141,7 @@ class Tipo_ItemController(BaseController):
 						descripcion=tipo_item.descripcion,
 						)
 
+
 		return dict(pagina="eliminar_tipo_item",values=values)
 
 	@validate({'id_tipo_item':Int(not_empty=True), 
@@ -141,6 +151,11 @@ class Tipo_ItemController(BaseController):
 
 	@expose()
 	def post_delete(self, id_tipo_item, nombre_tipo_item, descripcion, **kw):
+		campos2=Tipo_Campos.get_campos_by_tipo_item(id_tipo_item)
+
+		for cam in campos2:
+			DBSession.delete(DBSession.query(Tipo_Campos).get(cam.id_tipo_campos))
+			DBSession.flush()
 
 		DBSession.delete(DBSession.query(Tipo_Item).get(id_tipo_item))
 		DBSession.flush()

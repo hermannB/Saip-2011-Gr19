@@ -7,8 +7,10 @@
 
 <head>
 	<meta content="text/html; charset=UTF-8" http-equiv="content-type" py:replace="''"/>
-<script type="text/javascript" src="js/jquery-1.4.2.min.js"></script>
-	<script src="js/vanadium-min.js" type="text/javascript"></script>
+
+	<script src="/js/vanadium-min.js" type="text/javascript"></script>
+<script src="/js/jquery-1.6.1.js" type="text/javascript" language="javascript"></script>
+<script src="/js/jquery.MultiFile.js" type="text/javascript" language="javascript"></script>
 
 
 
@@ -39,7 +41,7 @@
 				     </select>
 				 </td></tr>	
 				<tr><td>complejidad </td><td><input type="textfield" name="complejidad" value="${values['complejidad']}"/>${tmpl_context.form_errors.get('complejidad')}</td></tr>				        	
-				<tr><td>adjunto</td><td> <textarea name="adjunto">${values.get('adjunto')}</textarea>${tmpl_context.form_errors.get('adjunto')}</td></tr>		
+				 <tr><td>adjunto </td><td><input type="file" class="multi" name="adjunto" value="${values.get('adjunto', '')}"/>${tmpl_context.form_errors.get('adjunto')}</td></tr>
      		                <tr><td><input type="hidden" name="_method" value="PUT"/>
 					<input type="submit" value="Actualizar"/>
 				</td></tr>

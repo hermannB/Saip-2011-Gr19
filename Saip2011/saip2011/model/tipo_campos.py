@@ -63,7 +63,7 @@ class Tipo_Campos (DeclarativeBase):
         campos = DBSession.query(Tipo_Campos).all()
         lista = []
         for campo in campos:
-            if (campo.id_tipo_item == int(4)):
+            if (campo.id_tipo_item == id_tipo):
                 lista.append(campo)
 
         return lista
