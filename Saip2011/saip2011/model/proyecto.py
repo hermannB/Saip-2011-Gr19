@@ -68,5 +68,16 @@ class Proyecto(DeclarativeBase):
 		    
 		return proyectos
 
+	@classmethod
+	def get_proyecto_by_id(self,id_proyecto):
+		"""
+		Obtiene la lista de todos los roles
+		registrados en el sistema
+		"""
+
+		proyecto = DBSession.query(Proyecto).get(id_proyecto)
+		    
+		return proyecto
+
 	#}
 

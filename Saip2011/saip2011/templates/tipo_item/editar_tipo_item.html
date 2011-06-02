@@ -1,0 +1,65 @@
+<!DOCTYPE html>
+<html xmlns="http://www.w3.org/1999/xhtml"
+      xmlns:py="http://genshi.edgewall.org/"
+      xmlns:xi="http://www.w3.org/2001/XInclude">
+
+  <xi:include href="master.html" />
+
+<head>
+	<meta content="text/html; charset=UTF-8" http-equiv="content-type" py:replace="''"/>
+<script type="text/javascript" src="js/jquery-1.4.2.min.js"></script>
+<script type="text/javascript">
+	var nextinput = 0;
+	function AgregarCampos(){
+		nextinput++;
+		campo = '<li id="rut'+nextinput+'">Campo:<input type="text" size="20" id="campo"  name="campo"  /></li>';
+		$("#campos").append(campo);
+	}
+</script>
+
+
+	<title>Sistema de Administracion de Item</title>
+</head>
+
+<body> 
+
+	<div class="submit">
+		<div>
+			<h2>Editar Tipo de Item</h2>
+		</div>
+		  <form action="put" method="PUT">
+			<table summary="">
+			<tbody>
+				<tr><td>id_tipo_item </td><td><input readonly="readonly" type="textfield" name="id_tipo_item"  value="${values['id_tipo_item']}"/>${tmpl_context.form_errors.get('id_tipo_item')}</td></tr>
+			      	<tr><td>nombre_tipo_item </td><td><input class="required" maxlength="50" type="textfield" name="nombre_tipo_item" value="${values['nombre_tipo_item']}"/>${tmpl_context.form_errors.get('nombre_tipo_item')}</td></tr>
+<tr><td>campos2 </td><td><input class="required" maxlength="50" type="textfield" name="campos" value="${values['campos']}"/>${tmpl_context.form_errors.get('campos')}</td></tr>		
+				<tr><td>descripcion</td><td> <textarea rows="10" cols="40" name="descripcion">${values.get('descripcion')}</textarea>${tmpl_context.form_errors.get('descripcion')}</td></tr>		
+
+				<tr><td>Campos</td>
+				<td>
+					<py:for each="campo in campos2"><div id="campos2">
+						<tr>
+							<td>Campo </td>
+					<input type="text" size="20" id="campo"  name="campo"  value="$campo.nombre_campo"/>
+						</tr></div>
+					</py:for>
+					
+				</td></tr>
+
+				<tr><td><a href="#" onclick="AgregarCampos();">Agregar Campos</a></td>
+				        <td><div id="campos">    </div>	</td></tr>
+
+     		                <tr><td><input type="hidden" name="_method" value="PUT"/>
+					<input type="submit" value="update"/>
+				</td></tr>
+			
+			</tbody>
+			</table>
+		</form>
+		
+	</div> 
+ 
+</body>
+
+</html>
+

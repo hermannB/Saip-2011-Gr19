@@ -7,8 +7,26 @@
 
   <head>
   <meta content="text/html; charset=UTF-8" http-equiv="content-type" py:replace="''"/>
-   <link type="text/css" rel="stylesheet" href="css/selectMultiple.css" />
-   <script type="text/javascript" src="js/selectMultiple.js"></script>
+	<script type="text/javascript" src="js/jquery.js"></script>
+	<script type="text/javascript" src="js/jquery.ui.js"></script>
+	<script type="text/javascript" src="js/jquery.asmselect.js"></script>
+
+	<script type="text/javascript">
+
+		$(document).ready(function() {
+			$("#tipos_fases").asmSelect({
+				addItemTarget: 'bottom',
+				animate: true,
+				highlight: true,
+				sortable: true
+			});
+			
+		}); 
+
+	</script>
+
+	<link rel="stylesheet" type="text/css" href="css/jquery.asmselect.css" />
+	<link rel="stylesheet" type="text/css" href="css/example.css" />
 
   <title>Sistema de Administracion de Item</title>
 </head>
@@ -31,9 +49,9 @@
 	      </select>
          </td></tr>
 
-	<tr><td>Lista de Fases</td> 
+	<tr><td>Lista Ordenada de Fases</td> 
         <td>
-          <select multiple="multiple" name="tipos_fases">
+		<select id="tipos_fases" multiple="multiple" name="tipos_fases" title="Seleccionar las Fases Necesarias">
    	       <py:for each="tipo_fase in tipos_fases">
                    <option value="$tipo_fase.id_tipo_fase" >$tipo_fase.nombre_tipo_fase</option>
 	       </py:for>

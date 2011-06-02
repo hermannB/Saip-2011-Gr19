@@ -242,7 +242,7 @@ class Usuario(DeclarativeBase):
         """
         Obtiene el usuario por su id
         """
-        usuario, = DBSession.query(Usuario).filter_by(idusuario=iduser)
+        usuario = DBSession.query(Usuario).filter_by(idusuario=iduser)
         
         return usuario
 

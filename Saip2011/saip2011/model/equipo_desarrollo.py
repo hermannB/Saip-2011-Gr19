@@ -88,5 +88,15 @@ class Equipo_Desarrollo(DeclarativeBase):
 	
     #}
 
+    @classmethod
+    def get_miembros_by_usuario(self, id_miembro):
+	equipos = DBSession.query(Equipo_Desarrollo).all()
+	lista = []
+	for equipo in equipos:
+	   if (equipo.idusuario == id_miembro):
+		lista.append(equipo)
+
+	return lista
+
 
 #
