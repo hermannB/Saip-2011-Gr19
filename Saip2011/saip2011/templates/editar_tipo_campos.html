@@ -1,0 +1,40 @@
+<!DOCTYPE html>
+<html xmlns="http://www.w3.org/1999/xhtml"
+      xmlns:py="http://genshi.edgewall.org/"
+      xmlns:xi="http://www.w3.org/2001/XInclude">
+
+  <xi:include href="master.html" />
+
+<head>
+	<meta content="text/html; charset=UTF-8" http-equiv="content-type" py:replace="''"/>
+
+
+	<title>Sistema de Administracion de Item</title>
+</head>
+
+<body> 
+
+	<div class="submit">
+		<div>
+			<h2>Editar Campo del Tipo de Item</h2>
+		</div>
+		  <form action="put_tipo_campos" method="PUT">
+			<table summary="">
+			<tbody>
+				<tr><td>id_tipo_campos </td><td><input type="textfield" name="id_tipo_campos" value="${values['id_tipo_campos']}"/>${tmpl_context.form_errors.get('id_tipo_item')}</td></tr>
+				<tr><td>nombre_campo </td><td><input type="textfield" name="nombre_campo" value="${values['nombre_campo']}"/>${tmpl_context.form_errors.get('nombre_campo')}</td></tr>	
+				<tr><td>valor_campo</td><td> <textarea name="valor_campo">${values.get('valor_campo')}</textarea>${tmpl_context.form_errors.get('valor_campo')}</td></tr>		
+     		                <tr><td><input type="hidden" name="_method" value="PUT"/>
+					<input type="submit" value="update"/>
+				</td></tr>
+			
+			</tbody>
+			</table>
+		</form>
+		
+	</div> 
+ 
+</body>
+
+</html>
+

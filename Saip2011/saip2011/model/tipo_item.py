@@ -52,6 +52,18 @@ class Tipo_Item(DeclarativeBase):
 		    
 		return tipos_items
 
+	@classmethod
+	def get_ultimo_id(self):
+		"""
+		Obtiene el ultimo id de la tabla
+		"""
+		mayor =0
+		tipos_items = DBSession.query(Tipo_Item).all()
+		for tipo_item in tipos_items:
+		   if (tipo_item.id_tipo_item > mayor):
+		      mayor =tipo_item.id_tipo_item
+
+		return mayor
 	#}
 
 

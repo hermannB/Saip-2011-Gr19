@@ -60,3 +60,8 @@ class ProyectoForm(Schema):
     lista_fases = validators.UnicodeString(not_empty=True)
     descripcion = validators.UnicodeString(not_empty=True)
 
+class TipoCamposForm(Schema):
+    nombre_campo = validators.UnicodeString(not_empty=True)
+    valor_campo = validators.UnicodeString(not_empty=True)
+
+

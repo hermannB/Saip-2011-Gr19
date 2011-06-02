@@ -32,10 +32,16 @@ class Equipo_Desarrollo(DeclarativeBase):
     #{ Columns
     
     id_equipo = Column(Integer, autoincrement=True, primary_key=True)
+
+    proyecto = Column(Integer)
     
-    alias = Column(Unicode(50), unique=True, nullable=False)
+    idusuario = Column(Integer, ForeignKey('Tabla_Usuario.idusuario'))
+
+    nombre_usuario = relation('Usuario', backref='Equipo_Desarrollo')
     
-    rol = Column(Unicode(50), nullable=False)
+    idrol = Column(Integer, ForeignKey('Tabla_Rol.idrol'))
+
+    nombre_rol = relation('Rol', backref='Equipo_Desarrollo')
     
     
     #{ Relations
@@ -57,10 +63,19 @@ class Equipo_Desarrollo(DeclarativeBase):
         Obtiene la lista de todos los equipos
         registrados en el sistema
         """
-
         equipos = DBSession.query(Equipo_Desarrollo).all()
-           
         return equipos    
+
+
+    @classmethod
+    def get_miembros_by_proyecto(self, id_proyecto):
+	equipos = DBSession.query(Equipo_Desarrollo).all()
+	lista = []
+	for equipo in equipos:
+	   if (equipo.proyecto == id_proyecto):
+		lista.append(equipo)
+
+	return lista
     #}
 
 

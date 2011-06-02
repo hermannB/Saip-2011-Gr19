@@ -1,0 +1,48 @@
+<!DOCTYPE html>
+<html xmlns="http://www.w3.org/1999/xhtml"
+      xmlns:py="http://genshi.edgewall.org/"
+      xmlns:xi="http://www.w3.org/2001/XInclude">
+
+  <xi:include href="master.html" />
+
+<head>
+  <meta content="text/html; charset=UTF-8" http-equiv="content-type" py:replace="''"/>
+  <title>Sistema de Administracion de Item</title>
+</head>
+
+<body class="submit">
+    <div>
+      <h2>Agregar nuevo Miembro al Equipo</h2>
+    </div>
+
+    <form action="post_miembro" method="POST">
+    <table summary=""><tbody><tr>
+       
+         <tr><td>Nombre del Usuario</td>
+     	     <td>
+     	     <select name="idusuario">
+		<py:for each="usuario in usuarios">
+         	       <option value="$usuario.idusuario" selected="selected">$usuario.alias</option>
+	        </py:for>
+	      </select>
+         </td></tr>
+
+	 <tr><td>Nombre del Usuario</td>
+     	     <td>
+     	     <select name="idrol">
+		<py:for each="rol in roles">
+         	       <option value="$rol.idrol" selected="selected">$rol.nombrerol</option>
+	        </py:for>
+	      </select>
+         </td></tr>
+        
+	<td>
+        	<input type="submit" value="Guardar" />
+	</td>
+
+      </tr></tbody></table>
+    </form>
+
+  </body>
+</html>
+

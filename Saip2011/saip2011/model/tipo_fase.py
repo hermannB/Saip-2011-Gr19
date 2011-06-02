@@ -15,6 +15,7 @@ from sqlalchemy import Table, ForeignKey, Column
 from sqlalchemy.types import Unicode, Integer, DateTime , Text , String
 from sqlalchemy.orm import relation, synonym
 
+from saip2011.model.proyecto import Proyecto , proyecto_tipo_fase_tabla
 from saip2011.model import DeclarativeBase, metadata, DBSession
 
 __all__ = ['Tipo_Fase']
@@ -35,6 +36,11 @@ class Tipo_Fase(DeclarativeBase):
 	nombre_tipo_fase = Column(Unicode(50), unique=True, nullable=False)
 
 	descripcion = Column(Text)
+
+	 #{ Relations
+    
+        proyectos = relation(Proyecto, secondary=proyecto_tipo_fase_tabla,
+                              backref='tipos_fases')
 	
 	#{ Special methods
 

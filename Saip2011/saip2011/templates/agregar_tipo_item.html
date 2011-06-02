@@ -16,7 +16,7 @@
 
     <form action="/agregar_tipo_item" method="post">
       <table summary=""><tbody><tr>
-        <th><label for="nombre_tipo_itemL">Nombre del Tipo de Item:</label></th>
+        <th><label for="nombre_tipo_item">Nombre del Tipo de Item:</label></th>
         <td>
            <input type="text" id="nombre_tipo_item" name="nombre_tipo_item" />
            <span py:if="'nombre_tipo_item' in errors" class="fielderror">${errors.nombre_tipo_item}</span>   
@@ -29,6 +29,9 @@
            <span py:if="'descripcion' in errors" class="fielderror">${errors.descripcion}</span>
         </td>
       </tr><tr>
+
+	  <td><a href="${tg.url('agregar_tipo_campos')}">Agregar Campo al Tipo de Item</a></td>
+	  <td><a href="${tg.url('listar_tipo_campos')}">Listar Campos Agregados</a></td>
         <td></td>
         <td>
           <input type="submit" value="Guardar" />

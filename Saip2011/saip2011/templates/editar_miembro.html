@@ -1,0 +1,56 @@
+<!DOCTYPE html>
+<html xmlns="http://www.w3.org/1999/xhtml"
+      xmlns:py="http://genshi.edgewall.org/"
+      xmlns:xi="http://www.w3.org/2001/XInclude">
+
+  <xi:include href="master.html" />
+
+<head>
+	<meta content="text/html; charset=UTF-8" http-equiv="content-type" py:replace="''"/>
+
+
+	<title>Sistema de Administracion de Item</title>
+</head>
+
+<body> 
+
+	<div class="submit">
+		<div>
+			<h2>Editar Fase</h2>
+		</div>
+		  <form action="put_miembro" method="PUT">
+			<table summary="">
+			<tbody>
+				<tr><td>id_equipo </td><td><input type="textfield" name="id_equipo" value="${values['id_equipo']}"/>${tmpl_context.form_errors.get('id_equipo')}</td></tr>
+				<tr><td>Nombre del usuario</td>
+					<td>
+					  <select name="idusuario">
+					      <py:for each="usuario in usuarios">
+						  <option value="$usuario.idusuario" selected="selected">$usuario.alias</option>
+					      </py:for>
+					  </select>
+				</td></tr>
+			
+				<tr><td>Nombre del rol</td>
+					<td>
+					  <select name="idrol">
+					      <py:for each="rol in roles">
+						  <option value="$rol.idrol" selected="selected">$rol.nombrerol</option>
+					      </py:for>
+					  </select>
+				</td></tr>
+					
+     		                <tr><td><input type="hidden" name="_method" value="PUT"/>
+					<input type="submit" value="update"/>
+				</td></tr>
+			
+			</tbody>
+			</table>
+		</form>
+		
+	</div> 
+ 
+</body>
+
+</html>
+

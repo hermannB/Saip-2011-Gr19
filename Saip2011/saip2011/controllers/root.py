@@ -2,7 +2,7 @@
 """Main Controller"""
 
 from tg import expose, flash, require, url, request, redirect
-
+from datetime import datetime
 from tg.controllers import RestController, redirect
 from tg.decorators import expose, validate
 from formencode.validators import DateConverter, Int, NotEmpty
@@ -11,8 +11,8 @@ from pylons.i18n import ugettext as _, lazy_ugettext as l_
 from catwalk.tg2 import Catwalk
 from repoze.what import predicates
 from tgext.crud import CrudRestController
-from sprox.tablebase import TableBase
-from sprox.fillerbase import TableFiller
+#from sprox.tablebase import TableBase
+#from sprox.fillerbase import TableFiller
 import transaction
 from saip2011.lib.base import BaseController
 from saip2011.model import DBSession, metadata
@@ -27,16 +27,15 @@ from saip2011.model.equipo_desarrollo import Equipo_Desarrollo
 from saip2011.model.tipo_item import Tipo_Item
 from saip2011.model.proyecto import Proyecto
 from saip2011.model.historial import Historial
-
+from saip2011.model.tipo_campos import Tipo_Campos
  
 from saip2011.controllers.secure import SecureController
 from cherrypy import HTTPRedirect
 from genshi.template import TemplateLoader
 import os
 from saip2011.form import UsuarioForm , RolForm , PrivilegioForm , FaseForm , TipoFaseForm 
-from saip2011.form import ItemForm , TipoItemForm , EquipoForm , ProyectoForm
+from saip2011.form import ItemForm , TipoItemForm , EquipoForm , ProyectoForm , TipoCamposForm
 from formencode import Invalid
-import transaction
 from psycopg2 import IntegrityError
 
 
@@ -76,9 +75,10 @@ class RootController(BaseController):
  #######    Variables globales de control
 
     username =""
-    fase_activa=""
-    proyecto_actual=""
-    rol_actual=""
+    fase_actual=1
+    proyecto_actual=2
+    rol_actual=2
+    tipo_actual=1
 
     def set_username(self, nombre):
 	self.username = nombre
@@ -86,11 +86,11 @@ class RootController(BaseController):
     def get_username(self):
         return self.username
 
-    def set_fase_activa(self, fase):
-	self.fase_activa = fase
+    def set_fase_actual(self, fase):
+	self.fase_actual = fase
 
-    def get_fase_activa(self):
-        return self.fase_activa
+    def get_fase_actual(self):
+        return self.fase_actual
 
     def set_proyecto_actual(self, proyecto):
 	self.proyecto_actual = proyecto
@@ -104,6 +104,11 @@ class RootController(BaseController):
     def get_rol_actual(self):
         return self.rol_actual
 
+    def set_tipo_actual(self, tipo):
+	self.tipo_actual = tipo
+
+    def get_tipo_actual(self):
+        return self.tipo_actual
 
  # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # #
 
@@ -757,40 +762,37 @@ class RootController(BaseController):
         return dict(pagina="listar_item",items=items)
 
     @expose('saip2011.templates.agregar_item')
-    def agregar_item(self,cancel=False,**data):
-        errors = {}
-        item = None
-        if request.method == 'POST':
-            if cancel:
-                redirect('/item')
-            form = ItemForm()
-            try:
-                data = form.to_python(data)
+    def agregar_item(self, *args, **kw):
+       	tipos_items = DBSession.query(Tipo_Item).all()	
 
-                item = Item(nombre_item=data.get('nombre_item'), tipo_item=data.get('tipo_item'), fase=data.get('fase'),
-		 	    proyecto=data.get('proyecto'), adjunto=data.get('adjunto'), estado=data.get('estado'),
-			    campos=data.get('campos'),complejidad=data.get('complejidad'), lista_item=data.get('lista_item'),
-			    creado_por=data.get('creado_por'),fecha_creacion=data.get('fecha_creacion'))
+        return dict(pagina="agregar_item",values=kw, tipos_items=tipos_items)
+    
+    @validate({'nombre_item':NotEmpty, 
+                'adjunto':Int(not_empty=True),
+                'complejidad':Int(not_empty=True), 
+                'estado':NotEmpty,
+		'fecha_creacion':DateConverter(not_empty=True)}, error_handler=agregar_item)
 
-                DBSession.add(item)
-                DBSession.flush()
-                print item
-                flash("Item agregado!")
+    @expose()
+    def post_item(self, nombre_item, adjunto, complejidad, estado, id_tipo_item,fecha_creacion):
+        if id_tipo_item is not None:
+           id_tipo_item = int(id_tipo_item)
 
-            except Invalid, e:
-                print e
-                item = None
-                errors = e.unpack_errors()
-                flash(_("Favor complete los datos requeridos"),'warning')
+	#if lista_items is not None:
+        #    if not isinstance(lista_items, list):
+        #        lista_items = [lista_items]
+        #   lista_items = [DBSession.query(Item).get(lista_item) for lista_item in lista_items]
+        
+	fecha_creacion = datetime.strptime(fecha_creacion, "%m/%d/%y")
+        item = Item (nombre_item=nombre_item, id_tipo_item=id_tipo_item, 
+		             adjunto=adjunto, complejidad=complejidad, estado = estado ,fase=self.get_fase_actual(), proyecto=self.get_proyecto_actual(),creado_por =self.get_username(), fecha_creacion = fecha_creacion )
+        DBSession.add(item)
+        
+        
+        DBSession.add(item)
+	flash("Item Agregado!")  
+        redirect('./item')
 
-            except IntegrityError:
-                flash("LLave duplicada")
-                DBSession.rollback()
-                redirect('/agregar_item')
-        else:
-            errors = {}        
-
-        return dict(pagina='agregar_item',data=data.get('nombre_item'),errors=errors)
 
 # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # #
 
@@ -901,56 +903,96 @@ class RootController(BaseController):
         """
            Menu para Equipo de Desarrollo
         """
-        return dict(pagina="equipo")
+	return dict(pagina="equipo")
     
-    @expose('saip2011.templates.editar_equipo')
-    def equipomod(self,id_equipo,action):
-        """
-           Metodo que recibe ID de equipo para
-           ser modificado
-        """
-        return "Pagina no disponible"
-    
-    @expose('saip2011.templates.listar_equipo')
-    def listar_equipo(self):
+    @expose('saip2011.templates.listar_miembro')
+    def listar_miembro(self):
         """Lista equipos 
         """
-        equipos = Equipo_Desarrollo.get_equipo()
-        return dict(pagina="listar_equipo",equipos=equipos)
+        equipos =  Equipo_Desarrollo.get_miembros_by_proyecto(self.get_proyecto_actual())
+        return dict(pagina="listar_miembro",equipos=equipos)
 
-    @expose('saip2011.templates.agregar_equipo')
-    def agregar_equipo(self,cancel=False,**data):
-        errors = {}
-        equipo = None
+    @expose('saip2011.templates.agregar_miembro')
+    def agregar_miembro(self, *args, **kw):
+        roles = DBSession.query(Rol).all()
+	usuarios = DBSession.query(Usuario).all()	
 
-        if request.method == 'POST':
-            if cancel:
-                redirect('/equipo')
-            form = EquipoForm()
-            try:
-                data = form.to_python(data)
+        return dict(pagina="agregar_miembro",values=kw, roles=roles, usuarios=usuarios)
+    
+    @validate({'idusuario':Int(not_empty=True),
+		'idrol':Int(not_empty=True)}, error_handler=agregar_miembro)
 
-                equipo = Privilegios(alias=data.get('alias'),rol=data.get('rol'))
+    @expose()
+    def post_miembro(self, idusuario, idrol):
+        if idusuario is not None:
+           idusuario = int(idusuario)      
+        if idrol is not None:
+           idrol = int(idrol)      
 
-                DBSession.add(equipo)
-                DBSession.flush()
-                print equipo
-                flash("Equipo de Desarrollo agregado!")
+        equipo =  Equipo_Desarrollo(proyecto=self.get_proyecto_actual(), idusuario=idusuario, 
+		             idrol=idrol)
+      
+	DBSession.add(equipo)
+	flash("Miembro Agregado Agregado!")  
+        redirect('./equipo')
 
-            except Invalid, e:
-                print e
-                equipo = None
-                errors = e.unpack_errors()
-                flash(_("Favor complete los datos requeridos"),'warning')
+    @expose('saip2011.templates.editar_miembro')
+    def editar_miembro(self, id_equipo, *args, **kw):
+      
+	usuarios = DBSession.query(Usuario).all()
+	roles = DBSession.query(Rol).all()
+        equipo = DBSession.query(Equipo_Desarrollo).get(id_equipo)
+        
+        values = dict(id_equipo=equipo.id_equipo, 
+		      nombre_usuario=equipo.nombre_usuario, 
+		      nombre_rol=equipo.nombre_rol
+                      )
+                      
+        values.update(kw)
 
-            except IntegrityError:
-                flash("LLave duplicada")
-                DBSession.rollback()
-                redirect('/agregar_equipo')
-        else:
-            errors = {}        
+        return dict(values=values, usuarios=usuarios, roles=roles)
 
-        return dict(pagina='agregar_equipo',data=data.get('alias'),errors=errors)
+    @validate({'idusuario':Int(not_empty=True),
+		'idrol':Int(not_empty=True)}, error_handler=editar_miembro)
+
+    @expose()
+    def put_miembro(self, id_equipo, idusuario, idrol, **kw):
+        equipo = DBSession.query(Equipo_Desarrollo).get(id_equipo)
+        
+	if idusuario is not None:
+           idusuario = int(idusuario)      
+        if idrol is not None:
+           idrol = int(idrol)   
+            
+        equipo.idusuario = idusuario
+        equipo.idrol=idrol
+        
+        DBSession.flush()
+	flash("Miembro Modificado!")  
+        redirect('/equipo')
+ 
+    @expose('saip2011.templates.eliminar_miembro')
+    def eliminar_miembro(self,id_equipo, *args, **kw):
+        equipo = DBSession.query(Equipo_Desarrollo).get(id_equipo)	
+
+	values = dict(id_equipo=equipo.id_equipo, 
+		      nombre_usuario=equipo.nombre_usuario, 
+		      nombre_rol=equipo.nombre_rol
+                      )
+
+        return dict(pagina="eliminar_miembro",values=values)
+
+    @validate({'nombre_usuario':NotEmpty,
+		'nombre_rol':NotEmpty}, error_handler=eliminar_miembro)
+
+    @expose()
+    def post_delete_miembro(self, id_equipo, nombre_usuario, nombre_rol, **kw):
+	
+        DBSession.delete(DBSession.query(Equipo_Desarrollo).get(id_equipo))
+        DBSession.flush()
+        flash("Miembro eliminado!")
+	redirect('/equipo')
+
 
 # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # #
 
@@ -961,14 +1003,6 @@ class RootController(BaseController):
         """
         return dict(pagina="proyecto")
     
-    @expose('saip2011.templates.editar_proyecto')
-    def fasemod(self,id_proyecto,action):
-        """
-           Metodo que recibe ID de proyecto para
-           ser modificado
-        """
-        return "Pagina no disponible"
-    
     @expose('saip2011.templates.listar_proyecto')
     def listar_proyecto(self):
         """Lista proyectos 
@@ -977,38 +1011,214 @@ class RootController(BaseController):
         return dict(pagina="listar_proyecto",proyectos=proyectos)
 
     @expose('saip2011.templates.agregar_proyecto')
-    def agregar_proyecto(self,cancel=False,**data):
+    def agregar_proyecto(self, *args, **kw):
+        usuarios = DBSession.query(Usuario).all()
+	tipos_fases = DBSession.query(Tipo_Fase).all()	
+
+        return dict(pagina="agregar_proyecto",values=kw, tipos_fases=tipos_fases, usuarios=usuarios)
+    
+    @validate({'nombre_proyecto':NotEmpty, 
+                'idusuario':Int(not_empty=True), 
+		'descripcion':NotEmpty}, error_handler=agregar_proyecto)
+
+    @expose()
+    def post_proyecto(self, nombre_proyecto, idusuario, tipos_fases, descripcion):
+        if idusuario is not None:
+           idusuario = int(idusuario)
+
+	if tipos_fases is not None:
+            if not isinstance(tipos_fases, list):
+                tipos_fases = [tipos_fases]
+            tipos_fases = [DBSession.query(Tipo_Fase).get(tipo_fase) for tipo_fase in tipos_fases]
+        
+        proyecto = Proyecto (nombre_proyecto=nombre_proyecto, idusuario=idusuario, 
+		             descripcion=descripcion, tipos_fases=tipos_fases)
+        DBSession.add(proyecto)
+        
+        equipo = Equipo_Desarrollo(proyecto=self.get_proyecto_actual(), idusuario=idusuario, 
+		                   idrol=2)
+        DBSession.add(equipo)
+	flash("Proyecto Agregado!")  
+        redirect('./proyecto')
+
+    @expose('saip2011.templates.editar_proyecto')
+    def editar_proyecto(self, id_proyecto, *args, **kw):
+        usuarios = DBSession.query(Usuario).all()
+        tipos_fases = DBSession.query(Tipo_Fase).all()
+        proyecto = DBSession.query(Proyecto).get(id_proyecto)
+        
+        values = dict(id_proyecto=proyecto.id_proyecto, 
+		      nombre_proyecto=proyecto.nombre_proyecto, 
+                      descripcion=proyecto.descripcion, 
+                      idusuario=proyecto.idusuario,
+                      tipos_fases = [str(tipo_fase.id_tipo_fase) for tipo_fase in proyecto.tipos_fases],
+                      )
+                      
+        if 'tipos_fases' in kw and not isinstance(kw['tipos_fases'], list):
+            kw['tipos_fases'] = [kw['tipos_fases']]
+        values.update(kw)
+
+        return dict(values=values, usuarios=usuarios, tipos_fases=tipos_fases)
+
+    @validate({'id_proyecto':NotEmpty, 
+	       'nombre_proyecto':NotEmpty, 
+               'descripcion':NotEmpty, 
+               'idusuario':Int(not_empty=True)}, error_handler=editar_proyecto)
+
+    @expose()
+    def put_proyecto(self, id_proyecto, nombre_proyecto, descripcion, tipos_fases, idusuario, **kw):
+        proyecto = DBSession.query(Proyecto).get(id_proyecto)
+        
+	idusuario = int(idusuario)
+        if not isinstance(tipos_fases, list):
+                tipos_fases = [tipos_fases]
+        tipos_fases = [DBSession.query(Tipo_Fase).get(tipo_fase) for tipo_fase in tipos_fases]
+            
+        proyecto.idusuario = idusuario
+        proyecto.nombre_proyecto=nombre_proyecto
+        proyecto.descripcion = descripcion
+        proyecto.tipos_fases = tipos_fases
+     
+        DBSession.flush()
+	flash("Proyecto Modificado!")  
+        redirect('/proyecto')
+ 
+    @expose('saip2011.templates.eliminar_proyecto')
+    def eliminar_proyecto(self,id_proyecto, *args, **kw):
+        proyecto = DBSession.query(Proyecto).get(id_proyecto)	
+
+	values = dict(id_proyecto=proyecto.id_proyecto, 
+		      nombre_proyecto=proyecto.nombre_proyecto, 
+                      descripcion=proyecto.descripcion,
+		      lider_equipo=proyecto.lider_equipo,
+		      tipos_fases=proyecto.tipos_fases
+                )
+
+        return dict(pagina="eliminar_proyecto",values=values)
+
+    @validate({'id_proyecto':NotEmpty, 
+	       'nombre_proyecto':NotEmpty, 
+               'descripcion':NotEmpty}, error_handler=eliminar_proyecto)	
+
+    @expose()
+    def post_delete_proyecto(self, id_proyecto, nombre_proyecto, descripcion, tipos_fases, **kw):
+	
+        DBSession.delete(DBSession.query(Proyecto).get(id_proyecto))
+        DBSession.flush()
+        flash("Proyecto eliminado!")
+	redirect('/proyecto')
+
+# # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # #
+
+    @expose('saip2011.templates.listar_tipo_campos')
+    def listar_tipo_campos(self):
+        """Lista campos del tipo de item
+        """
+        id_tipo_item = Tipo_Item.get_ultimo_id()
+	if id_tipo_item is None:
+           id_tipo_item=0
+	id_tipo_item=1+id_tipo_item
+
+	tipos_campos= Tipo_Campos.get_campos_by_tipo_item(id_tipo_item)
+
+        return dict(pagina="listar_tipo_campos",tipos_campos=tipos_campos)
+
+    @expose('saip2011.templates.editar_tipo_campos')
+    def editar_tipo_campos(self,id_tipo_campos,*args, **kw):
+	tipo_campos = DBSession.query(Tipo_Campos).get(id_tipo_campos)
+
+	if request.method != 'PUT':  
+
+	  values = dict(id_tipo_campos=tipo_campos.id_tipo_campos, 
+	  	        nombre_campo=tipo_campos.nombre_campo, 
+                        valor_campo=tipo_campos.valor_campo,
+                    )
+
+	  return dict(pagina="editar_tipo_campos",values=values)
+
+    @validate({'id_tipo_campos':NotEmpty, 
+	       'nombre_campo':NotEmpty, 
+               'valor_campo':NotEmpty}, error_handler=editar_tipo_campos)	
+
+    @expose()
+    def put_tipo_campos(self, id_tipo_campos, nombre_campo, valor_campo, **kw):
+	tipo_campos = DBSession.query(Tipo_Campos).get(id_tipo_campos)
+
+	
+        tipo_campos.nombre_campo = nombre_campo
+        tipo_campos.valor_campo = valor_campo
+
+        DBSession.flush()
+        flash("Campo modificado!")
+	redirect('/agregar_tipo_item')
+
+    @expose('saip2011.templates.eliminar_tipo_campos')
+    def eliminar_tipo_campos(self,id_tipo_campos, *args, **kw):
+        tipo_campos = DBSession.query(Tipo_Campos).get(id_tipo_campos)
+
+	values = dict(id_tipo_campos=tipo_campos.id_tipo_campos, 
+	  	        nombre_campo=tipo_campos.nombre_campo, 
+                        valor_campo=tipo_campos.valor_campo,
+                    )
+
+        return dict(pagina="eliminar_tipo_campos",values=values)
+
+    @validate({'id_tipo_campos':NotEmpty, 
+	       'nombre_campo':NotEmpty, 
+               'valor_campo':NotEmpty}, error_handler=eliminar_tipo_campos)
+
+    @expose()
+    def post_delete_tipo_campos(self, id_tipo_campos, nombre_campo, valor_campo, **kw):
+
+        DBSession.delete(DBSession.query(Tipo_Campos).get(id_tipo_campos))
+        DBSession.flush()
+        flash("Campo eliminado!")
+	redirect('/tipo_item')
+
+    @expose('saip2011.templates.agregar_tipo_campos')
+    def agregar_tipo_campos(self,cancel=False,**data):
         errors = {}
-        proyecto = None
+        tipo_campos = None
 
         if request.method == 'POST':
             if cancel:
-                redirect('/proyecto')
-            form = ProyectoForm()
+                redirect('/tipo_item')
+            form = TipoCamposForm()
             try:
                 data = form.to_python(data)
+		
+		id_tipo_item = Tipo_Item.get_ultimo_id()
+		if id_tipo_item is None:
+		   id_tipo_item=0
+		
+		id_tipo_item=1+id_tipo_item
+                tipos_campos = Tipo_Campos(id_tipo_item=id_tipo_item, nombre_campo=data.get('nombre_campo'),
+				      valor_campo=data.get('valor_campo'))
 
-                proyecto = Proyecto(nombre_proyecto=data.get('nombre_proyecto'),equipo=data.get('equipo'),
-			    lista_Fases=data.get('lista_Fases'),descripcion=data.get('descripcion'))
-
-                DBSession.add(proyecto)
+                DBSession.add(tipos_campos)
                 DBSession.flush()
-                print proyecto
-                flash("Proyecto agregado!")
+                print tipo_campos
+                flash("Campo agregado!")
+		redirect('/agregar_tipo_item')
 
             except Invalid, e:
                 print e
-                proyecto = None
+                tipo_campos = None
                 errors = e.unpack_errors()
                 flash(_("Favor complete los datos requeridos"),'warning')
 
             except IntegrityError:
                 flash("LLave duplicada")
                 DBSession.rollback()
-                redirect('/agregar_proyecto')
-            
+                redirect('/agregar_tipo_item')
         else:
             errors = {}        
 
-        return dict(pagina='agregar_proyecto',data=data.get('nombre_proyecto'),errors=errors)
+        return dict(pagina='agregar_tipo_campos',data=data.get('nombre_campo'),errors=errors)
 
+# # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # #
+        """
+           Menu para Proyecto
+        """
+        return dict(pagina="proyecto")
+    

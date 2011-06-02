@@ -1,0 +1,59 @@
+<!DOCTYPE html>
+<html xmlns="http://www.w3.org/1999/xhtml"
+      xmlns:py="http://genshi.edgewall.org/"
+      xmlns:xi="http://www.w3.org/2001/XInclude">
+
+  <xi:include href="master.html" />
+
+<head>
+	<meta content="text/html; charset=UTF-8" http-equiv="content-type" py:replace="''"/>
+
+
+	<title>Sistema de Administracion de Item</title>
+</head>
+
+<body> 
+
+	<div class="submit">
+		<div>
+			<h2>Editar Proyecto</h2>
+		</div>
+		  <form action="put_proyecto" method="PUT">
+			<table summary="">
+			<tbody>
+				<tr><td>id_proyecto </td><td><input type="textfield" name="id_proyecto" value="${values['id_proyecto']}"/>${tmpl_context.form_errors.get('id_proyecto')}</td></tr>
+			      	<tr><td>nombre_proyecto </td><td><input type="textfield" name="nombre_proyecto" value="${values['nombre_proyecto']}"/>${tmpl_context.form_errors.get('nombre_proyecto')}</td></tr>	
+
+				<tr><td>Lider del Equipo</td>
+					<td>
+					  <select name="idusuario">
+					      <py:for each="usuario in usuarios">
+						  <option value="$usuario.idusuario" selected="selected">$usuario.alias</option>
+					      </py:for>
+					  </select>
+					</td></tr>
+
+				<tr><td>Lista de Fases</td>
+					<td>
+					  <select multiple="true" name="tipos_fases">
+				   	       <py:for each="tipo_fase in tipos_fases">
+						   <option value="$tipo_fase.id_tipo_fase" selected="selected">$tipo_fase.nombre_tipo_fase</option>
+					       </py:for>
+					  </select>
+					</td></tr>		        
+	
+				<tr><td>descripcion</td><td> <textarea name="descripcion">${values.get('descripcion')}</textarea>${tmpl_context.form_errors.get('descripcion')}</td></tr>		
+     		                <tr><td><input type="hidden" name="_method" value="PUT"/>
+					<input type="submit" value="update"/>
+				</td></tr>
+			
+			</tbody>
+			</table>
+		</form>
+		
+	</div> 
+ 
+</body>
+
+</html>
+

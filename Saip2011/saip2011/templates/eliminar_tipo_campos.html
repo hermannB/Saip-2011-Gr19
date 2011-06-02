@@ -1,0 +1,31 @@
+<html xmlns="http://www.w3.org/1999/xhtml"
+      xmlns:py="http://genshi.edgewall.org/"
+      xmlns:xi="http://www.w3.org/2001/XInclude">
+
+<xi:include href="master.html" />
+<head>
+<meta content="text/html; charset=UTF-8" http-equiv="content-type" py:replace="''"/>
+</head>
+<body>
+<div style="height:0px;">&nbsp;</div>
+<h2>Delete Confirmation</h2>
+<div class="submit">
+
+<form action="post_delete_tipo_campos" method="DELETE">
+	Are you sure you want to delete this record?
+	<table>
+		<tr><td>id_tipo_campos </td><td><input type="textfield" name="id_tipo_campos" value="${values['id_tipo_campos']}"/>${tmpl_context.form_errors.get('id_tipo_campos')}</td></tr>
+		
+	      	<tr><td>nombre_campo </td><td><input type="textfield" name="nombre_campo" value="${values['nombre_campo']}"/>${tmpl_context.form_errors.get('nombre_campo')}</td></tr>
+		<tr><td>valor_campo</td><td> <textarea name="valor_campo">${values.get('valor_campo')}</textarea>${tmpl_context.form_errors.get('valor_campo')}</td></tr>		
+     		               
+	</table>
+	
+	  <input type="hidden" name='_method' value='POST_DELETE'/>
+	  <input type="submit" value="Yes, Delete"/>
+	
+
+</form>
+</div>
+</body>
+</html>

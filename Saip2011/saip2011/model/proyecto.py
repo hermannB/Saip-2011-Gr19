@@ -11,9 +11,20 @@ from sqlalchemy import Table, ForeignKey, Column
 from sqlalchemy.types import Unicode, Integer, DateTime, Text
 from sqlalchemy.orm import relation, synonym
 
+
 from saip2011.model import DeclarativeBase, metadata, DBSession
 
 __all__ = ['Proyecto']
+
+
+proyecto_tipo_fase_tabla = Table('Tabla_Proyecto_Tipo_Fase', metadata,
+    Column('id_proyecto', Integer, ForeignKey('Tabla_Proyecto.id_proyecto',
+        onupdate="CASCADE", ondelete="CASCADE")),
+    Column('id_tipo_fase', Integer, ForeignKey('Tabla_Tipo_Fase.id_tipo_fase',
+        onupdate="CASCADE", ondelete="CASCADE"))
+)
+
+
 
 class Proyecto(DeclarativeBase):
 	"""
@@ -30,11 +41,13 @@ class Proyecto(DeclarativeBase):
 
 	nombre_proyecto = Column(Unicode(50), unique=True, nullable=False)
 
-	equipo = Column(Integer, nullable=False)
-
-	lista_Fases = Column(Text, nullable=False)	
-
 	descripcion = Column(Text)	
+
+	idusuario = Column(Integer, ForeignKey('Tabla_Usuario.idusuario'))
+
+  	lider_equipo = relation('Usuario', backref='Proyecto')
+
+
 
 	#{ Special methods
 

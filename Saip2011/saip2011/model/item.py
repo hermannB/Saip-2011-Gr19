@@ -37,7 +37,9 @@ class Item(DeclarativeBase):
 
 	nombre_item = Column(Unicode(50), nullable=False)	
 
-	tipo_item = Column(Unicode(50), nullable=False)
+	id_tipo_item = Column(Integer, ForeignKey('Tabla_Tipo_Item.id_tipo_item'))
+
+  	nombre_tipo_item = relation('Tipo_Item', backref='Item')
 
 	fase = Column(Unicode(50), nullable=False)
 
@@ -49,9 +51,11 @@ class Item(DeclarativeBase):
 
 	estado = Column(Unicode(50), nullable=False)
 
-	campos = Column(Text, nullable=False)
+	#campos = Column(Text, nullable=False)
 
-	lista_item = Column(Text)
+	#lista_item = Column(Text)
+
+	version = Column(Integer)
 
 	creado_por = Column(Unicode(50), nullable=False)
 
