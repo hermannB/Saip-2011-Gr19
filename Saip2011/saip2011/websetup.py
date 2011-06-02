@@ -407,12 +407,35 @@ def setup_app(command, conf, vars):
 	model.DBSession.add(tipo)
 
 	model.DBSession.flush()
+
+
+###################### Variables ##################################################
+
+	var = model.Variables()
+	var.nombre = u'usuario_actual'
+	var.valor = u''
+	model.DBSession.add(var)
+
+	var = model.Variables()
+	var.nombre = u'fase_actual'
+	var.valor = u'1'
+	model.DBSession.add(var)
+
+	var = model.Variables()
+	var.nombre = u'proyecto_actual'
+	var.valor = u'1'
+	model.DBSession.add(var)
+
+	var = model.Variables()
+	var.nombre = u'rol_actual'
+	var.valor = u'1'
+	model.DBSession.add(var)
+
+	var = model.Variables()
+	var.nombre = u'rol_por_defecto'
+	var.valor = u'2'
+	model.DBSession.add(var)
+
 	transaction.commit()
 	print "Successfully setup"
-
-
-###################### Roles ##################################################
-
-
-
 

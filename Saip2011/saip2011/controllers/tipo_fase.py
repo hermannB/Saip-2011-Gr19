@@ -19,6 +19,7 @@ from saip2011.model.auth import Usuario , Rol , Privilegios
 from saip2011.model.fase import Fase
 from saip2011.model.tipo_fase import Tipo_Fase
 from saip2011.model.item import Item
+from saip2011.model.variables import Variables
 from saip2011.model.equipo_desarrollo import Equipo_Desarrollo
 from saip2011.model.tipo_item import Tipo_Item
 from saip2011.model.proyecto import Proyecto

@@ -33,7 +33,6 @@
         <th>Proyecto</th>
         <th>Complejidad</th>
         <th>Estado</th>
-        <th>Adjunto</th>
       </tr>
       <tr align="center" py:for="item in items">
     	<td><a href="${tg.url('/item/revivir_item?id_item=%d' % item.id_item)}">Revivir</a></td>
@@ -44,7 +43,6 @@
         <td>${item.proyecto}</td>
         <td>${item.complejidad}</td>
         <td>${item.estado}</td>
-        <td>${item.adjunto}</td>
       </tr>          
     </table>   
     

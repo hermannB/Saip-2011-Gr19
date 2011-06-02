@@ -28,7 +28,7 @@ from saip2011.model.tipo_item import Tipo_Item
 from saip2011.model.proyecto import Proyecto
 from saip2011.model.historial import Historial
 from saip2011.model.tipo_campos import Tipo_Campos
- 
+from saip2011.model.variables import Variables
 from saip2011.controllers.secure import SecureController
 from cherrypy import HTTPRedirect
 from genshi.template import TemplateLoader
@@ -48,6 +48,7 @@ from saip2011.controllers.tipo_item import Tipo_ItemController
 __all__ = ['RootController', 'FaseController' , 'EquipoController' , 'ItemController' , 'ProyectoController' ,  'Tipo_FaseController' , 'Tipo_ItemController' ]
 
 
+	
 
 class RootController(BaseController):
 	"""
@@ -63,6 +64,7 @@ class RootController(BaseController):
 	must be wrapped around with :class:`tg.controllers.WSGIAppController`.
 
 	"""
+
 	fase = FaseController()
 	equipo = EquipoController()
 	item = ItemController()
@@ -78,45 +80,6 @@ class RootController(BaseController):
 
 	error = ErrorController()
 
-
- # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # #
- #######    Variables globales de control
-
-	username =""
-	fase_actual=1
-	proyecto_actual=2
-	rol_actual=2
-	tipo_actual=1
-
-	def set_username(self, nombre):
-		self.username = nombre
-
-	def get_username(self):
-		return self.username
-
-	def set_fase_actual(self, fase):
-		self.fase_actual = fase
-
-	def get_fase_actual(self):
-		return self.fase_actual
-
-	def set_proyecto_actual(self, proyecto):
-		self.proyecto_actual = proyecto
-
-	def get_proyecto_actual(self):
-		return self.proyecto_actual
-
-	def set_rol_actual(self, rol):
-		self.rol_actual = rol
-
-	def get_rol_actual(self):
-		return self.rol_actual
-
-	def set_tipo_actual(self, tipo):
-		self.tipo_actual = tipo
-
-	def get_tipo_actual(self):
-		return self.tipo_actual
 
  # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # #
 
@@ -178,7 +141,8 @@ class RootController(BaseController):
 			redirect(url('/login', came_from=came_from, __logins=login_counter))
 		userid = request.identity['repoze.who.userid']
 
-		RootController.username=userid
+		Variables.set_valor_by_nombre("usuario_actual",userid)
+
 		flash(_('Bienvenido, %s!') % userid)
 		redirect(came_from)
 
@@ -210,20 +174,27 @@ class RootController(BaseController):
 		return dict(pagina="cambiar_password")
 
 	@expose()
-	def post_cambiar_password(self,clave,clave2):
+	def post_cambiar_password(self,clave,clave2,cancel=False):
 		"""
 		Metodo que usa el Id del usuario logeado
 		para modificar su password
 		"""
-		var=self.get_username()
+		if cancel:
+			redirect('/usuario')
+
+		var=Variables.get_valor_by_nombre("usuario_actual")
 		usuario = Usuario.get_user_by_alias(var)
 		usuario._set_password(clave)
 		flash("password modificado!")
 		redirect('/usuario')
     
 	@expose('saip2011.templates.usuario.editar_usuario')
-	def editar_usuario(self,idusuario,*args, **kw):
+	def editar_usuario(self,idusuario,cancel=False,*args, **kw):
 		usuario = DBSession.query(Usuario).get(idusuario)
+
+		if cancel:
+			redirect('/usuario')
+
 		if request.method != 'PUT':  
 
 			values = dict(idusuario=usuario.idusuario, 
@@ -246,10 +217,14 @@ class RootController(BaseController):
   
 	@expose()
 	def put_usuario(self, idusuario, alias, nombre,  apellido, nacionalidad, tipodocumento, nrodoc , 
-					email_address, **kw):
+					email_address,cancel=False, **kw):
+
+		if cancel:
+			redirect('/usuario')
+
 	
 		usuario = DBSession.query(Usuario).get(int(idusuario))
-
+	
 		usuario.alias=alias, 
 		usuario.nombre=nombre, 
 		usuario.apellido=apellido,
@@ -319,8 +294,8 @@ class RootController(BaseController):
 									_password=data.get('clave'))
 
 				usuario._set_password(data.get('clave'))
-
-				rol = DBSession.query(Rol).get(2)
+				xdef=int (Variables.get_valor_by_nombre("rol_por_defecto") )
+				rol = DBSession.query(Rol).get(xdef)
 				usuario.roles.append(rol)
 				DBSession.add(usuario)
 				DBSession.flush()

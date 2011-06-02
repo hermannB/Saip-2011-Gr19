@@ -12,13 +12,13 @@ from repoze.what import predicates
 import transaction
 from saip2011.lib.base import BaseController
 from saip2011.model import DBSession, metadata
-
 from saip2011.controllers.error import ErrorController
 from saip2011 import model
 from saip2011.model.auth import Usuario , Rol , Privilegios
 from saip2011.model.fase import Fase
 from saip2011.model.tipo_fase import Tipo_Fase
 from saip2011.model.item import Item
+from saip2011.model.variables import Variables
 from saip2011.model.equipo_desarrollo import Equipo_Desarrollo
 from saip2011.model.tipo_item import Tipo_Item
 from saip2011.model.proyecto import Proyecto
@@ -52,7 +52,8 @@ class EquipoController(BaseController):
 	def listar_miembro(self):
 		"""Lista equipos 
 		"""
-		equipos =  Equipo_Desarrollo.get_miembros_by_proyecto(self.get_proyecto_actual())
+		valor=int( Variables.get_valor_by_nombre("proyecto_actual"))
+		equipos =  Equipo_Desarrollo.get_miembros_by_proyecto(valor)
 		return dict(pagina="listar_miembro",equipos=equipos)
 
 	@expose('saip2011.templates.miembro.agregar_miembro')
@@ -72,18 +73,19 @@ class EquipoController(BaseController):
 		if idrol is not None:
 			idrol = int(idrol)      
 
-		equipo =  Equipo_Desarrollo(proyecto=self.get_proyecto_actual(), idusuario=idusuario, 
+		valor=int( Variables.get_valor_by_nombre("proyecto_actual"))
+		equipo =  Equipo_Desarrollo(proyecto=valor, idusuario=idusuario, 
 									idrol=idrol)
       
 		usuario = DBSession.query(Usuario).get(idusuario)
 		rol = DBSession.query(Rol).get(idrol)
-		usuario.roles=rol
-
+		usuario.roles=[]
+		usuario.roles.append(rol)
 		DBSession.add(equipo)
 		DBSession.flush()
 
 		flash("Miembro Agregado Agregado!")  
-		redirect('./equipo')
+		redirect('/equipo/equipo')
 
 	@expose('saip2011.templates.miembro.editar_miembro')
 	def editar_miembro(self, id_equipo, *args, **kw):
@@ -91,7 +93,8 @@ class EquipoController(BaseController):
 		usuarios = DBSession.query(Usuario).all()
 		roles = DBSession.query(Rol).all()
 		equipo = DBSession.query(Equipo_Desarrollo).get(id_equipo)
-		
+		usuario2=equipo.nombre_usuario
+		rol2=equipo.nombre_rol
 		values = dict(id_equipo=equipo.id_equipo, 
 				  nombre_usuario=equipo.nombre_usuario, 
 				  nombre_rol=equipo.nombre_rol
@@ -99,7 +102,7 @@ class EquipoController(BaseController):
 		                  
 		values.update(kw)
 
-		return dict(values=values, usuarios=usuarios, roles=roles)
+		return dict(values=values, usuarios=usuarios, roles=roles , usuario2=usuario2, rol2=rol2)
 
 	@validate({'idusuario':Int(not_empty=True),
 		'idrol':Int(not_empty=True)}, error_handler=editar_miembro)
@@ -118,7 +121,7 @@ class EquipoController(BaseController):
         
 		DBSession.flush()
 		flash("Miembro Modificado!")  
-		redirect('/equipo')
+		redirect('/equipo/equipo')
  
 	@expose('saip2011.templates.miembro.eliminar_miembro')
 	def eliminar_miembro(self,id_equipo, *args, **kw):
@@ -139,5 +142,5 @@ class EquipoController(BaseController):
 		DBSession.delete(DBSession.query(Equipo_Desarrollo).get(id_equipo))
 		DBSession.flush()	
 		flash("Miembro eliminado!")
-		redirect('/equipo')
+		redirect('/equipo/equipo')
 

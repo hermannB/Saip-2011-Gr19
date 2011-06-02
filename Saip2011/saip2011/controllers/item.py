@@ -3,6 +3,7 @@
 
 from tg import expose, flash, require, url, request, redirect
 from datetime import datetime
+import time
 from tg.decorators import expose, validate
 from formencode.validators import DateConverter, Int, NotEmpty
 
@@ -17,6 +18,7 @@ from saip2011.model.auth import Usuario , Rol , Privilegios
 from saip2011.model.fase import Fase
 from saip2011.model.tipo_fase import Tipo_Fase
 from saip2011.model.item import Item
+from saip2011.model.variables import Variables
 from saip2011.model.adjunto import Adjunto
 from saip2011.model.equipo_desarrollo import Equipo_Desarrollo
 from saip2011.model.tipo_item import Tipo_Item
@@ -32,6 +34,7 @@ from formencode import Invalid
 from psycopg2 import IntegrityError
 from saip2011.controllers.error import ErrorController
 import base64
+import binascii
 
 
 class ItemController(BaseController):
@@ -48,11 +51,13 @@ class ItemController(BaseController):
 	@expose('saip2011.templates.item.listar_item')
 	def listar_item_activos (self):
 		items = Item.get_item_activados()
+
+
 		return dict(pagina="listar_item",items=items)
 
 	@expose('saip2011.templates.item.historial')
 	def historial (self, id_item):
-		items = Item.get_historial(id_item)
+		items = Item.get_historial(2)
 		return dict(pagina="historial",items=items)
 
 	@expose('saip2011.templates.item.listar_item eliminados')
@@ -71,30 +76,36 @@ class ItemController(BaseController):
 						codigo_item=item.codigo_item,
 						nombre_tipo_item=item.nombre_tipo_item, 
 						estado=item.estado,
-						adjunto=item.adjunto,
 						complejidad=item.complejidad,
 						)
+		adjuntos=Adjunto.get_adjuntos_by_item(item.id_item)
+		#decodificar
+		adjuntos2=[]
+		for adj in adjuntos:
+			var=binascii.b2a_base64(adj.archivo)
+			archivo=base64.b64decode(var)
+			adjuntos2.append(archivo)
 
-		return dict(pagina="editar_item",values=values)
+		return dict(pagina="editar_item",values=values,adjuntos2=adjuntos2)
 
 	@validate({'id_item':Int(not_empty=True),
 				'nombre_item':NotEmpty,
                 'codigo_item':NotEmpty,  
-				'adjunto':Int(not_empty=True),
 				'complejidad':Int(not_empty=True), 
 				'estado':NotEmpty}, error_handler=editar_item)
 
 	@expose()
-	def put_item(self, id_item, nombre_item, codigo_item, adjunto, complejidad, estado, **kw):
+	def put_item(self, id_item, nombre_item, nombre_tipo_item, codigo_item, complejidad, estado, **kw):
 
 		item = DBSession.query(Item).get(int(id_item))
 		version=item.version+1
 		item.estado_oculto="Desactivado"
+		DBSession.flush()
 
 		item2 = Item (nombre_item=nombre_item , codigo_item=codigo_item , id_tipo_item=item.id_tipo_item , 
-					adjunto=adjunto , complejidad=complejidad , estado = estado ,
-					fase=RootController.get_fase_actual() , proyecto=RootController.get_proyecto_actual(),
-					creado_por =request.identity['repoze.who.userid'], fecha_creacion = item.fecha_creacion ,
+					complejidad=complejidad , estado = estado ,fase=int( Variables.get_valor_by_nombre("fase_actual") ) ,
+					proyecto=int( Variables.get_valor_by_nombre("proyecto_actual") ),
+					creado_por =Variables.get_valor_by_nombre("usuario_actual"), fecha_creacion = time.ctime() ,
 					version =version ,estado_oculto="Activo")
 
 		DBSession.add(item2)
@@ -110,7 +121,6 @@ class ItemController(BaseController):
 						codigo_item=item.codigo_item,
 						nombre_tipo_item=item.nombre_tipo_item, 
 						estado=item.estado,
-						adjunto=item.adjunto,
 						complejidad=item.complejidad,
 						)
 
@@ -119,13 +129,12 @@ class ItemController(BaseController):
 	@validate({'id_item':Int(not_empty=True),
 				'nombre_item':NotEmpty, 
 				'codigo_item':NotEmpty, 
-				'adjunto':Int(not_empty=True),
 				'complejidad':Int(not_empty=True), 
 				'estado':NotEmpty}, error_handler=eliminar_item
 				)
 
 	@expose()
-	def post_delete_item(self, id_item, nombre_item, codigo_item, nombre_tipo_item, estado, adjunto, complejidad, **kw):
+	def post_delete_item(self, id_item, nombre_item, codigo_item, nombre_tipo_item, estado, complejidad, **kw):
 		item = DBSession.query(Item).get(id_item)
 		item.estado_oculto="Eliminado"
 
@@ -141,7 +150,6 @@ class ItemController(BaseController):
 						codigo_item=item.codigo_item,
 						nombre_tipo_item=item.nombre_tipo_item, 
 						estado=item.estado,
-						adjunto=item.adjunto,
 						complejidad=item.complejidad,
 						)
 
@@ -150,14 +158,14 @@ class ItemController(BaseController):
 	@validate({'id_item':Int(not_empty=True),
 				'nombre_item':NotEmpty,
 				'codigo_item':NotEmpty,  
-				'adjunto':Int(not_empty=True),
 				'complejidad':Int(not_empty=True), 
 				'estado':NotEmpty}, error_handler=eliminar_item)
 
 	@expose()
-	def post_revivir_item(self, id_item, nombre_item , codigo_item,  nombre_tipo_item, estado, adjunto, complejidad, **kw):
+	def post_revivir_item(self, id_item, nombre_item , codigo_item,  nombre_tipo_item, estado, complejidad, **kw):
 		item = DBSession.query(Item).get(id_item)
 		item.estado_oculto="Activo"
+		DBSession.add(item2)
 		DBSession.flush()
 		flash("item Revivido!")
 		redirect('/item/item')
@@ -170,7 +178,6 @@ class ItemController(BaseController):
 						codigo_item=item.codigo_item,
 						nombre_tipo_item=item.nombre_tipo_item, 
 						estado=item.estado,
-						adjunto=item.adjunto,
 						complejidad=item.complejidad,
 						)
 
@@ -179,20 +186,19 @@ class ItemController(BaseController):
 	@validate({'id_item':Int(not_empty=True),
 				'nombre_item':NotEmpty,
 				'codigo_item':NotEmpty,  
-				'adjunto':Int(not_empty=True),
 				'complejidad':Int(not_empty=True), 
 				'estado':NotEmpty}, error_handler=eliminar_item
 				 )
 
 	@expose()
-	def post_recuperar_item(self, id_item, nombre_item, codigo_item,  nombre_tipo_item, estado, adjunto, complejidad, **kw):
+	def post_recuperar_item(self, id_item, nombre_item, codigo_item,  nombre_tipo_item, estado, complejidad, **kw):
 		item = Item.version_actual(id_item)
 		item.estado_oculto="Desactivado"
 		version= item.version+1  
 		DBSession.flush()
 
 		item2 = DBSession.query(Item).get(id_item)
-		item3 = Item (nombre_item=item2.nombre_item,codigo_item=item2.codigo_item, id_tipo_item=item2.id_tipo_item, adjunto=item2.adjunto,
+		item3 = Item (nombre_item=item2.nombre_item,codigo_item=item2.codigo_item, id_tipo_item=item2.id_tipo_item,
 						complejidad=item2.complejidad, estado = item2.estado ,fase=item2.fase, 
 						proyecto=item2.proyecto,creado_por =item2.creado_por, 
 						fecha_creacion = item2.fecha_creacion , version =version , estado_oculto="Activo")
@@ -214,14 +220,15 @@ class ItemController(BaseController):
 			    )
 
 	@expose()
-	def post_item(self, nombre_item, complejidad, estado, adjunto, id_tipo_item):
+	def post_item(self, nombre_item, adjunto, complejidad, estado, id_tipo_item):
 		if id_tipo_item is not None:
 			id_tipo_item = int(id_tipo_item)
 		codigo_item=Item.crear_codigo(id_tipo_item)
 		item = Item (nombre_item=nombre_item, codigo_item=codigo_item,id_tipo_item=id_tipo_item, 
-						complejidad=complejidad, estado = estado ,fase=1, 
-						proyecto=1,creado_por ="DANI", 
-						fecha_creacion = "12/12/11", version =1 ,estado_oculto="Activo"
+						complejidad=complejidad, estado = estado, fase=int( Variables.get_valor_by_nombre("fase_actual") ) ,
+						proyecto=int( Variables.get_valor_by_nombre("proyecto_actual") ),
+						creado_por =Variables.get_valor_by_nombre("usuario_actual"),
+						fecha_creacion = time.ctime(), version =1 ,estado_oculto="Activo"
 						)
 		DBSession.add(item)
 		DBSession.flush()
@@ -229,11 +236,11 @@ class ItemController(BaseController):
 
 		for ad in adjunto:
 			encode=base64.b64encode(ad)
-			adj = Adjunto (id_item=mayor, archivo=encode)
+			var=binascii.a2b_base64(encode)
+			adj = Adjunto (id_item=mayor, archivo=var)
 			DBSession.add(adj)
 			DBSession.flush()
 		flash("Item Agregado!")  
 		redirect('/item/item')
-
 
 

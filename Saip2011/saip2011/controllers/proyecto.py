@@ -19,6 +19,7 @@ from saip2011.model.auth import Usuario , Rol , Privilegios
 from saip2011.model.fase import Fase
 from saip2011.model.tipo_fase import Tipo_Fase
 from saip2011.model.item import Item
+from saip2011.model.variables import Variables
 from saip2011.model.equipo_desarrollo import Equipo_Desarrollo
 from saip2011.model.tipo_item import Tipo_Item
 from saip2011.model.proyecto import Proyecto
@@ -72,16 +73,15 @@ class ProyectoController(BaseController):
 
 	@expose()
 	def ingresar(self,id_proyecto):
-
-		usuario=get_user_by_alias(self.get_username())
+		usuario=Variables.get_valor_by_nombre("usuario_actual")
 		proyecto=Proyecto.get_proyecto_by_id(id_proyecto)
-		self.set_proyecto_actual(proyecto.id_proyecto)
+		Variables.set_valor_by_nombre("proyecto_actual",proyecto.id_proyecto)
 		miembros=Equipo_Desarrollo.get_miembros_by_proyecto(proyecto.id_proyecto)
 		for miembro in miembros:
 			if ( miembro.idusuario == usuario.idusuario ):
-				self.set_rol_actual(miembro.idrol)
+				Variables.set_valor_by_nombre("rol_actual",miembro.idrol)
 
-		redirect('./proyecto')
+		redirect('/proyecto/proyecto')
 
 	@expose('saip2011.templates.proyecto.agregar_proyecto')
 	def agregar_proyecto(self, *args, **kw):
@@ -92,6 +92,7 @@ class ProyectoController(BaseController):
     
 	@validate({'nombre_proyecto':NotEmpty, 
 				'idusuario':Int(not_empty=True), 
+				'tipos_fases':NotEmpty,
 				#		'descripcion':NotEmpty
 				}, error_handler=agregar_proyecto)
 
@@ -103,39 +104,42 @@ class ProyectoController(BaseController):
 		if tipos_fases is not None:
 			if not isinstance(tipos_fases, list):
 				tipos_fases = [tipos_fases]
-				tipos_fases = [DBSession.query(Tipo_Fase).get(tipo_fase) for tipo_fase in tipos_fases]
+		tipos_fases = [DBSession.query(Tipo_Fase).get(tipo_fase) for tipo_fase in tipos_fases]
         
 		proyecto = Proyecto (nombre_proyecto=nombre_proyecto, idusuario=idusuario, 
 				     descripcion=descripcion, tipos_fases=tipos_fases)
 		DBSession.add(proyecto)
         
-		equipo = Equipo_Desarrollo(proyecto=self.get_proyecto_actual(), idusuario=idusuario, 
-									idrol=self.get_rol_actual())
+		equipo = Equipo_Desarrollo(proyecto=Variables.get_valor_by_nombre("proyecto_actual"), idusuario=idusuario, 
+									idrol=Variables.get_valor_by_nombre("rol_actual"))
 		DBSession.add(equipo)
 		flash("Proyecto Agregado!")  
-		redirect('./proyecto')
+		redirect('/proyecto/proyecto')
 
 	@expose('saip2011.templates.proyecto.editar_proyecto')
 	def editar_proyecto(self, id_proyecto, *args, **kw):
 		usuarios = DBSession.query(Usuario).all()
 		tipos_fases = DBSession.query(Tipo_Fase).all()
 		proyecto = DBSession.query(Proyecto).get(id_proyecto)
+		usuario2 = proyecto.idusuario
+		tipos = proyecto.tipos_fases
+		tipos_fases2 = []
+		for tip in tipos:
+			tipos_fases2.append(tip.id_tipo_fase)
+
 
 		values = dict(id_proyecto=proyecto.id_proyecto, 
 						nombre_proyecto=proyecto.nombre_proyecto, 
 						descripcion=proyecto.descripcion, 
-						idusuario=proyecto.idusuario,
-						tipos_fases = [str(tipo_fase.id_tipo_fase) for tipo_fase in proyecto.tipos_fases],
+						idusuario=proyecto.idusuario
 						)
                       
-		if 'tipos_fases' in kw and not isinstance(kw['tipos_fases'], list):
-			kw['tipos_fases'] = [kw['tipos_fases']]
-
 		values.update(kw)
-		return dict(pagina="editar_proyecto",values=values, usuarios=usuarios, tipos_fases=tipos_fases)
+		return dict(pagina="editar_proyecto",values=values, usuarios=usuarios, tipos_fases=tipos_fases, tipos_fases2=tipos_fases2,usuario2=usuario2)
 
 	@validate({'id_proyecto':Int(not_empty=True), 
 				'nombre_proyecto':NotEmpty, 
+				'tipos_fases':NotEmpty,
 				#               'descripcion':NotEmpty, 
 				'idusuario':Int(not_empty=True)}, error_handler=editar_proyecto)
 
@@ -149,7 +153,7 @@ class ProyectoController(BaseController):
 		idusuario = int(idusuario)
 		if not isinstance(tipos_fases, list):
 			tipos_fases = [tipos_fases]
-			tipos_fases = [DBSession.query(Tipo_Fase).get(tipo_fase) for tipo_fase in tipos_fases]
+		tipos_fases = [DBSession.query(Tipo_Fase).get(tipo_fase) for tipo_fase in tipos_fases]
             
 		proyecto.idusuario = idusuario
 		proyecto.nombre_proyecto=nombre_proyecto
@@ -157,12 +161,12 @@ class ProyectoController(BaseController):
 		proyecto.tipos_fases = tipos_fases
      
 		DBSession.flush()
-		equipo = Equipo_Desarrollo(proyecto=self.get_proyecto_actual(), idusuario=idusuario, 
-									idrol=self.get_rol_actual())
+		equipo = Equipo_Desarrollo(proyecto=Variables.get_valor_by_nombre("proyecto_actual"), idusuario=idusuario, 
+									idrol=Variables.get_valor_by_nombre("rol_actual"))
 		DBSession.add(equipo)
 
 		flash("Proyecto Modificado!")  
-		redirect('/proyecto')
+		redirect('/proyecto/proyecto')
  
 	@expose('saip2011.templates.proyecto.eliminar_proyecto')
 	def eliminar_proyecto(self,id_proyecto, *args, **kw):
@@ -179,6 +183,7 @@ class ProyectoController(BaseController):
 
 	@validate({'id_proyecto':Int(not_empty=True), 
 				'nombre_proyecto':NotEmpty, 
+				'tipos_fases':NotEmpty,
 				#               'descripcion':NotEmpty
 				}, error_handler=eliminar_proyecto)	
 
@@ -189,11 +194,11 @@ class ProyectoController(BaseController):
 		miembros=Equipo_Desarrollo.get_miembros_by_proyecto(proyecto.idusuario)
 		for miembro in miembros:
 			idm=miembro.id_equipo
+			DBSession.delete(DBSession.query(Equipo_Desarrollo).get(idm))
+			#DBSession.flush()
 
-		DBSession.delete(DBSession.query(Equipo_Desarrollo).get(idm))
-		#DBSession.flush()
 		DBSession.delete(DBSession.query(Proyecto).get(id_proyecto))
 		DBSession.flush()
 		flash("Proyecto eliminado!")
-		redirect('/proyecto')
+		redirect('/proyecto/proyecto')
 

@@ -62,6 +62,7 @@ def init_model(engine):
 
 from saip2011.model.auth import Usuario , Rol , Privilegios
 from saip2011.model.item import Item
+from saip2011.model.variables import Variables
 from saip2011.model.adjunto import Adjunto
 from saip2011.model.tipo_item import Tipo_Item
 from saip2011.model.equipo_desarrollo import Equipo_Desarrollo

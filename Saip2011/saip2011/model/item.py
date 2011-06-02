@@ -138,8 +138,9 @@ class Item(DeclarativeBase):
 		lista=[]
 		items = DBSession.query(Item).all()
 		for item in items:
-			if( (item.nombre_item == muestra.nombre_item) and  (item.proyecto == muestra.proyecto)  and (item.fase == muestra.fase ) ):
-				lista.append(item)  
+			if( (item.proyecto == muestra.proyecto)  and (item.fase == muestra.fase ) 
+					and ( item.codigo_item ==muestra.codigo_item) and (item.estado_oculto == "Desactivado") ):
+					lista.append(item)  
 		return lista
 
 	@classmethod

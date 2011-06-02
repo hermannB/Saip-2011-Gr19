@@ -17,27 +17,39 @@ __all__ = ['Adjunto']
 
 
 class Adjunto(DeclarativeBase):
-    """
+	"""
 	Definicion de Adjunto
-    """
-    
-    __tablename__ = 'Tabla_Adjunto'
-    
-    #{ Columns
-    
-    id_adjunto = Column(Integer, autoincrement=True, primary_key=True)
+	"""
 
-    id_item = Column(Integer)
+	__tablename__ = 'Tabla_Adjunto'
+
+	#{ Columns
+
+	id_adjunto = Column(Integer, autoincrement=True, primary_key=True)
+
+	id_item = Column(Integer)
+
+	archivo = Column(LargeBinary, nullable=False)
+
+
+	#{ Special methods
+
+	def __repr__(self):
+		return '<Adjunto: id=%s>' % self.id_adjunto
     
-    archivo = Column(LargeBinary, nullable=False)
-   
-    
-    #{ Special methods
-    
-    def __repr__(self):
-        return '<Adjunto: id=%s>' % self.id_adjunto
-    
-    def __unicode__(self):
-        return self.id_adjunto
-    #}
+	def __unicode__(self):
+		return self.id_adjunto
+	#}
+	@classmethod
+	def get_adjuntos_by_item(self,id_item):
+		"""
+		Obtiene la lista de todos los adjuntos del item
+		registrados en el sistema
+		"""
+		lista=[]
+		adjuntos = DBSession.query(Adjunto).all()
+		for adj in adjuntos:
+			if( adj.id_item==id_item):
+				lista.append(adj)  
+		return lista
 
