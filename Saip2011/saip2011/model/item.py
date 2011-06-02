@@ -14,17 +14,14 @@ from datetime import datetime
 import sys
 
 from sqlalchemy import Table, ForeignKey, Column
-from sqlalchemy.types import Unicode, Integer, DateTime , Text , Enum
+from sqlalchemy.types import Unicode, Integer, DateTime , Text
 from sqlalchemy.orm import relation, synonym
 
 from saip2011.model import DeclarativeBase, metadata, DBSession
 
 __all__ = ['Item']
 
-tabla_item_adjunto = Table('TB_item_adjunto', metadata,
-	Column('id_item', Integer, ForeignKey('Tabla_Item.id_item', onupdate="CASCADE", ondelete="CASCADE")),
-	Column('id_adjunto', Integer, ForeignKey('Tabla_Adjunto.id_adjunto', onupdate="CASCADE", ondelete="CASCADE"))
-)
+
 
 
 class Item(DeclarativeBase):
@@ -35,14 +32,12 @@ class Item(DeclarativeBase):
 	__tablename__ = 'Tabla_Item'
 
 	#{ Columns
-	
-	id_item = Column(Integer, autoincrement=True, primary_key=True)
 
-	tipo_id = Column('nombretipo', Unicode(30), ForeignKey('Tabla_TipoItem.nombre_tipo'))
+	iditem = Column(Integer, autoincrement=True, primary_key=True)
 
-	tipoitem = relation('TipoItem', backref='itemm')
+	tipoitem = Column(Unicode(30), nullable=False)
 
-	fase = Column(Unicode(30) ,  nullable=False)
+	fase = Column(Unicode(30), nullable=False)
 
 	proyecto = Column(Unicode(30), nullable=False)
 
@@ -54,20 +49,19 @@ class Item(DeclarativeBase):
 
 	campos = Column(Text, nullable=False)
 
-	lista_item = Column(Text)
+	listaitem = Column(Text)
 
-	creado_por = Column(Unicode(30))
+	creadopor = Column(Unicode(30), nullable=False)
 
-	fecha_creacion = Column(DateTime, default=datetime.now)
+	fechacreacion = Column(DateTime, default=datetime.now)
 	
 	#{ Special methods
-	
-			
+
 	def __repr__(self):
-		return '<Item: Id Item=%s>' % self.id_item
+		return '<Item: Id Item=%s>' % self.iditem
 
 	def __unicode__(self):
-		return self.id_item
+		return self.iditem
 
 	#}
 

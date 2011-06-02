@@ -14,12 +14,10 @@ from sqlalchemy.orm import relation, synonym
 
 from saip2011.model import DeclarativeBase, metadata, DBSession
 
-from saip2011.model.rol import Rol , tabla_rol_privilegios
-
-__all__ = ['Privilegio' ]
+__all__ = ['Privilegios']
 
 
-class Privilegio(DeclarativeBase):
+class Privilegios(DeclarativeBase):
 	"""
 	Definicion de los privilegios    
 	"""
@@ -28,15 +26,12 @@ class Privilegio(DeclarativeBase):
 
 	#{ Columns
 
-	idprivilegio = Column(Integer, autoincrement=True, primary_key=True)
+	idprivilegios = Column(Integer, autoincrement=True, primary_key=True)
 
 	nombreprivilegio = Column(Unicode(30), unique=True, nullable=False)
 
 	descripcion = Column (Text)
 
-	 #{ Relations   /// se indica quien me va a usar
-    
-	roles = relation(Rol, secondary=tabla_rol_privilegios, backref='Privilegios')
 
 	#{ Special methods
 
@@ -46,6 +41,5 @@ class Privilegio(DeclarativeBase):
 	def __unicode__(self):
 		return self.nombreprivilegio
 	#}
-
 
 

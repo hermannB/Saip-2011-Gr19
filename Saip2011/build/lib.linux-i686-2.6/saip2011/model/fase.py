@@ -17,8 +17,6 @@ from sqlalchemy.orm import relation, synonym
 
 from saip2011.model import DeclarativeBase, metadata, DBSession
 
-from saip2011.model.proyecto import Proyecto , tabla_proyecto_fases
-
 __all__ = ['Fase']
 
 
@@ -39,11 +37,6 @@ class Fase(DeclarativeBase):
 	estado = Column(Unicode(30), nullable=False)
 	
 	descripcion = Column(Text)
-
-	#{ Relations   /// se indica quien me va a usar
-    
-	listafases = relation(Proyecto, secondary=tabla_proyecto_fases, backref='Lista_de_Fases')
-
 	
 	#{ Special methods
 

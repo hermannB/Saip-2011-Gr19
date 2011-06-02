@@ -259,7 +259,7 @@ form.loginfields input#submit
 	padding-top:0px;
 }
 .foottext p {
-	margin: 0; padding: 0;
+	padding-left: 280px;
 }
 .code {
 font-family:monospace;

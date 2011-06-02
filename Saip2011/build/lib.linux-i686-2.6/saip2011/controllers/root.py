@@ -45,11 +45,6 @@ class RootController(BaseController):
         """Handle the 'about' page."""
         return dict(page='about')
 
-    @expose('saip2011.templates.contact')
-    def contact(self):
-        """Handle the 'contact' page."""
-        return dict(page='contact')
-
     @expose('saip2011.templates.authentication')
     def auth(self):
         """Display some information about auth* on this application."""

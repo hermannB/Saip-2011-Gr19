@@ -29,7 +29,7 @@ class TipoItem(DeclarativeBase):
 
 	idtipo = Column(Integer, autoincrement=True, primary_key=True)
 
-	nombretipo = Column(Unicode(30), unique=True, nullable=False, index=True)
+	nombretipo = Column(Unicode(30), unique=True, nullable=False)
 
 	descripcion = Column (Text)
 	

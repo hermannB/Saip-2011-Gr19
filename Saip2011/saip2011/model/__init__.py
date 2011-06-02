@@ -59,10 +59,10 @@ def init_model(engine):
     #mapper(Reflected, t_reflected)
 
 # Import your model modules here.
-from saip2011.model.auth import User, Group, Permission
+#from saip2011.model.auth import User, Group, Permission
 
-from saip2011.model.usuario import Usuario
-from saip2011.model.rol import Rol
+from saip2011.model.auth import Usuario,Rol,Privilegios
+#from saip2011.model.rol import Rol
 from saip2011.model.item import Item
 from saip2011.model.adjunto import Adjunto
 from saip2011.model.tipoitem import TipoItem
@@ -71,5 +71,5 @@ from saip2011.model.fase import Fase
 from saip2011.model.proyecto import Proyecto
 from saip2011.model.historial import Historial
 from saip2011.model.lineabase import LineaBase
-from saip2011.model.privilegios import Privilegio
+#from saip2011.model.privilegios import Privilegio, Rol
 

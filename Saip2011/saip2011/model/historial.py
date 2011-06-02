@@ -29,25 +29,25 @@ class Historial(DeclarativeBase):
 
 	#{ Columns
 
-	id_historial = Column(Integer, autoincrement=True, primary_key=True)
+	idhistorial = Column(Integer, autoincrement=True, primary_key=True)
 
-	id_Item = Column(Integer, nullable=False)
+	iditem = Column(Integer, nullable=False)
 	
 	version = Column(Integer, nullable=False)
 
-	creado_por = Column(Unicode(30), nullable=False)
+	creadopor = Column(Unicode(30), nullable=False)
 
-	fecha_creacion = Column(DateTime, default=datetime.now)
+	fechacreacion = Column(DateTime, default=datetime.now)
 	
 	descripcion = Column(Text)
 
 	#{ Special methods
 
 	def __repr__(self):
-		return '<Historial: idHistorial=%s>' % self.id_historial
+		return '<Historial: idHistorial=%s>' % self.idhistorial
 
 	def __unicode__(self):
-		return self.id_historial
+		return self.idhistorial
     
     #}
 

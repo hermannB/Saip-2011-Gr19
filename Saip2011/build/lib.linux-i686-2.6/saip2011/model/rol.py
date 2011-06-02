@@ -12,19 +12,9 @@ from sqlalchemy.types import Unicode, Integer, DateTime, Text
 from sqlalchemy.orm import relation, synonym
 
 from saip2011.model import DeclarativeBase, metadata, DBSession
-from saip2011.model.equipodesarrollo import EquipoDesarrollo , tabla_equipo_rol
 
 __all__ = ['Rol']
 
-
-# This is the association table for the many-to-many relationship between
-# groups and permissions. This is required by repoze.what.
-# esto se pone en la clase que va a usar los datos del otro
-
-tabla_rol_privilegios = Table('TB_rol_privilegios', metadata,
-	Column('idrol', Integer, ForeignKey('Tabla_Rol.idrol', onupdate="CASCADE", ondelete="CASCADE")),
-	Column('idprivilegio', Integer, ForeignKey('Tabla_Privilegios.idprivilegio', onupdate="CASCADE", ondelete="CASCADE"))
-)
 
 class Rol(DeclarativeBase):
 	"""
@@ -41,10 +31,9 @@ class Rol(DeclarativeBase):
 
 	descripcion = Column(Text)
 
-	 #{ Relacio rol equipo
-    
-	miembrorol = relation(EquipoDesarrollo, secondary=tabla_equipo_rol, backref='Rol')
-    
+	listaprivilegios = Column (Text)
+
+
 	#{ Special methods
 
 	def __repr__(self):
@@ -53,4 +42,5 @@ class Rol(DeclarativeBase):
 	def __unicode__(self):
 		return self.nombrerol
 	
-	
+	#}
+

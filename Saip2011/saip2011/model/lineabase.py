@@ -30,11 +30,11 @@ class LineaBase(DeclarativeBase):
 
 	#{ Columns
 
-	id_linea_base = Column(Integer, autoincrement=True, primary_key=True)
+	idlineabase = Column(Integer, autoincrement=True, primary_key=True)
 
 	estado = Column(Unicode(30), nullable=False)
 
-	fecha_creacion = Column(DateTime, default=datetime.now)
+	fechacreacion = Column(DateTime, default=datetime.now)
 
 	#{ Special methods
 

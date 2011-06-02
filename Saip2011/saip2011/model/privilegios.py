@@ -28,26 +28,23 @@ class Privilegio(DeclarativeBase):
 
 	#{ Columns
 
-	id_privilegio = Column(Integer, autoincrement=True, primary_key=True)
+	idprivilegio = Column(Integer, autoincrement=True, primary_key=True)
 
-	nombre_privilegio = Column(Unicode(30), unique=True, nullable=False)
+	nombreprivilegio = Column(Unicode(30), unique=True, nullable=False)
 
 	descripcion = Column (Text)
 
 	 #{ Relations   /// se indica quien me va a usar
     
-	roles = relation(Rol, secondary=tabla_rol_privilegios, backref='Privilegios')
+	roles = relation(Rol, secondary=tabla_rol_privilegios, backref='privilegios')
 
 	#{ Special methods
 
 	def __repr__(self):
-		return '<Privilegio: nombre=%s>' % self.nombre_privilegio
+		return '<Privilegio: nombre=%s>' % self.nombreprivilegio
 
 	def __unicode__(self):
-		return self.nombre_privilegio
-	
-
-
+		return self.nombreprivilegio
 	#}
 
 

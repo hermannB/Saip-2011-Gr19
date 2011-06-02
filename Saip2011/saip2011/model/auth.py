@@ -25,7 +25,7 @@ from sqlalchemy.orm import relation, synonym
 
 from saip2011.model import DeclarativeBase, metadata, DBSession
 
-__all__ = ['User', 'Group', 'Permission']
+__all__ = ['Usuario', 'Rol', 'Privilegios']
 
 
 #{ Association tables
@@ -33,19 +33,19 @@ __all__ = ['User', 'Group', 'Permission']
 
 # This is the association table for the many-to-many relationship between
 # groups and permissions. This is required by repoze.what.
-group_permission_table = Table('tg_group_permission', metadata,
-    Column('group_id', Integer, ForeignKey('tg_group.group_id',
+rol_privilegio_tabla = Table('Tabla_Rol_Privilegios', metadata,
+    Column('rol_id', Integer, ForeignKey('Tabla_Rol.idrol',
         onupdate="CASCADE", ondelete="CASCADE")),
-    Column('permission_id', Integer, ForeignKey('tg_permission.permission_id',
+    Column('privilegio_id', Integer, ForeignKey('Tabla_Privilegios.idprivilegio',
         onupdate="CASCADE", ondelete="CASCADE"))
 )
 
 # This is the association table for the many-to-many relationship between
 # groups and members - this is, the memberships. It's required by repoze.what.
-user_group_table = Table('tg_user_group', metadata,
-    Column('user_id', Integer, ForeignKey('tg_user.user_id',
+usuario_rol_tabla = Table('Tabla_Usuario_Rol', metadata,
+    Column('usuario_id', Integer, ForeignKey('Tabla_Usuario.idusuario',
         onupdate="CASCADE", ondelete="CASCADE")),
-    Column('group_id', Integer, ForeignKey('tg_group.group_id',
+    Column('rol_id', Integer, ForeignKey('Tabla_Rol.idrol',
         onupdate="CASCADE", ondelete="CASCADE"))
 )
 
@@ -53,7 +53,7 @@ user_group_table = Table('tg_user_group', metadata,
 #{ The auth* model itself
 
 
-class Group(DeclarativeBase):
+class Rol(DeclarativeBase):
     """
     Group definition for :mod:`repoze.what`.
     
@@ -61,37 +61,39 @@ class Group(DeclarativeBase):
     
     """
     
-    __tablename__ = 'tg_group'
+    __tablename__ = 'Tabla_Rol'
     
     #{ Columns
     
-    group_id = Column(Integer, autoincrement=True, primary_key=True)
+    idrol = Column(Integer, autoincrement=True, primary_key=True)
     
-    group_name = Column(Unicode(16), unique=True, nullable=False)
-    
-    display_name = Column(Unicode(255))
-    
-    created = Column(DateTime, default=datetime.now)
+    nombrerol = Column(Unicode(30), unique=True, nullable=False)
+
+    descripcion = Column(Unicode(255))
+
+    listaprivilegios = Column(Unicode(255))
+
+
+	#{ Special methods
+
+    def __repr__(self):
+        return '<Rol: nombre=%s>' % self.nombrerol
+
+    def __unicode__(self):
+        return self.nombrerol
     
     #{ Relations
     
-    users = relation('User', secondary=user_group_table, backref='groups')
+    usuarios = relation('Usuario', secondary=usuario_rol_tabla, backref='roles')
     
-    #{ Special methods
-    
-    def __repr__(self):
-        return '<Group: name=%s>' % self.group_name
-    
-    def __unicode__(self):
-        return self.group_name
-    
+        
     #}
 
 
 # The 'info' argument we're passing to the email_address and password columns
 # contain metadata that Rum (http://python-rum.org/) can use generate an
 # admin interface for your models.
-class User(DeclarativeBase):
+class Usuario(DeclarativeBase):
     """
     User definition.
     
@@ -99,41 +101,41 @@ class User(DeclarativeBase):
     least the ``user_name`` column.
     
     """
-    __tablename__ = 'tg_user'
+    __tablename__ = 'Tabla_Usuario'
     
     #{ Columns
 
-    user_id = Column(Integer, autoincrement=True, primary_key=True)
+    idusuario = Column(Integer, autoincrement=True, primary_key=True)
     
-    user_name = Column(Unicode(16), unique=True, nullable=False)
-    
-    email_address = Column(Unicode(255), unique=True, nullable=False,
-                           info={'rum': {'field':'Email'}})
-    
-    display_name = Column(Unicode(255))
-    
-    _password = Column('password', Unicode(80),
-                       info={'rum': {'field':'Password'}})
-    
-    created = Column(DateTime, default=datetime.now)
+    alias = Column(Unicode(30), unique=True, nullable=False)
+    nombre = Column(Unicode(30), nullable=False)
+    apellido = Column(Unicode(30), nullable=False)
+    _password = Column('password', Unicode(80),info={'rum': {'field':'Password'}})
+
+    rol = Column(Unicode(30))
+    email_address = Column(Unicode(80), unique=True, nullable=False, info={'rum': {'field':'Email'}})
+
+    nacionalidad = Column(Unicode(30))
+    tipodocumento = Column(Unicode(30), nullable=True)
+    nrodoc = Column(Integer, unique=True, nullable=True)
+
     
     #{ Special methods
 
     def __repr__(self):
-        return '<User: email="%s", display name="%s">' % (
-                self.email_address, self.display_name)
+	return '<User: email="%s", Alias="%s">' % (self.email_address, self.alias)
 
     def __unicode__(self):
-        return self.display_name or self.user_name
+        return self.alias
     
     #{ Getters and setters
 
     @property
-    def permissions(self):
+    def privilegios(self):
         """Return a set of strings for the permissions granted."""
         perms = set()
-        for g in self.groups:
-            perms = perms | set(g.permissions)
+        for g in self.roles:
+            perms = perms | set(g.privilegios)
         return perms
 
     @classmethod
@@ -142,9 +144,9 @@ class User(DeclarativeBase):
         return DBSession.query(cls).filter(cls.email_address==email).first()
 
     @classmethod
-    def by_user_name(cls, username):
+    def by_alias(cls, username):
         """Return the user object whose user name is ``username``."""
-        return DBSession.query(cls).filter(cls.user_name==username).first()
+        return DBSession.query(cls).filter(cls.alias==username).first()
 
     def _set_password(self, password):
         """Hash ``password`` on the fly and store its hashed version."""
@@ -194,8 +196,20 @@ class User(DeclarativeBase):
         hashed_pass.update(password + self.password[:40])
         return self.password[40:] == hashed_pass.hexdigest()
 
+    @classmethod
+    def get_usuarios(self):
+        """
+        Obtiene la lista de todos los usuarios
+        registrados en el sistema
+        """
+        #Session = sessionmaker()
+        #session = Session() 
+        """usuarios = session.query(cls).all()"""
+        usuarios = DBSession.query(Usuario).all()
+            
+        return usuarios
 
-class Permission(DeclarativeBase):
+class Privilegios(DeclarativeBase):
     """
     Permission definition for :mod:`repoze.what`.
     
@@ -203,28 +217,28 @@ class Permission(DeclarativeBase):
     
     """
     
-    __tablename__ = 'tg_permission'
+    __tablename__ = 'Tabla_Privilegios'
     
     #{ Columns
 
-    permission_id = Column(Integer, autoincrement=True, primary_key=True)
+    idprivilegio = Column(Integer, autoincrement=True, primary_key=True)
     
-    permission_name = Column(Unicode(16), unique=True, nullable=False)
-    
-    description = Column(Unicode(255))
+    nombreprivilegio = Column(Unicode(30), unique=True, nullable=False)
+
+    descripcion = Column(Unicode(255))
     
     #{ Relations
     
-    groups = relation(Group, secondary=group_permission_table,
-                      backref='permissions')
+    roles = relation(Rol, secondary=rol_privilegio_tabla,
+                      backref='privilegios')
     
     #{ Special methods
     
     def __repr__(self):
-        return '<Permission: name=%s>' % self.permission_name
+        return '<Privilegio: nombre=%s>' % self.nombreprivilegio
 
     def __unicode__(self):
-        return self.permission_name
+        return self.nombreprivilegio
     
     #}
 

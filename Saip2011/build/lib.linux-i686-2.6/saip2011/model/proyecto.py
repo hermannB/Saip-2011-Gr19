@@ -15,16 +15,6 @@ from saip2011.model import DeclarativeBase, metadata, DBSession
 
 __all__ = ['Proyecto']
 
-tabla_proyecto_equipo = Table('TB_proyecto_equipo', metadata,
-	Column('idproyecto', Integer, ForeignKey('Tabla_Proyecto.idproyecto', onupdate="CASCADE", ondelete="CASCADE")),
-	Column('idequipo', Integer, ForeignKey('Tabla_EquipoDesarrollo.idequipo', onupdate="CASCADE", ondelete="CASCADE"))
-)
-
-tabla_proyecto_fases = Table('TB_proyecto_fases', metadata,
-	Column('idproyecto', Integer, ForeignKey('Tabla_Proyecto.idproyecto', onupdate="CASCADE", ondelete="CASCADE")),
-	Column('idfase', Integer, ForeignKey('Tabla_Fase.idfase', onupdate="CASCADE", ondelete="CASCADE"))
-)
-
 class Proyecto(DeclarativeBase):
 	"""
 
@@ -39,6 +29,10 @@ class Proyecto(DeclarativeBase):
 	idproyecto = Column(Integer, autoincrement=True, primary_key=True)
 
 	nombreproyecto = Column(Unicode(30), unique=True, nullable=False)
+
+	idequipo = Column(Integer, nullable=False)
+
+	listaFases = Column(Text, nullable=False)	
 
 	descripcion = Column(Text)	
 

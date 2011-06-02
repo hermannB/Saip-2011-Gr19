@@ -24,7 +24,6 @@ from sqlalchemy.types import Unicode, Integer, DateTime
 from sqlalchemy.orm import relation, synonym
 
 from saip2011.model import DeclarativeBase, metadata, DBSession
-from saip2011.model.equipodesarrollo import EquipoDesarrollo , tabla_equipo_usuario
 
 __all__ = ['Usuario']
 
@@ -113,6 +112,8 @@ class Usuario(DeclarativeBase):
 
 	_password = Column('password', Unicode(80),info={'rum': {'field':'Password'}})
 
+	rol = Column(Unicode(30))
+
 	email_address = Column(Unicode(80), unique=True, nullable=False, info={'rum': {'field':'Email'}})
 
 	nacionalidad = Column(Unicode(30))
@@ -120,12 +121,6 @@ class Usuario(DeclarativeBase):
 	tipodocumento = Column(Unicode(30), nullable=False)
 
 	nrodoc = Column(Integer, unique=True, nullable=False)
-
-
-	 #{ Relacio usuario equipo
-    
-	miembrousuario = relation(EquipoDesarrollo, secondary=tabla_equipo_usuario, backref='Alias')
-    
 
 	#{ Special methods
 

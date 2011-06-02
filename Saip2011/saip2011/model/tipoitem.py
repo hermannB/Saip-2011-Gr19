@@ -27,19 +27,19 @@ class TipoItem(DeclarativeBase):
 
 	#{ Columns
 
-	id_tipo = Column(Integer, autoincrement=True, primary_key=True)
+	idtipo = Column(Integer, autoincrement=True, primary_key=True)
 
-	nombre_tipo = Column(Unicode(30), unique=True, nullable=False, index=True)
+	nombretipo = Column(Unicode(30), unique=True, nullable=False)
 
 	descripcion = Column (Text)
 	
 	#{ Special methods
 
 	def __repr__(self):
-		return '<Tipo Item: nombre=%s>' % self.nombre_tipo
+		return '<Tipo Item: nombre=%s>' % self.nombretipo
 
 	def __unicode__(self):
-		return self.nombre_tipo
+		return self.nombretipo
 
 	#}
 

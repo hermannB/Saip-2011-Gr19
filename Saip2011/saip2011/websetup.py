@@ -21,36 +21,44 @@ def setup_app(command, conf, vars):
     print "Creating tables"
     model.metadata.create_all(bind=config['pylons.app_globals'].sa_engine)
 
-    manager = model.User()
-    manager.user_name = u'manager'
-    manager.display_name = u'Example manager'
-    manager.email_address = u'manager@somedomain.com'
-    manager.password = u'managepass'
+    administrador = model.Usuario()
+    administrador.alias = u'admin'
+    administrador.nombre = u'Administrador'
+    administrador.apellido = u'Administrador'
+    administrador.email_address = u'admin@somedomain.com'
+    administrador.password = u'admin'
 
-    model.DBSession.add(manager)
+    model.DBSession.add(administrador)
 
-    group = model.Group()
-    group.group_name = u'managers'
-    group.display_name = u'Managers Group'
+    rol = model.Rol()
+    rol.nombrerol = u'Administrador'
+    rol.descripcion = u'Administrador del Sistema'
 
-    group.users.append(manager)
+    rol.usuarios.append(administrador)
 
-    model.DBSession.add(group)
+    model.DBSession.add(rol)
 
-    permission = model.Permission()
-    permission.permission_name = u'manage'
-    permission.description = u'This permission give an administrative right to the bearer'
-    permission.groups.append(group)
+    privilegio = model.Privilegios()
+    privilegio.nombreprivilegio = u'control_total'
+    privilegio.descripcion = u'Este permiso permite el control total del sistema'
+    privilegio.roles.append(rol)
 
-    model.DBSession.add(permission)
+    model.DBSession.add(privilegio)
 
-    editor = model.User()
-    editor.user_name = u'editor'
-    editor.display_name = u'Example editor'
-    editor.email_address = u'editor@somedomain.com'
-    editor.password = u'editpass'
+    privilegio2 = model.Privilegios()
+    privilegio2.nombreprivilegio = u'solo_lectura'
+    privilegio2.descripcion = u'Este permiso permite solo ver las consultas'
+    privilegio2.roles.append(rol)
 
-    model.DBSession.add(editor)
+    model.DBSession.add(privilegio2)
+
+    #editor = model.User()
+    #editor.user_name = u'editor'
+    #editor.display_name = u'Example editor'
+    #editor.email_address = u'editor@somedomain.com'
+    #editor.password = u'editpass'
+
+    #model.DBSession.add(editor)
     model.DBSession.flush()
 
     transaction.commit()

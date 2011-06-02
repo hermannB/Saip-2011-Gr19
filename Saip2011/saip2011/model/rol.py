@@ -12,8 +12,8 @@ from sqlalchemy.types import Unicode, Integer, DateTime, Text
 from sqlalchemy.orm import relation, synonym
 
 from saip2011.model import DeclarativeBase, metadata, DBSession
-from saip2011.model.equipodesarrollo import EquipoDesarrollo , tabla_equipo_rol
-#from saip2011.model.privilegios import Privilegio
+from saip2011.model import *
+
 __all__ = ['Rol']
 
 
@@ -22,8 +22,8 @@ __all__ = ['Rol']
 # esto se pone en la clase que va a usar los datos del otro
 
 tabla_rol_privilegios = Table('TB_rol_privilegios', metadata,
-	Column('id_rol', Integer, ForeignKey('Tabla_Rol.id_rol', onupdate="CASCADE", ondelete="CASCADE")),
-	Column('id_privilegio', Integer, ForeignKey('Tabla_Privilegios.id_privilegio', onupdate="CASCADE", ondelete="CASCADE"))
+	Column('idrol', Integer, ForeignKey('Tabla_Rol.idrol', onupdate="CASCADE", ondelete="CASCADE")),
+	Column('idprivilegio', Integer, ForeignKey('Tabla_Privilegios.idprivilegio', onupdate="CASCADE", ondelete="CASCADE"))
 )
 
 class Rol(DeclarativeBase):
@@ -31,31 +31,32 @@ class Rol(DeclarativeBase):
 	Definicion del Rol    
 	"""
 
-	__tablename__ = 'Tabla_Rol'
+        __tablename__ = 'Tabla_Rol'
 
 	#{ Columns
 
-	id_rol = Column(Integer, autoincrement=True, primary_key=True)
+	idrol = Column(Integer, autoincrement=True, primary_key=True)
 
-	nombre_rol = Column(Unicode(30), unique=True, nullable=False)
+	nombrerol = Column(Unicode(30), unique=True, nullable=False)
 
 	descripcion = Column(Text)
 
-	 #{ Relacio rol equipo
-    
-	miembro_rol = relation(EquipoDesarrollo, secondary=tabla_equipo_rol, backref='Rol')
-    
+	listaprivilegios = Column(Text)
+
+
 	#{ Special methods
 
 	def __repr__(self):
-		return '<Rol: nombre=%s>' % self.nombre_rol
+		return '<Rol: nombre=%s>' % self.nombrerol
 
 	def __unicode__(self):
-		return self.nombre_rol
+		return self.nombrerol
+	
+	#}
 	@property
-	def Privilegios(self):
+	def privilegios(self):
 		"""Return a set of strings for the permissions granted."""
-		nombre = set()
-		for g in self.roles:
-		    nombre = nombre | set(g.Privilegios)
-		return nombre
+	    perms = set()
+	    for g in self.roles:
+	        perms = perms | set(g.privilegios)
+	    return perms
