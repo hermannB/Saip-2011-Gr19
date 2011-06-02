@@ -226,6 +226,15 @@ class Usuario(DeclarativeBase):
             
         return usuarios
 
+    @classmethod
+    def get_user_by_id(self, iduser):
+        """
+        Obtiene el usuario por su id
+        """
+        usuario, = DBSession.query(Usuario).filter_by(idusuario=iduser)
+        
+        return usuario
+
 class Privilegios(DeclarativeBase):
     """
     Permission definition for :mod:`repoze.what`.

@@ -15,45 +15,64 @@
     </div>
 
     <form action="/editar_usuario" method="post">
+     <fieldset><legend>Datos de Usuario</legend> 
       <table summary=""><tbody><tr>
+        <th><label for="id">Id:</label></th>
+        <td>
+           <input type="text" id="id" name="id" value="${usuario.idusuario}" disabled="disabled"/>
+           
+        </td>
+        </tr><tr>
         <th><label for="alias">Alias:</label></th>
         <td>
-           <input type="text" id="alias" name="alias" />
+           <input type="text" id="alias" name="alias" value="${usuario.alias}"/>
            <span py:if="'alias' in errors" class="fielderror">${errors.alias}</span>   
         </td>
       </tr><tr>
         <th><label for="nombre">Nombre:</label></th>
         <td>
-           <input type="text" id="nombre" name="nombre" />
+           <input type="text" id="nombre" name="nombre" value="${usuario.nombre}"/>
            <span py:if="'nombre' in errors" class="fielderror">${errors.nombre}</span>
         </td>
       </tr><tr>
         <th><label for="apellido">Apellido:</label></th>
-        <td><input type="text" name="apellido" /></td>
+        <td><input type="text" name="apellido" value="${usuario.apellido}"/></td>
       </tr><tr>
            
         <th><label for="nacionalidad">Nacionalidad:</label></th>
-        <td><input type="text" name="nacionalidad" /></td>
+        <td><input type="text" name="nacionalidad" value="${usuario.nacionalidad}"/></td>
       </tr><tr>
         <th><label for="nrodoc">Nro.Documento:</label></th>
-        <td><input type="text" name="nrodoc" /></td>
+        <td><input type="text" name="nrodoc" value="${usuario.nrodoc}"/></td>
       </tr><tr>
         <th><label for="email">Email:</label></th>
         <td>
-            <input type="text" name="email" />
+            <input type="text" name="email" value="${usuario.email_address}"/>
              <span py:if="'email' in errors" class="fielderror">${errors.email}</span>
         </td>
       </tr><tr>
         <th><label for="password">Clave:</label></th>
         <td>
-           <input type="password" name="clave" />
+           <input type="password" name="clave" value="${usuario._password}"/>
             <span py:if="'clave' in errors" class="fielderror">${errors.clave}</span>
            </td>
       </tr><tr>
         <th><label for="password">Confirmar clave:</label></th>
         <td>
-          <input type="password" name="clave" />
+          <input type="password" name="clave" value="${usuario._password}"/>
           <span py:if="'clave' in errors" class="fielderror">${errors.clave}</span>
+         </td>
+      </tr><tr>
+        <th><label for="Roles">Roles:</label></th>
+        <td>
+          <div py:choose="len(roles)" py:strip="True" id="rol">
+          <label for="Roles" py:when="0">No rol</label>
+          <select class="roles" py:otherwise="" size="5">
+              <option id="ninguno" selected="selected" value="">Seleccione algun rol</option>         
+              <option id="roles" py:for="rol in roles" value="${rol.idrol}">${rol.nombrerol}</option>  
+             
+          </select>
+         </div>
          </td>
       </tr><tr> 
         <td></td>
@@ -62,10 +81,11 @@
           <input type="submit" name="cancel" value="Cancelar" />
         </td>
       </tr></tbody></table>
+     </fieldset>
     </form>
 
     <div id="footer">
-    <p py:replace="data"></p>  
+      
     </div>
   </body>
 </html>

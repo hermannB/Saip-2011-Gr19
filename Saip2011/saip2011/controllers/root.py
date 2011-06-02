@@ -150,12 +150,46 @@ class RootController(BaseController):
         return dict(pagina="usuario")
     
     @expose('saip2011.templates.editar_usuario')
-    def user(self,iduser,action):
+    def editar_usuario(self,iduser=1,cancel=False,**data):
         """
            Metodo que recibe ID de usuario para
            ser modificado
         """
-        return "Pagina no disponible"
+        errors = {}
+        
+        if request.method == 'POST':
+            if cancel:
+                redirect('/usuario')
+            form = UsuarioForm()
+            try:
+                data = form.to_python(data)
+                usuario = Usuario(alias=data.get('alias'),nombre=data.get('nombre'),apellido=data.get('apellido'),email_address=data.get('email'),nacionalidad=data.get('nacionalidad'),tipodocumento=data.get('tipodocumento'),nrodoc=data.get('nrodoc'),_password=data.get('clave'))
+                #if isinstance(usuario,Usuario) :
+		usuario._set_password(data.get('clave'))
+                DBSession.add(usuario)
+                DBSession.flush()
+                #DBSession.commit()
+                #transaction.commit() 
+                print usuario
+                flash("Usuario guardado!")
+            except Invalid, e:
+                print e
+                usuario = None
+                errors = e.unpack_errors()
+                flash(_("Favor complete los datos requeridos"),'warning')
+            except IntegrityError:
+                flash("LLave duplicada")
+                DBSession.rollback()
+                redirect('/listar_usuario')
+            
+        else:
+            errors = {} 
+            try:
+                usuario = Usuario.get_user_by_id(iduser)
+                roles = Rol.get_roles()
+            except e:
+                print e
+        return dict(pagina="editar_usuario",usuario=usuario,errors=errors,roles=roles)
     
     @expose('saip2011.templates.listar_usuario')
     def listar_usuario(self):
@@ -200,7 +234,7 @@ class RootController(BaseController):
         #tmpl = loader.load('agregar_usuario.html')
         #stream = tmpl.generate()
         #return stream.render('html',doctype='html')
-        return dict(pagina='agregar_usuario',data=data.get('alias'),errors=errors)
+        return dict(pagina='usuarios',data=data.get('alias'),errors=errors)
 
  # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # #
 

@@ -20,7 +20,8 @@
       <tr><th>No hay usuarios registrados..</th></tr>
     </table>
     <table border="1" cellspacing="1" cellpadding="5" class="usuarios" py:otherwise="">    
-      <h2>Lista de Usuarios</h2>
+    
+     <h2>Lista de Usuarios</h2>
       <tr align="center">
         <th>Id</th>
         <th>Alias</th>
@@ -32,15 +33,16 @@
         <th>Email</th>
       </tr>
       <tr align="center" py:for="usuario in usuarios">
-        <td><a href="${tg.url('/usuario/%s/edit' % usuario.idusuario)}">${usuario.idusuario}</a></td>
+        <td><a href="${tg.url('/editar_usuario/%s' % usuario.idusuario)}">${usuario.idusuario}</a></td>
         <td><a href="${tg.url('/')}">${usuario.alias}</a></td>
         <td>${usuario.nombre}</td>
         <td>${usuario.apellido}</td>
-        <td>${usuario.rol}</td>
+        <td>${usuario.roles}</td>
         <td>${usuario.nacionalidad}</td>
         <td>${usuario.nrodoc}</td>
         <td>${usuario.email_address}</td>
-      </tr>          
+      </tr>
+             
     </table>   
     
   </div>
