@@ -13,6 +13,8 @@ from sqlalchemy.types import Unicode, Integer, DateTime, Text
 from sqlalchemy.orm import relation, synonym
 
 from saip2011.model import DeclarativeBase, metadata, DBSession
+from saip2011.model.tipo_campos import Tipo_Campos
+
 
 __all__ = ['Tipo_Item']
 
@@ -64,6 +66,19 @@ class Tipo_Item(DeclarativeBase):
 		      mayor =tipo_item.id_tipo_item
 
 		return mayor
+
+	@classmethod
+	def get_campos(self, id_tipo):
+		"""
+		Obtiene la lista de todos los tipos de item
+		registrados en el sistema
+		"""
+		lista=Tipo_Campos.get_nombres_by_tipo_item(id_tipo)
+
+		    
+		return lista
+
+
 	#}
 
 

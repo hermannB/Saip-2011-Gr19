@@ -7,6 +7,9 @@
 
   <head>
   <meta content="text/html; charset=UTF-8" http-equiv="content-type" py:replace="''"/>
+   <link type="text/css" rel="stylesheet" href="css/selectMultiple.css" />
+   <script type="text/javascript" src="js/selectMultiple.js"></script>
+
   <title>Sistema de Administracion de Item</title>
 </head>
   <body class="submit">
@@ -23,9 +26,9 @@
 	
         <tr><td>Privilegios</td>
         <td>
-          <select multiple="true" name="privilegios">
+          <select multiple="multiple" name="privilegios">
    	       <py:for each="privilegio in privilegios">
-                   <option value="$privilegio.idprivilegio" selected="selected">$privilegio.nombreprivilegio</option>
+                   <option value="$privilegio.idprivilegio" >$privilegio.nombreprivilegio</option>
 	       </py:for>
           </select>
         </td></tr>

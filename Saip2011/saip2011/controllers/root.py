@@ -956,7 +956,8 @@ class RootController(BaseController):
         """Lista tipos de items 
         """
         tipos_items = Tipo_Item.get_tipo_item()
-        return dict(pagina="listar_tipo_item",tipos_items=tipos_items)
+	tipos_campos = Tipo_Campos.get_tipo_campos()
+        return dict(pagina="listar_tipo_item",tipos_items=tipos_items, tipos_campos=tipos_campos)
 
     @expose('saip2011.templates.editar_tipo_item')
     def editar_tipo_item(self,id_tipo_item,*args, **kw):
@@ -1010,39 +1011,33 @@ class RootController(BaseController):
 	redirect('/tipo_item')
 
     @expose('saip2011.templates.agregar_tipo_item')
-    def agregar_tipo_item(self,cancel=False,**data):
-        errors = {}
-        tipo_item = None
+    def agregar_tipo_item(self, *args, **kw):
+       	
+        return dict(pagina="agregar_tipo_item",values=kw)
+    
+    @validate({'nombre_tipo_item':NotEmpty, 
+                'descripcion':NotEmpty
+		
+		}, error_handler=agregar_tipo_item)
 
-        if request.method == 'POST':
-            if cancel:
-                redirect('/tipo_item')
-            form = TipoItemForm()
-            try:
-                data = form.to_python(data)
+    @expose()
+    def post_tipo_item(self, nombre_tipo_item, descripcion, campo):
 
-                tipo_item = Tipo_Item(nombre_tipo_item=data.get('nombre_tipo_item'),
-				      descripcion=data.get('descripcion'))
+	
+        tipo_item = Tipo_Item (nombre_tipo_item=nombre_tipo_item,descripcion=descripcion)
+        DBSession.add(tipo_item)
+	
+	if campo is not None:
+            if not isinstance(campo, list):
+                campo = [campo]
 
-                DBSession.add(tipo_item)
-                DBSession.flush()
-                print tipo_item
-                flash("Tipo de item agregado!")
-
-            except Invalid, e:
-                print e
-                tipo_item = None
-                errors = e.unpack_errors()
-                flash(_("Favor complete los datos requeridos"),'warning')
-
-            except IntegrityError:
-                flash("LLave duplicada")
-                DBSession.rollback()
-                redirect('/agregar_tipo_item')
-        else:
-            errors = {}        
-
-        return dict(pagina='agregar_tipo_item',data=data.get('nombre_tipo_item'),errors=errors)
+        
+	id_tipo=Tipo_Item.get_ultimo_id()        
+        for camp in campo:
+	   camp =Tipo_Campos(id_tipo_item=id_tipo,nombre_campo=camp)
+           DBSession.add(camp)
+	flash("Item Agregado!")  
+        redirect('./tipo_item')
 
 # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # #
 

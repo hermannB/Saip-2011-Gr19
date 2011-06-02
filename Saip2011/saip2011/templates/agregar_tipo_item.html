@@ -5,34 +5,37 @@
 
   <xi:include href="master.html" />
 
-  <head>
+<head>
   <meta content="text/html; charset=UTF-8" http-equiv="content-type" py:replace="''"/>
-  <title>Sistema de Administracion de Item</title>
+<script type="text/javascript" src="js/jquery-1.4.2.min.js"></script>
+<script type="text/javascript">
+	var nextinput = 0;
+	function AgregarCampos(){
+		nextinput++;
+		campo = '<li id="rut'+nextinput+'">Campo:<input type="text" size="20" id="campo"  name="campo"  /></li>';
+		$("#campos").append(campo);
+	}
+</script>
+
+<title>Sistema de Administracion de Item</title>
 </head>
   <body class="submit">
+
+
     <div>
       <h2>Agregar nuevo Tipo de Item</h2>
     </div>
 
-    <form action="/agregar_tipo_item" method="post">
+    <form action="post_tipo_item" method="POST">
       <table summary=""><tbody><tr>
-        <th><label for="nombre_tipo_item">Nombre del Tipo de Item:</label></th>
-        <td>
-           <input type="text" id="nombre_tipo_item" name="nombre_tipo_item" />
-           <span py:if="'nombre_tipo_item' in errors" class="fielderror">${errors.nombre_tipo_item}</span>   
-        </td>
-	</tr><tr>
+	<tr><td>Nombre del Tipo Item </td><td><input type="textfield" name="nombre_tipo_item" value="${values.get('nombre_tipo_item', '')}"/>${tmpl_context.form_errors.get('nombre_tipo_item')}</td></tr>
 	
-        <th><label for="descripcion">Descripcion:</label></th>
-        <td>
-           <textarea id="descripcion" name="descripcion" />
-           <span py:if="'descripcion' in errors" class="fielderror">${errors.descripcion}</span>
-        </td>
-      </tr><tr>
-
-	  <td><a href="${tg.url('agregar_tipo_campos')}">Agregar Campo al Tipo de Item</a></td>
-	  <td><a href="${tg.url('listar_tipo_campos')}">Listar Campos Agregados</a></td>
-        <td></td>
+        <tr><td>descripcion</td><td> <textarea name="descripcion">${values.get('descripcion')}</textarea>${tmpl_context.form_errors.get('descripcion')}</td></tr>
+	<tr><td><a href="#" onclick="AgregarCampos();">Agregar Campos</a></td>
+        <td><div id="campos">    </div>	</td></tr>
+	 
+	
+	<td></td>
         <td>
           <input type="submit" value="Guardar" />
           <input type="submit" name="cancel" value="Cancelar" />
@@ -40,9 +43,7 @@
       </tr></tbody></table>
     </form>
 
-    <div id="footer">
-    <p py:replace="data"></p>  
-    </div>
+    
   </body>
 </html>
 

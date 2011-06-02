@@ -1,0 +1,51 @@
+<!DOCTYPE html>
+<html xmlns="http://www.w3.org/1999/xhtml"
+      xmlns:py="http://genshi.edgewall.org/"
+      xmlns:xi="http://www.w3.org/2001/XInclude">
+
+  <xi:include href="master.html" />
+
+<head>
+	<meta content="text/html; charset=UTF-8" http-equiv="content-type" py:replace="''"/>
+
+
+	<title>Sistema de Administracion de Item</title>
+</head>
+
+<body> 
+
+	<div class="submit">
+		<div>
+			<h2>Editar Item</h2>
+		</div>
+		  <form action="put_item" method="PUT">
+			<table summary="">
+			<tbody>
+				<tr><td>id_item </td><td><input type="textfield" name="id_item" value="${values['id_item']}"/>${tmpl_context.form_errors.get('id_item')}</td></tr>
+			      	<tr><td>nombre_item </td><td><input type="textfield" name="nombre_item" value="${values['nombre_item']}"/>${tmpl_context.form_errors.get('nombre_fase')}</td></tr>	
+				<tr><td>nombre_tipo_item </td><td><input type="textfield" name="nombre_tipo_item" value="${values['nombre_tipo_item']}"/>${tmpl_context.form_errors.get('nombre_tipo_item')}</td></tr>
+				<tr><td>Estado</td>
+			     	     <td>
+			     	     <select name="estado">
+					       <option value="Nuevo" selected="selected">Nuevo</option>
+					       <option value="En_Desarrollo" >En Desarrollo</option>
+					       <option value="Listo" >Listo</option>
+					       <option value="Revisar" >Revisar</option>
+				     </select>
+				 </td></tr>	
+				<tr><td>complejidad </td><td><input type="textfield" name="complejidad" value="${values['complejidad']}"/>${tmpl_context.form_errors.get('complejidad')}</td></tr>				        	
+				<tr><td>adjunto</td><td> <textarea name="adjunto">${values.get('adjunto')}</textarea>${tmpl_context.form_errors.get('adjunto')}</td></tr>		
+     		                <tr><td><input type="hidden" name="_method" value="PUT"/>
+					<input type="submit" value="update"/>
+				</td></tr>
+			
+			</tbody>
+			</table>
+		</form>
+		
+	</div> 
+ 
+</body>
+
+</html>
+

@@ -1,0 +1,54 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" 
+                      "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml"
+      xmlns:py="http://genshi.edgewall.org/"
+      xmlns:xi="http://www.w3.org/2001/XInclude">
+
+  <xi:include href="master.html" />
+
+<head>
+  <meta content="text/html; charset=UTF-8" http-equiv="content-type" py:replace="''"/>
+  <title>Sistema de Administracion de Item</title>
+</head>
+
+<body>
+  <div id="mainmenu">
+    <li class="first"><a href="${tg.url('/listar_item_eliminados')}" class="${('', 'active')[defined('pagina') and pagina==pagina=='listar_item_eliminados']}">Item</a></li>
+  </div>  
+  <div py:choose="len(items)" py:strip="True" id="item">
+    <table class="items" py:when="0">
+      <tr><th>No hay item registrados..</th></tr>
+    </table>
+    <table border="1" cellspacing="1" cellpadding="5" class="items" py:otherwise="">    
+      <h2>Lista de Item</h2>
+      <tr align="center">
+	<th>Accion</th>
+        <th>Id</th>
+        <th>Nombre del Item</th>
+        <th>Tipo del Item</th>
+        <th>Fase</th>
+        <th>Proyecto</th>
+        <th>Complejidad</th>
+        <th>Estado</th>
+        <th>Adjunto</th>
+      </tr>
+      <tr align="center" py:for="item in items">
+	<td><a href="${tg.url('revivir_item?id_item=%d' % item.id_item)}">Revivir</a></td>
+	<td>${item.id_item}</td>
+        <td>${item.nombre_item}</td>
+        <td>${item.nombre_tipo_item}</td>
+        <td>${item.fase}</td>
+        <td>${item.proyecto}</td>
+        <td>${item.complejidad}</td>
+        <td>${item.estado}</td>
+        <td>${item.adjunto}</td>
+      </tr>          
+    </table>   
+    
+  </div>
+  <div class="clearingdiv" />
+  <div class="notice"> Lista los item registrados en el sistema.
+    
+  </div>
+</body>
+</html>

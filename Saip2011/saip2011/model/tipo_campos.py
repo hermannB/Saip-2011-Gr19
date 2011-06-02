@@ -37,9 +37,6 @@ class Tipo_Campos (DeclarativeBase):
     
     nombre_campo =Column(Unicode(50),  nullable=False)
    
-    valor_campo =Column(Unicode(50))
-    
-    
    
     
     #{ Special methods
@@ -52,13 +49,13 @@ class Tipo_Campos (DeclarativeBase):
 
 
     @classmethod
-    def get_id_tipo_campos(self):
+    def get_tipo_campos(self):
         """
         Obtiene la lista de todos los equipos
         registrados en el sistema
         """
-        equipos = DBSession.query(Tipo_Campos).all()
-        return equipos    
+        campos = DBSession.query(Tipo_Campos).all()
+        return campos
 
 
     @classmethod
@@ -72,5 +69,15 @@ class Tipo_Campos (DeclarativeBase):
 	return lista
     #}
 
+    @classmethod
+    def get_nombres_by_tipo_item(self, id_tipo):
+	campos = DBSession.query(Tipo_Campos).all()
+	lista = []
+	for campo in campos:
+	   if (campo.id_tipo_item == id_tipo):
+		lista.append(campo.nombre_campo)
+
+	return lista
+    #}
 
 #

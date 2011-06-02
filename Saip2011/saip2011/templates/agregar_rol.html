@@ -6,7 +6,9 @@
   <xi:include href="master.html" />
 
   <head>
-  <meta content="text/html; charset=UTF-8" http-equiv="content-type" py:replace="''"/>
+   <meta content="text/html; charset=UTF-8" http-equiv="content-type" py:replace="''"/>
+   <link type="text/css" rel="stylesheet" href="css/selectMultiple.css" />
+   <script type="text/javascript" src="js/selectMultiple.js"></script>
   <title>Sistema de Administracion de Item</title>
 </head>
   <body class="submit">
@@ -14,7 +16,7 @@
       <h2>Agregar nuevo Rol</h2>
     </div>
 
-    <form action="put_rol" method="POST">
+    <form action="post_rol" method="POST">
    
       <table summary=""><tbody>
          <tr><td>Nombre </td><td><input type="textfield" name="nombrerol" value="${values.get('nombrerol', '')}"/>${tmpl_context.form_errors.get('nombrerol')}</td></tr>
@@ -22,9 +24,9 @@
 	
         <tr><td>Privilegios</td> 
         <td>
-          <select multiple="true" name="privilegios">
+          <select multiple="multiple" name="privilegios">
    	       <py:for each="privilegio in privilegios">
-                   <option value="$privilegio.idprivilegio" selected="selected">$privilegio.nombreprivilegio</option>
+                   <option value="$privilegio.idprivilegio" >$privilegio.nombreprivilegio</option>
 	       </py:for>
           </select>
         </td></tr>

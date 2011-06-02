@@ -7,6 +7,8 @@
 
 <head>
 	<meta content="text/html; charset=UTF-8" http-equiv="content-type" py:replace="''"/>
+        <link type="text/css" rel="stylesheet" href="css/selectMultiple.css" />
+        <script type="text/javascript" src="js/selectMultiple.js"></script>
 
 
 	<title>Sistema de Administracion de Item</title>
@@ -35,9 +37,9 @@
 
 				<tr><td>Lista de Fases</td>
 					<td>
-					  <select multiple="true" name="tipos_fases">
+					  <select multiple="multiple" name="tipos_fases">
 				   	       <py:for each="tipo_fase in tipos_fases">
-						   <option value="$tipo_fase.id_tipo_fase" selected="selected">$tipo_fase.nombre_tipo_fase</option>
+						   <option value="$tipo_fase.id_tipo_fase" >$tipo_fase.nombre_tipo_fase</option>
 					       </py:for>
 					  </select>
 					</td></tr>		        

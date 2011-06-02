@@ -62,6 +62,6 @@ class ProyectoForm(Schema):
 
 class TipoCamposForm(Schema):
     nombre_campo = validators.UnicodeString(not_empty=True)
-    valor_campo = validators.UnicodeString(not_empty=True)
+    id_tipo_item = validators.UnicodeString(not_empty=True)
 
 
