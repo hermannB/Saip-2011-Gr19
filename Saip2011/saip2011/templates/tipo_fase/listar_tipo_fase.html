@@ -30,8 +30,22 @@
         <th>Descripcion</th>
       </tr>
       <tr align="center" py:for="tipo_fase in tipos_fases">
-    	<td><a href="${tg.url('/tipo_fase/editar_tipo_fase?id_tipo_fase=%d' % tipo_fase.id_tipo_fase)}">Editar</a>
-    	<a href="${tg.url('/tipo_fase/eliminar_tipo_fase?id_tipo_fase=%d' % tipo_fase.id_tipo_fase)}">Borrar</a></td>
+    	<td>
+    	<div py:for="perm in request.identity['user'].privilegios">
+	    	<div py:choose="">
+	     		<span py:when="perm.var == 'mod_tipo_fase'">
+    				<a href="${tg.url('/tipo_fase/editar_tipo_fase?id_tipo_fase=%d' % tipo_fase.id_tipo_fase)}"><img src="/images/lapiz.png" border="0" height="15"/></a>
+    			</span>
+    			<span py:when="perm.var == 'elim_tipo_fase'">
+    				<a href="${tg.url('/tipo_fase/eliminar_tipo_fase?id_tipo_fase=%d' % tipo_fase.id_tipo_fase)}"><img src="/images/cross.png" border="0"/></a>
+    			</span>
+    			<span py:when="perm.var == 'control_total'">
+    				<a href="${tg.url('/tipo_fase/editar_tipo_fase?id_tipo_fase=%d' % tipo_fase.id_tipo_fase)}"><img src="/images/lapiz.png" border="0" height="15"/></a>
+    				<a href="${tg.url('/tipo_fase/eliminar_tipo_fase?id_tipo_fase=%d' % tipo_fase.id_tipo_fase)}"><img src="/images/cross.png" border="0"/></a>
+    			</span>
+    		</div>
+    	 </div>	
+        </td>
         <td>${tipo_fase.nombre_tipo_fase}</td>
         <td>${tipo_fase.descripcion}</td>
       </tr>          

@@ -31,9 +31,26 @@
         <th>Campos</th>
       </tr>
       <tr align="center" py:for="tipo_item in tipos_items">
-	    <td><a href="${tg.url('/tipo_item/editar_tipo_item?id_tipo_item=%d' % tipo_item.id_tipo_item)}">Editar</a>
-	    <a href="${tg.url('/tipo_item/clonar_tipo_item?id_tipo_item=%d' % tipo_item.id_tipo_item)}">Clonar</a>
-	    <a href="${tg.url('/tipo_item/eliminar_tipo_item?id_tipo_item=%d' % tipo_item.id_tipo_item)}">Borrar</a></td>
+	    <td>
+	     <div py:for="perm in request.identity['user'].privilegios">
+	    	<div py:choose="">
+	     		<span py:when="perm.var == 'control_total'">
+	    			<a href="${tg.url('/tipo_item/editar_tipo_item?id_tipo_item=%d' % tipo_item.id_tipo_item)}"><img src="/images/lapiz.png" border="0" height="15"/></a>
+	    			<a href="${tg.url('/tipo_item/clonar_tipo_item?id_tipo_item=%d' % tipo_item.id_tipo_item)}"><img src="/images/clonar.png" border="0" height="15"/></a>
+	    			<a href="${tg.url('/tipo_item/eliminar_tipo_item?id_tipo_item=%d' % tipo_item.id_tipo_item)}"><img src="/images/cross.png" border="0"/></a>
+	    		</span>
+	    		<span py:when="perm.var == 'mod_tipo_item'">
+	    			<a href="${tg.url('/tipo_item/editar_tipo_item?id_tipo_item=%d' % tipo_item.id_tipo_item)}"><img src="/images/lapiz.png" border="0" height="15"/></a>
+	    		</span>
+	    		<span py:when="perm.var == 'clonar_tipo_item'">
+	    			<a href="${tg.url('/tipo_item/clonar_tipo_item?id_tipo_item=%d' % tipo_item.id_tipo_item)}"><img src="/images/clonar.png" border="0" height="15"/></a>
+	    		</span>	
+	    		<span py:when="perm.var == 'elim_tipo_item'">
+	    			<a href="${tg.url('/tipo_item/eliminar_tipo_item?id_tipo_item=%d' % tipo_item.id_tipo_item)}"><img src="/images/cross.png" border="0"/></a>
+	    		</span>
+	    	</div>
+	     </div>			
+	    </td>
         <td>${tipo_item.nombre_tipo_item}</td>
         <td>${tipo_item.descripcion}</td>
         <td>${tipo_item.get_campos(tipo_item.id_tipo_item)}</td>

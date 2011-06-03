@@ -17,8 +17,22 @@
 <body >
   <div id="getting_started">
     <h2>Mantenimiento de Fases</h2>
-    <p><a href="${tg.url('/fase/agregar_fase')}">Agregar Fase</a></p>
-    <p><a href="${tg.url('/fase/listar_fase')}">Listar Fase</a></p>
+     <div py:for="perm in request.identity['user'].privilegios">
+	    <div py:choose="">
+	     <span py:when="perm.var == 'control_total'">
+    		<p><a href="${tg.url('/fase/agregar_fase')}">Agregar Fase</a></p>
+    		<p><a href="${tg.url('/fase/listar_fase')}">Listar Fase</a></p>
+    	 </span>
+    	 <span py:when="perm.var == 'alta_fase'">
+    		<p><a href="${tg.url('/fase/agregar_fase')}">Agregar Fase</a></p>
+    	 
+    	 </span>
+    	 <span py:when="perm.var == 'list_fase'">
+    		<p><a href="${tg.url('/fase/listar_fase')}">Listar Fase</a></p>
+    	 
+    	 </span>
+    	</div>
+    </div>
     
   </div>
   <div class="clearingdiv" />

@@ -17,9 +17,18 @@
 <body >
   <div id="getting_started">
     <h2>Mantenimiento de proyectos</h2>
-    <p><a href="${tg.url('/proyecto/agregar_proyecto')}">Agregar Proyecto</a></p>
-    <p><a href="${tg.url('/proyecto/listar_proyecto')}">Listar Proyecto</a></p>
-    <p><a href="${tg.url('/proyecto/ingresar_proyecto')}">Seleccionar un Proyecto</a></p>
+     <div py:for="perm in request.identity['user'].privilegios">
+      <div py:choose="">
+       <span py:when="perm.var == 'control_total'">
+       	<p><a href="${tg.url('/proyecto/agregar_proyecto')}">Agregar Proyecto</a></p>
+    	<p><a href="${tg.url('/proyecto/listar_proyecto')}">Listar Proyecto</a></p>
+    	<p><a href="${tg.url('/proyecto/ingresar_proyecto')}">Seleccionar un Proyecto</a></p>
+       </span>
+       <span py:when="perm.var == 'ingresar_proyecto'">
+       	<p><a href="${tg.url('/proyecto/ingresar_proyecto')}">Seleccionar un Proyecto</a></p>
+       </span>
+      </div>
+     </div>
     
   </div>
   <div class="clearingdiv" />

@@ -17,9 +17,26 @@
 <body >
   <div id="getting_started">
     <h2>Mantenimiento de Item</h2>
-    <p><a href="${tg.url('/item/agregar_item')}">Agregar Item</a></p>
-    <p><a href="${tg.url('/item/listar_item_activos')}">Listar Item</a></p>
-    <p><a href="${tg.url('/item/listar_item_eliminados')}">Revivir Item</a></p>
+     <div py:for="perm in request.identity['user'].privilegios">
+	    <div py:choose="">
+	     <span py:when="perm.var == 'control_total'">
+    		<p><a href="${tg.url('/item/agregar_item')}">Agregar Item</a></p>
+    		<p><a href="${tg.url('/item/listar_item_activos')}">Listar Item</a></p>
+    		<p><a href="${tg.url('/item/listar_item_eliminados')}">Revivir Item</a></p>
+    	 </span>
+    	 <span py:when="perm.var == 'alta_item'">
+    	 	<p><a href="${tg.url('/item/agregar_item')}">Agregar Item</a></p>
+    	 </span>
+    	 <span py:when="perm.var == 'list_item'">
+    	 	<p><a href="${tg.url('/item/listar_item_activos')}">Listar Item</a></p>
+    	 </span>
+    	 <span py:when="perm.var == 'rev_item'">
+    	 	<p><a href="${tg.url('/item/listar_item_eliminados')}">Revivir Item</a></p>
+    	 </span>
+    	</div>
+     </div>
+    	
+    	
     
   </div>
   <div class="clearingdiv" />

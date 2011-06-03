@@ -32,8 +32,8 @@
         <td>
           <select multiple="multiple" name="privilegios">
    	       <py:for each="privilegio in privilegios">
-				<div py:choose="">
-					<span py:when="privilegio.idprivilegio in privilegios2" >
+					<div py:choose="">
+							<span py:when="privilegio.idprivilegio in privilegios2" >
             	           			<option value="$privilegio.idprivilegio" selected="selected">$privilegio.nombreprivilegio</option>
 			       			</span>
 			       			<span py:otherwise="">

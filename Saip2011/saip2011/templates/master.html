@@ -16,7 +16,15 @@
 <body py:match="body" py:attrs="select('@*')">
   ${header()}
   <ul id="mainmenu">
-    <py:if test="defined('pagina') and request.identity"> 
+    <py:if test="defined('pagina') and request.identity">
+      <div py:for="perm in request.identity['user'].privilegios">
+       <div py:choose="">
+        <span py:when="perm.var == 'usuario_basico'">
+         <li class="first"><a href="${tg.url('/usuario')}" class="${('', 'active')[defined('pagina') and pagina==pagina=='index']}">Usuario</a></li>
+         <li class="first"><a href="${tg.url('/proyecto/proyecto')}" class="${('', 'active')[defined('pagina') and pagina==pagina=='index']}">Proyecto</a></li>
+        </span>
+        
+        <span py:when="perm.var == 'control_total' or perm.var == 'lider'">
         <li class="first"><a href="${tg.url('/usuario')}" class="${('', 'active')[defined('pagina') and pagina==pagina=='index']}">Usuario</a></li>
 	<li class="first"><a href="${tg.url('/rol')}" class="${('', 'active')[defined('pagina') and pagina==pagina=='index']}">Rol</a></li>
 	<li class="first"><a href="${tg.url('/privilegio')}" class="${('', 'active')[defined('pagina') and pagina==pagina=='index']}">Privilegio</a></li>    
@@ -27,6 +35,9 @@
 	<li class="first"><a href="${tg.url('/equipo/equipo')}" class="${('', 'active')[defined('pagina') and pagina==pagina=='index']}">Miembros del Equipo</a></li>  
 	<li class="first"><a href="${tg.url('/proyecto/proyecto')}" class="${('', 'active')[defined('pagina') and pagina==pagina=='index']}">Proyecto</a></li>
 	<li class="first"><a href="${tg.url('/reporte/reporte')}" class="${('', 'active')[defined('pagina') and pagina==pagina=='index']}">Reporte</a></li>    
+      </span>
+     </div>
+     </div>  
     </py:if>  
     <span py:if="tg.auth_stack_enabled" py:strip="True">
         <li py:if="not request.identity" id="login" class="loginlogout"><a href="${tg.url('/login')}">Entrar</a></li>
@@ -37,7 +48,7 @@
   <div id="content">
     <py:if test="defined('usuarios')">
      <div class="currentpage">
-
+     Total usuarios: <span py:replace="len(usuarios)"/>
      </div>
     </py:if>
     <py:with vars="flash=tg.flash_obj.render('flash', use_js=False)">

@@ -33,11 +33,29 @@
         <th>Proyecto</th>
         <th>Complejidad</th>
         <th>Estado</th>
+        <th>Adjunto</th>
       </tr>
       <tr align="center" py:for="item in items">
-	<td><a href="${tg.url('/item/editar_item?id_item=%d' % item.id_item)}">Editar</a>
-	    <a href="${tg.url('/item/eliminar_item?id_item=%d' % item.id_item)}">Borrar</a>
-	    <a href="${tg.url('/item/historial?id_item=%d' % item.id_item)}">Historial</a></td>
+	<td>
+		<div py:for="perm in request.identity['user'].privilegios">
+	    	<div py:choose="">
+	     		<span py:when="perm.var == 'control_total'">
+					<a href="${tg.url('/item/editar_item?id_item=%d' % item.id_item)}"><img src="/images/lapiz.png" border="0" height="15"/></a>
+	    			<a href="${tg.url('/item/eliminar_item?id_item=%d' % item.id_item)}"><img src="/images/cross.png" border="0"/></a>
+	    			<a href="${tg.url('/item/historial?id_item=%d' % item.id_item)}"><img src="/images/history.png" border="0" height="15"/></a>
+				</span>
+				<span py:when="perm.var == 'mod_item'">
+					<a href="${tg.url('/item/editar_item?id_item=%d' % item.id_item)}"><img src="/images/lapiz.png" border="0" height="15"/></a>
+				</span>
+				<span py:when="perm.var == 'elim_item'">
+	    			<a href="${tg.url('/item/eliminar_item?id_item=%d' % item.id_item)}"><img src="/images/cross.png" border="0"/></a>
+	    		</span>
+	    		<span py:when="perm.var == 'rest_item'">
+	    			<a href="${tg.url('/item/historial?id_item=%d' % item.id_item)}"><img src="/images/history.png" border="0" height="15"/></a>
+				</span>
+			</div>
+		</div>    		
+	</td>
         <td>${item.nombre_item}</td>
         <td>${item.codigo_item}</td>
         <td>${item.nombre_tipo_item}</td>
@@ -45,7 +63,7 @@
         <td>${item.proyecto}</td>
         <td>${item.complejidad}</td>
         <td>${item.estado}</td>
-
+        <td>${item.adjunto}</td>
       </tr>          
     </table>   
     

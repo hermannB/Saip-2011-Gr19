@@ -30,8 +30,16 @@
         <th>Descripcion</th>
        </tr>
       <tr align="center" py:for="privilegio in privilegios">
-	    <td><a href="${tg.url('editar_privilegio?idprivilegio=%d' % privilegio.idprivilegio)}">Editar</a>
-	    <a href="${tg.url('eliminar_privilegio?idprivilegio=%d' % privilegio.idprivilegio)}">Borrar</a></td>
+	    <td>
+	     <div py:for="perm in request.identity['user'].privilegios">
+	    	<div py:choose="">
+	     		<span py:when="perm.var == 'control_total'">
+	    			<a href="${tg.url('editar_privilegio?idprivilegio=%d' % privilegio.idprivilegio)}"><img src="/images/lapiz.png" border="0" height="15" alt="Editar privilegio"/></a>
+	    			<a href="${tg.url('eliminar_privilegio?idprivilegio=%d' % privilegio.idprivilegio)}"><img src="/images/cross.png" border="0"/></a>
+	    		</span>
+	    	</div>
+	    </div>
+	    </td>
         <td>${privilegio.nombreprivilegio}</td>
         <td>${privilegio.descripcion}</td>
       </tr>          

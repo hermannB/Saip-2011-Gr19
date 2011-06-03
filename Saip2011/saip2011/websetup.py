@@ -69,7 +69,20 @@ def setup_app(command, conf, vars):
 
 ##  usuario
 
-
+	priv = model.Privilegios()
+	priv.nombreprivilegio = u'Lider del proyecto '
+	priv.var = u'lider'
+	priv.descripcion = u'Brinda las funciones necesarias para el lider del proyecto'
+	priv.roles.append(rolLP)
+	model.DBSession.add(priv)
+    
+	priv = model.Privilegios()
+	priv.nombreprivilegio = u'Usuario basico '
+	priv.var = u'usuario_basico'
+	priv.descripcion = u'Brinda las funciones necesarias para un usuario basico'
+	priv.roles.append(rolUB)
+	model.DBSession.add(priv)
+	
 	priv = model.Privilegios()
 	priv.nombreprivilegio = u'Agregar Usuario al '
 	priv.var = u'alta_usuario'
@@ -407,35 +420,12 @@ def setup_app(command, conf, vars):
 	model.DBSession.add(tipo)
 
 	model.DBSession.flush()
-
-
-###################### Variables ##################################################
-
-	var = model.Variables()
-	var.nombre = u'usuario_actual'
-	var.valor = u''
-	model.DBSession.add(var)
-
-	var = model.Variables()
-	var.nombre = u'fase_actual'
-	var.valor = u'1'
-	model.DBSession.add(var)
-
-	var = model.Variables()
-	var.nombre = u'proyecto_actual'
-	var.valor = u'1'
-	model.DBSession.add(var)
-
-	var = model.Variables()
-	var.nombre = u'rol_actual'
-	var.valor = u'1'
-	model.DBSession.add(var)
-
-	var = model.Variables()
-	var.nombre = u'rol_por_defecto'
-	var.valor = u'2'
-	model.DBSession.add(var)
-
 	transaction.commit()
 	print "Successfully setup"
+
+
+###################### Roles ##################################################
+
+
+
 
