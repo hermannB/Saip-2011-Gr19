@@ -91,7 +91,7 @@ class FaseController(BaseController):
 
         DBSession.flush()
         flash("Fase modificada!")
-        redirect('/fase')
+        redirect('/fase/fase')
 
     @expose('saip2011.templates.fase.eliminar_fase')
     def eliminar_fase(self,id_fase, *args, **kw):
@@ -119,7 +119,7 @@ class FaseController(BaseController):
         DBSession.delete(DBSession.query(Fase).get(id_fase))
         DBSession.flush()
         flash("Fase eliminada!")
-        redirect('/fase')
+        redirect('/fase/fase')
 
     @expose('saip2011.templates.fase.agregar_fase')
     def agregar_fase(self, *args, **kw):
@@ -143,7 +143,7 @@ class FaseController(BaseController):
   
         DBSession.add(fase)
         flash("Fase agregada!")  
-        redirect('./fase')
+        redirect('/fase/fase')
   
   
  # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # #

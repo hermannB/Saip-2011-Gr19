@@ -34,18 +34,20 @@ class Fase(DeclarativeBase):
 
 	nombre_fase = Column(Unicode(50), unique=True, nullable=False)
 
-   	id_tipo_fase = Column(Integer, ForeignKey('Tabla_Tipo_Fase.id_tipo_fase'))
+	id_tipo_fase = Column(Integer, ForeignKey('Tabla_Tipo_Fase.id_tipo_fase'))
 
-  	nombre_tipo_fase = relation('Tipo_Fase', backref='Fase')
+	nombre_tipo_fase = relation('Tipo_Fase', backref='Fase')
 
 	estado = Column(Unicode(50), nullable=False)
+
+	proyecto = Column(Integer, nullable=False)
 
 	orden = Column(Integer)
 
 	linea_base =Column (Unicode(50), nullable=False)
-	
+
 	descripcion = Column(Text)
-	
+
 	#{ Special methods
 
 	def __repr__(self):
@@ -54,8 +56,8 @@ class Fase(DeclarativeBase):
 	def __unicode__(self):
 		return self.nombre_fase
        
-        @classmethod
-        def get_fase(self):
+	@classmethod
+	def get_fase(self):
 		"""
 		Obtiene la lista de todos los usuarios
 		registrados en el sistema
@@ -65,6 +67,19 @@ class Fase(DeclarativeBase):
 		    
 		return fases
 
+	@classmethod
+	def get_fase_by_proyecto(self,id_proyecto):
+		"""
+		Obtiene la lista de todos los usuarios
+		registrados en el sistema
+		"""
+		fases = DBSession.query(Fase).all()
+		lista=[]
+		for	fase in fases:
+			if fase.proyecto == id_proyecto:
+				lista.append(fase)
+
+		return lista
 	
 
 	#}

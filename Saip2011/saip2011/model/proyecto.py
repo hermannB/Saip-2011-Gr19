@@ -47,6 +47,7 @@ class Proyecto(DeclarativeBase):
 
   	lider_equipo = relation('Usuario', backref='Proyecto')
 
+	estado = Column(Unicode(50),  nullable=False)
 
 
 	#{ Special methods
@@ -78,6 +79,19 @@ class Proyecto(DeclarativeBase):
 		proyecto = DBSession.query(Proyecto).get(id_proyecto)
 		    
 		return proyecto
+
+	@classmethod
+	def get_ultimo_id(self):
+		"""
+		Obtiene el ultimo id de la tabla
+		"""
+		mayor =0
+		proyectos = DBSession.query(Proyecto).all()
+		for proy in proyectos:
+			if (proy.id_proyecto > mayor):
+				mayor =proy.id_proyecto
+
+		return mayor
 
 	#}
 
