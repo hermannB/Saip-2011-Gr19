@@ -17,7 +17,7 @@
 <body >
   <div id="getting_started">
     <h2>Mantenimiento de Equipos de Desarrollo</h2>
-      <div py:for="perm in request.identity['user'].privilegios">
+  <div py:for="perm in request.identity['user'].privilegios">
 	    <div py:choose="">
 	     <span py:when="perm.var == 'control_total'">
     		<p><a href="${tg.url('/equipo/agregar_miembro')}">Agregar Miembro al Equipo </a></p>
@@ -30,7 +30,7 @@
     		<p><a href="${tg.url('/equipo/listar_miembro')}">Listar Miembros del Equipo</a></p>
   		 </span>
   		</div>
-  	  </div>  
+  	  </div>      
   </div>
   <div class="clearingdiv" />
   <div class="notice"> Estas en el menu de Equipo de Desarrollo. 

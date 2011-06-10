@@ -7,6 +7,26 @@
 
 <head>
   <meta content="text/html; charset=UTF-8" http-equiv="content-type" py:replace="''"/>
+	<script type="text/javascript" src="/js/js/jquery.js"></script>
+	<script type="text/javascript" src="/js/jquery.ui.js"></script>
+	<script type="text/javascript" src="/js/jquery.asmselect.js"></script>
+	<link rel="stylesheet" type="text/css" href="/css/jquery.asmselect.css" />
+	<link rel="stylesheet" type="text/css" href="/css/example.css" />
+
+	<script type="text/javascript">
+
+		$(document).ready(function() {
+			$("#fases").asmSelect({
+				addItemTarget: 'bottom',
+				animate: true,
+				highlight: true,
+				sortable: true
+			});
+			
+		}); 
+
+	</script>
+
   <title>Sistema de Administracion de Item</title>
 </head>
 
@@ -35,7 +55,16 @@
 	        </py:for>
 	      </select>
          </td></tr>
-        
+     
+ 	 <tr><td>Fases Habilitadas</td> 
+        <td>
+		<select id="fases" multiple="multiple" name="fases" title="Seleccionar las Fases Necesarias">
+   	       <py:for each="fase in fases">
+                   <option value="$fase.id_fase" >$fase.nombre_fase</option>
+	       </py:for>
+          </select>
+        </td></tr>
+   
 	<td>
         	<input type="submit" value="Guardar" />
 	</td>

@@ -16,6 +16,7 @@ from sqlalchemy.types import Unicode, Integer, DateTime , Text , String
 from sqlalchemy.orm import relation, synonym
 
 from saip2011.model import DeclarativeBase, metadata, DBSession
+from saip2011.model.equipo_desarrollo import Equipo_Desarrollo , equipo_fases_tabla
 
 __all__ = ['Fase']
 
@@ -47,6 +48,10 @@ class Fase(DeclarativeBase):
 	linea_base =Column (Unicode(50), nullable=False)
 
 	descripcion = Column(Text)
+
+
+	equipo = relation(Equipo_Desarrollo, secondary=equipo_fases_tabla,
+		              backref='fases')
 
 	#{ Special methods
 

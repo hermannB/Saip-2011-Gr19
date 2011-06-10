@@ -95,6 +95,18 @@ class Rol(DeclarativeBase):
             
         return roles
 
+    @classmethod
+    def get_roles_by_nombre(self,nombre):
+        """
+        Obtiene la lista de los roles
+        registrados en el sistema
+        """
+        """roles = session.query(cls).all()"""
+        roles = DBSession.query(Rol).all()
+        for rol in roles:
+			if rol.nombrerol == nombre: 
+				return rol
+
     #{ Relations
     
     usuarios = relation('Usuario', secondary=usuario_rol_tabla, backref='roles')

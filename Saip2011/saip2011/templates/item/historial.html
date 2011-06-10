@@ -34,7 +34,6 @@
         <th>Complejidad</th>
         <th>Estado</th>
     	<th>Version</th>
-        <th>Adjunto</th>
       </tr>
       <tr align="center" py:for="item in items">
     	<td><a href="${tg.url('/item/recuperar_item?id_item=%d' % item.id_item)}">Recuperar</a></td>
@@ -46,7 +45,6 @@
         <td>${item.complejidad}</td>
         <td>${item.estado}</td>
     	<td>${item.version}</td>
-        <td>${item.adjunto}</td>
       </tr>          
     </table>   
     

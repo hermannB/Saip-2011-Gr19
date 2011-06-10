@@ -33,9 +33,9 @@
         <th>Proyecto</th>
         <th>Complejidad</th>
         <th>Estado</th>
-        <th>Adjunto</th>
       </tr>
       <tr align="center" py:for="item in items">
+
 	<td>
 		<div py:for="perm in request.identity['user'].privilegios">
 	    	<div py:choose="">
@@ -56,6 +56,7 @@
 			</div>
 		</div>    		
 	</td>
+
         <td>${item.nombre_item}</td>
         <td>${item.codigo_item}</td>
         <td>${item.nombre_tipo_item}</td>
@@ -63,7 +64,7 @@
         <td>${item.proyecto}</td>
         <td>${item.complejidad}</td>
         <td>${item.estado}</td>
-        <td>${item.adjunto}</td>
+
       </tr>          
     </table>   
     

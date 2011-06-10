@@ -60,22 +60,30 @@ class EquipoController(BaseController):
 	def agregar_miembro(self, *args, **kw):
 		roles = DBSession.query(Rol).all()
 		usuarios = DBSession.query(Usuario).all()	
+		proy=int(Variables.get_valor_by_nombre("proyecto_actual") )
+		fases = Fase.get_fase_by_proyecto(proy)
 
-		return dict(pagina="agregar_miembro",values=kw, roles=roles, usuarios=usuarios)
+		return dict(pagina="agregar_miembro",values=kw, roles=roles, usuarios=usuarios, fases=fases)
     
 	@validate({'idusuario':Int(not_empty=True),
+				'fases':NotEmpty,
 				'idrol':Int(not_empty=True)}, error_handler=agregar_miembro)
 
 	@expose()
-	def post_miembro(self, idusuario, idrol):
+	def post_miembro(self, idusuario, idrol, asmSelect0, fases):
 		if idusuario is not None:
 			idusuario = int(idusuario)      
 		if idrol is not None:
 			idrol = int(idrol)      
 
+		if fases is not None:
+			if not isinstance(fases, list):
+				fases = [fases]
+		fases = [DBSession.query(Fase).get(fase) for fase in fases]
+
 		valor=int( Variables.get_valor_by_nombre("proyecto_actual"))
 		equipo =  Equipo_Desarrollo(proyecto=valor, idusuario=idusuario, 
-									idrol=idrol)
+									idrol=idrol, fases=fases)
       
 		usuario = DBSession.query(Usuario).get(idusuario)
 		rol = DBSession.query(Rol).get(idrol)
@@ -93,6 +101,14 @@ class EquipoController(BaseController):
 		usuarios = DBSession.query(Usuario).all()
 		roles = DBSession.query(Rol).all()
 		equipo = DBSession.query(Equipo_Desarrollo).get(id_equipo)
+		proy=int(Variables.get_valor_by_nombre("proyecto_actual") )
+		fases = Fase.get_fase_by_proyecto(proy)
+
+		fasess = equipo.fases
+		fases2 = []
+		for fas in fasess:
+			fases2.append(fas.id_fase)
+
 		usuario2=equipo.nombre_usuario
 		rol2=equipo.nombre_rol
 		values = dict(id_equipo=equipo.id_equipo, 
@@ -102,22 +118,27 @@ class EquipoController(BaseController):
 		                  
 		values.update(kw)
 
-		return dict(values=values, usuarios=usuarios, roles=roles , usuario2=usuario2, rol2=rol2)
+		return dict(values=values, usuarios=usuarios, roles=roles , usuario2=usuario2, rol2=rol2,fases2=fases2, fases=fases)
 
 	@validate({'idusuario':Int(not_empty=True),
-		'idrol':Int(not_empty=True)}, error_handler=editar_miembro)
+				'fases':NotEmpty,
+				'idrol':Int(not_empty=True)}, error_handler=editar_miembro)
 
 	@expose()
-	def put_miembro(self, id_equipo, idusuario, idrol, **kw):
+	def put_miembro(self, id_equipo, idusuario, idrol, asmSelect0, fases, **kw):
 		equipo = DBSession.query(Equipo_Desarrollo).get(id_equipo)
         
 		if idusuario is not None:
 			idusuario = int(idusuario)      
 		if idrol is not None:
 		   idrol = int(idrol)   
-            
+		if not isinstance(fases, list):
+			fases = [fases]
+		fases = [DBSession.query(Fase).get(fase) for fase in fases]
+           
 		equipo.idusuario = idusuario
 		equipo.idrol=idrol
+		equipo.fases
         
 		DBSession.flush()
 		flash("Miembro Modificado!")  

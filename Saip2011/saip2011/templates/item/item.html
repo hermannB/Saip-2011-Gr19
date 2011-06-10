@@ -17,7 +17,7 @@
 <body >
   <div id="getting_started">
     <h2>Mantenimiento de Item</h2>
-     <div py:for="perm in request.identity['user'].privilegios">
+  <div py:for="perm in request.identity['user'].privilegios">
 	    <div py:choose="">
 	     <span py:when="perm.var == 'control_total'">
     		<p><a href="${tg.url('/item/agregar_item')}">Agregar Item</a></p>
@@ -35,9 +35,9 @@
     	 </span>
     	</div>
      </div>
-    	
-    	
-    
+       <p><a href="${tg.url('/item/linea_base')}">Crear Linea Base</a></p>
+   	<p><a href="${tg.url('/item/trabajar_item')}">Trabajar con Item</a></p>
+
   </div>
   <div class="clearingdiv" />
   <div class="notice"> Estas en el menu de Item. 

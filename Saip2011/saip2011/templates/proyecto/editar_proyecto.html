@@ -9,9 +9,11 @@
 	<meta content="text/html; charset=UTF-8" http-equiv="content-type" py:replace="''"/>
 	<script type="text/javascript" src="/js/jquery-1.4.2.min.js"></script>
 	<script src="/js/vanadium-min.js" type="text/javascript"></script>
-	<script type="text/javascript" src="/js/jquery.js"></script>
+	<script type="text/javascript" src="/js/js/jquery.js"></script>
 	<script type="text/javascript" src="/js/jquery.ui.js"></script>
 	<script type="text/javascript" src="/js/jquery.asmselect.js"></script>
+	<link rel="stylesheet" type="text/css" href="/css/jquery.asmselect.css" />
+	<link rel="stylesheet" type="text/css" href="/css/example.css" />
 
 	<script type="text/javascript">
 
@@ -27,8 +29,6 @@
 
 	</script>
 
-	<link rel="stylesheet" type="text/css" href="css/jquery.asmselect.css" />
-	<link rel="stylesheet" type="text/css" href="css/example.css" />
 
 
 
@@ -51,7 +51,14 @@
 					<td>
 					  <select name="idusuario">
 					      <py:for each="usuario in usuarios">
-						  <option value="$usuario.idusuario" >$usuario.alias</option>
+								<div py:choose="">
+									<span py:when="usuario2 in usuarios" >
+				          	 			<option value="$usuario.idusuario" selected="selected">$usuario.alias</option>
+			       					</span>
+			       					<span py:otherwise="">
+									      <option value="$usuario.idusuario" >$usuario.alias</option>
+				          			 </span>
+							  </div>
 					      </py:for>
 					  </select>
 					</td></tr>
@@ -60,7 +67,15 @@
 					<td>
 					<select id="tipos_fases" multiple="multiple" name="tipos_fases" title="Seleccionar las Fases Necesarias">
 				   	       <py:for each="tipo_fase in tipos_fases">
-						   <option value="$tipo_fase.id_tipo_fase" >$tipo_fase.nombre_tipo_fase</option>
+								<div py:choose="">
+									<span py:when="tipo_fase.id_tipo_fase in tipos_fases2" >
+						   				<option value="$tipo_fase.id_tipo_fase" selected="selected" >$tipo_fase.nombre_tipo_fase</option>
+			       					</span>
+			       					<span py:otherwise="">
+									   <option value="$tipo_fase.id_tipo_fase"  >$tipo_fase.nombre_tipo_fase</option>
+				   			        </span>
+								</div>
+
 					       </py:for>
 					  </select>
 					</td></tr>		        

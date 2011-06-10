@@ -16,6 +16,7 @@ from sqlalchemy.types import Unicode, Integer, DateTime , Text , String
 from sqlalchemy.orm import relation, synonym
 
 from saip2011.model.proyecto import Proyecto , proyecto_tipo_fase_tabla
+
 from saip2011.model import DeclarativeBase, metadata, DBSession
 
 __all__ = ['Tipo_Fase']
@@ -38,10 +39,10 @@ class Tipo_Fase(DeclarativeBase):
 	descripcion = Column(Text)
 
 	 #{ Relations
-    
-        proyectos = relation(Proyecto, secondary=proyecto_tipo_fase_tabla,
-                              backref='tipos_fases')
-	
+
+	proyectos = relation(Proyecto, secondary=proyecto_tipo_fase_tabla,
+		              backref='tipos_fases')
+  	
 	#{ Special methods
 
 	def __repr__(self):

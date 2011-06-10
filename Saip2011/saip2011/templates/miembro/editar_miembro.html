@@ -7,9 +7,27 @@
 
 <head>
 	<meta content="text/html; charset=UTF-8" http-equiv="content-type" py:replace="''"/>
-<script type="text/javascript" src="js/jquery-1.4.2.min.js"></script>
-	<script src="js/vanadium-min.js" type="text/javascript"></script>
+	<script type="text/javascript" src="/js/jquery-1.4.2.min.js"></script>
+	<script src="/js/vanadium-min.js" type="text/javascript"></script>
+	<script type="text/javascript" src="/js/js/jquery.js"></script>
+	<script type="text/javascript" src="/js/jquery.ui.js"></script>
+	<script type="text/javascript" src="/js/jquery.asmselect.js"></script>
+	<link rel="stylesheet" type="text/css" href="/css/jquery.asmselect.css" />
+	<link rel="stylesheet" type="text/css" href="/css/example.css" />
 
+	<script type="text/javascript">
+
+		$(document).ready(function() {
+			$("#fases").asmSelect({
+				addItemTarget: 'bottom',
+				animate: true,
+				highlight: true,
+				sortable: true
+			});
+			
+		}); 
+
+	</script>
 
 
 	<title>Sistema de Administracion de Item</title>
@@ -29,7 +47,14 @@
 					<td>
 					  <select name="idusuario">
 					      <py:for each="usuario in usuarios">
-						  <option value="$usuario.idusuario" selected="selected">$usuario.alias</option>
+								<div py:choose="">
+									<span py:when=" usuario2 in usuarios " >
+				          	 			<option value="$usuario.idusuario" selected="selected">$usuario.alias</option>
+			       					</span>
+			       					<span py:otherwise="">
+									      <option value="$usuario.idusuario" >$usuario.alias</option>
+				          			 </span>
+							  </div>
 					      </py:for>
 					  </select>
 				</td></tr>
@@ -38,7 +63,31 @@
 					<td>
 					  <select name="idrol">
 					      <py:for each="rol in roles">
-						  <option value="$rol.idrol" selected="selected">$rol.nombrerol</option>
+								<div py:choose="">
+									<span py:when="rol2 in roles" >
+										  <option value="$rol.idrol" selected="selected">$rol.nombrerol</option>
+			       					</span>
+			       					<span py:otherwise="">
+										  <option value="$rol.idrol" >$rol.nombrerol</option>
+				          			 </span>
+							  </div>
+				<tr><td>Fases Habilitadas</td>
+					<td>
+					<select id="fases" multiple="multiple" name="fases" title="Seleccionar las Fases Necesarias">
+				   	       <py:for each="fase in fases">
+								<div py:choose="">
+									<span py:when="fase.id_fase in fases2" >
+						   				<option value="$fase.id_fase" selected="selected" >$fase.nombre_fase</option>
+			       					</span>
+			       					<span py:otherwise="">
+									   <option value="$fase.id_fase"  >$fase.nombre_fase</option>
+				   			        </span>
+								</div>
+
+					       </py:for>
+					  </select>
+					</td></tr>		        
+
 					      </py:for>
 					  </select>
 				</td></tr>

@@ -34,6 +34,7 @@
         <th>Descripcion</th>
       </tr>
       <tr align="center" py:for="fase in fases">
+
 		<td>
     	<div py:for="perm in request.identity['user'].privilegios">
 	    	<div py:choose="">
@@ -50,6 +51,7 @@
 			</div>
 		</div>
 		</td>
+
 		<td>${fase.nombre_fase}</td>
         <td>${fase.nombre_tipo_fase}</td>
         <td>${fase.estado}</td>

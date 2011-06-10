@@ -16,7 +16,7 @@
 
 <body >
   <div id="getting_started">
-    <h2>Mantenimiento de Fases</h2>
+     <h2>Mantenimiento de Fases</h2>
      <div py:for="perm in request.identity['user'].privilegios">
 	    <div py:choose="">
 	     <span py:when="perm.var == 'control_total'">
@@ -33,6 +33,7 @@
     	 </span>
     	</div>
     </div>
+
     
   </div>
   <div class="clearingdiv" />

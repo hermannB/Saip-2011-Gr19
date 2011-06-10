@@ -78,7 +78,7 @@ class ProyectoController(BaseController):
 		Variables.set_valor_by_nombre("proyecto_actual",proyecto.id_proyecto)
 		miembros=Equipo_Desarrollo.get_miembros_by_proyecto(proyecto.id_proyecto)
 		for miembro in miembros:
-			if ( miembro.idusuario == usuario.idusuario ):
+			if ( miembro.nombre_usuario == usuario ):
 				Variables.set_valor_by_nombre("rol_actual",miembro.idrol)
 
 		redirect('/proyecto/proyecto')
@@ -107,21 +107,26 @@ class ProyectoController(BaseController):
 		tipos_fases = [DBSession.query(Tipo_Fase).get(tipo_fase) for tipo_fase in tipos_fases]
         
 		proyecto = Proyecto (nombre_proyecto=nombre_proyecto, idusuario=idusuario, 
-				     descripcion=descripcion, tipos_fases=tipos_fases, estado ="Desactivado")
+				descripcion=descripcion, tipos_fases=tipos_fases, estado ="Desactivado")
 		DBSession.add(proyecto)
-        
-		equipo = Equipo_Desarrollo(proyecto=Variables.get_valor_by_nombre("proyecto_actual"), idusuario=idusuario, 
-									idrol=Variables.get_valor_by_nombre("rol_actual"))
-		DBSession.add(equipo)
-		DBSession.flush()
+
 		proy=Proyecto.get_ultimo_id()
 		cant=1
 		for tipo_fase in tipos_fases:
 			fase = Fase (nombre_fase=tipo_fase.nombre_tipo_fase, id_tipo_fase=tipo_fase.id_tipo_fase, estado ="Nuevo", 
-							proyecto=proy,orden=cant,linea_base="Abierta", descripcion=tipo_fase.descripcion)
+								proyecto=proy,orden=cant,linea_base="Abierta", descripcion=tipo_fase.descripcion)
 			DBSession.add(fase)
 			DBSession.flush()
 			cant+=1
+
+		fases = Fase.get_fase_by_proyecto(Proyecto.get_ultimo_id())
+		nom="Lider Proyecto"
+		mirol=Rol.get_roles_by_nombre(nom)
+		equipo = Equipo_Desarrollo(proyecto=Proyecto.get_ultimo_id(), idusuario=idusuario, 
+										idrol=mirol.idrol,fases=fases)
+
+		DBSession.add(equipo)
+		DBSession.flush()
 
 		flash("Proyecto Agregado!")  
 		redirect('/proyecto/proyecto')
@@ -161,13 +166,13 @@ class ProyectoController(BaseController):
 		id_miembro=miembro.id_equipo
 		DBSession.delete(DBSession.query(Equipo_Desarrollo).get(id_miembro))
 		DBSession.flush()
+
 		idusuario = int(idusuario)
 
 		fases=Fase.get_fase_by_proyecto(proyecto.id_proyecto)
 		for fase in fases:
 			DBSession.delete(DBSession.query(Fase).get(fase.id_fase))
 			DBSession.flush()
-			
 
 		if not isinstance(tipos_fases, list):
 			tipos_fases = [tipos_fases]
@@ -189,8 +194,11 @@ class ProyectoController(BaseController):
 		proyecto.estado="Desactivado"
 		DBSession.flush()
 
-		equipo = Equipo_Desarrollo(proyecto=Variables.get_valor_by_nombre("proyecto_actual"), idusuario=idusuario, 
-									idrol=Variables.get_valor_by_nombre("rol_actual"))
+		fases = Fase.get_fase_by_proyecto(Proyecto.get_ultimo_id())
+		nom="Lider Proyecto"
+		mirol=Rol.get_roles_by_nombre(nom)
+		equipo = Equipo_Desarrollo(proyecto=Proyecto.get_ultimo_id(), idusuario=idusuario, 
+									idrol=mirol.idrol,fases=fases)
 		DBSession.add(equipo)
 		DBSession.flush()
 		flash("Proyecto Modificado!")  
@@ -220,9 +228,10 @@ class ProyectoController(BaseController):
 
 		proyecto = DBSession.query(Proyecto).get(id_proyecto)
 		miembros=Equipo_Desarrollo.get_miembros_by_proyecto(proyecto.idusuario)
+
 		for miembro in miembros:
-			idm=miembro.id_equipo
-			DBSession.delete(DBSession.query(Equipo_Desarrollo).get(idm))
+			id_miembro=miembro.id_equipo
+			DBSession.delete(DBSession.query(Equipo_Desarrollo).get(id_miembro))
 			DBSession.flush()
 
 		fases=Fase.get_fase_by_proyecto(id_proyecto)
