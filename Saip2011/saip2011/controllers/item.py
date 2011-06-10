@@ -41,12 +41,15 @@ class ItemController(BaseController):
     
 
  # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # #
-	@expose('saip2011.templates.item.item')
-	def item(self):
-		"""
-		Menu para Item
-		"""
-		return dict(pagina="item")
+    @expose('saip2011.templates.item.item')
+    def item(self):
+        """
+        Menu para Item
+        """
+        fases=Fase.get_fase_by_proyecto(int (Variables.get_valor_by_nombre("proyecto_actual")) )
+        
+        return dict(pagina="listar_fase",fases=fases)
+        #return dict(pagina="item")
 
 	@expose('saip2011.templates.item.listar_item')
 	def listar_item_activos (self):

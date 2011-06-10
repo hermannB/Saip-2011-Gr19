@@ -14,7 +14,29 @@
 </head>
 
 <body py:match="body" py:attrs="select('@*')">
+        
   ${header()}
+  <ul>
+  <div id="mensajes" py:choose="request.identity">
+    <td>Usuario Actual</td>
+    <td py:when="None">
+    	<input type="textfield" readonly="readonly" name="user" value=""/>
+    	<td>Rol Actual </td>
+    	<input type="textfield" readonly="readonly" name="user" value=""/>
+    	<td>Proyecto Actual </td>
+    	<input type="textfield" readonly="readonly" name="user" value=""/>	
+    </td>
+    <td py:otherwise="">
+    	<input type="textfield" readonly="readonly" name="user" value="${request.identity['repoze.who.userid']}"/>	
+    	<td>Rol Actual </td>
+    	<td><input type="textfield" readonly="readonly" name="roluser" value="${request.identity['user'].roles}"/></td>
+    	<td>Proyecto Actual </td>
+    	<td py:if="defined('nom_proyecto')"><input type="textfield" readonly="readonly" name="proyuser" value="${nom_proyecto}"/></td>
+    </td>
+     	
+    </div>
+    
+  </ul>
   <ul id="mainmenu">
     <py:if test="defined('pagina') and request.identity">
       <div py:for="perm in request.identity['user'].privilegios">
@@ -24,24 +46,42 @@
          <li class="first"><a href="${tg.url('/proyecto/proyecto')}" class="${('', 'active')[defined('pagina') and pagina==pagina=='index']}">Proyecto</a></li>
         </span>
         
-        <span py:when="perm.var == 'control_total' or perm.var == 'lider'">
+        <span py:when="perm.var == 'control_total'">
         <li class="first"><a href="${tg.url('/usuario')}" class="${('', 'active')[defined('pagina') and pagina==pagina=='index']}">Usuario</a></li>
 	<li class="first"><a href="${tg.url('/rol')}" class="${('', 'active')[defined('pagina') and pagina==pagina=='index']}">Rol</a></li>
 	<li class="first"><a href="${tg.url('/privilegio')}" class="${('', 'active')[defined('pagina') and pagina==pagina=='index']}">Privilegio</a></li>    
 	<li class="first"><a href="${tg.url('/fase/fase')}" class="${('', 'active')[defined('pagina') and pagina==pagina=='index']}">Fase</a></li> 
         <li class="first"><a href="${tg.url('/tipo_fase/tipo_fase')}" class="${('', 'active')[defined('pagina') and pagina==pagina=='index']}">Tipo de Fase</a></li>  
 	<li class="first"><a href="${tg.url('/item/item')}" class="${('', 'active')[defined('pagina') and pagina==pagina=='index']}">Item</a></li>  
-	<li class="first"><a href="${tg.url('/tipo_item/tipo_item')}" class="${('', 'active')[defined('pagina') and pagina==pagina=='index']}">Tipo de Item </a></li>  
-	<li class="first"><a href="${tg.url('/equipo/equipo')}" class="${('', 'active')[defined('pagina') and pagina==pagina=='index']}">Miembros del Equipo</a></li>  
+	<li class="first"><a href="${tg.url('/tipo_item/tipo_item')}" class="${('', 'active')[defined('pagina') and pagina==pagina=='index']}">Tipo de Item </a></li>
 	<li class="first"><a href="${tg.url('/proyecto/proyecto')}" class="${('', 'active')[defined('pagina') and pagina==pagina=='index']}">Proyecto</a></li>
-	<li class="first"><a href="${tg.url('/reporte/reporte')}" class="${('', 'active')[defined('pagina') and pagina==pagina=='index']}">Reporte</a></li>    
-      </span>
+	<li class="first"><a href="${tg.url('/reporte/reporte')}" class="${('', 'active')[defined('pagina') and pagina==pagina=='index']}">Reporte</a></li>
+		</span>
+		<span py:when="perm.var == 'lider'">  
+			<li class="first"><a href="${tg.url('/usuario')}" class="${('', 'active')[defined('pagina') and pagina==pagina=='index']}">Usuario</a></li>
+	<li class="first"><a href="${tg.url('/rol')}" class="${('', 'active')[defined('pagina') and pagina==pagina=='index']}">Rol</a></li>
+	<li class="first"><a href="${tg.url('/privilegio')}" class="${('', 'active')[defined('pagina') and pagina==pagina=='index']}">Privilegio</a></li>    
+	<li class="first"><a href="${tg.url('/fase/fase')}" class="${('', 'active')[defined('pagina') and pagina==pagina=='index']}">Fase</a></li> 
+        <li class="first"><a href="${tg.url('/tipo_fase/tipo_fase')}" class="${('', 'active')[defined('pagina') and pagina==pagina=='index']}">Tipo de Fase</a></li>  
+	<li class="first"><a href="${tg.url('/item/item')}" class="${('', 'active')[defined('pagina') and pagina==pagina=='index']}">Item</a></li>  
+	<li class="first"><a href="${tg.url('/tipo_item/tipo_item')}" class="${('', 'active')[defined('pagina') and pagina==pagina=='index']}">Tipo de Item </a></li>
+	<li class="first"><a href="${tg.url('/equipo/equipo')}" class="${('', 'active')[defined('pagina') and pagina==pagina=='index']}">Miembros del Equipo</a></li>
+	<li class="first"><a href="${tg.url('/proyecto/proyecto')}" class="${('', 'active')[defined('pagina') and pagina==pagina=='index']}">Proyecto</a></li>
+	<li class="first"><a href="${tg.url('/reporte/reporte')}" class="${('', 'active')[defined('pagina') and pagina==pagina=='index']}">Reporte</a></li>
+			
+		</span>  
+	    
+    
      </div>
      </div>  
     </py:if>  
     <span py:if="tg.auth_stack_enabled" py:strip="True">
         <li py:if="not request.identity" id="login" class="loginlogout"><a href="${tg.url('/login')}">Entrar</a></li>
         <li py:if="request.identity" id="login" class="loginlogout"><a href="${tg.url('/logout_handler')}">Salir</a></li>
+        <li py:if="defined('nom_proyecto')" id="login" class="loginlogout"><a href="${tg.url('/proyecto/salir_proyecto')}">Salir_Proyecto</a></li>
+        	
+        		
+        
        
     </span>
   </ul>
@@ -57,5 +97,6 @@
     <!-- End of content -->
     ${footer()}
   </div>
+  
 </body>
 </html>

@@ -5,6 +5,7 @@
       xmlns:xi="http://www.w3.org/2001/XInclude">
 
   <xi:include href="master.html" />
+  
 
 <head>
   <meta content="text/html; charset=UTF-8" http-equiv="content-type" py:replace="''"/>
@@ -16,10 +17,19 @@
 
 <body>
   <div id="mainmenu">
-    <li class="first"><a href="${tg.url('/proyecto/proyecto')}" class="${('', 'active')[defined('pagina') and pagina==pagina=='proyecto']}">Proyecto</a></li>
+      	<xi:include href="buscar.html" />
   </div>  
-
+  
+  
+  
   <div py:choose="len(proyectos)" py:strip="True" id="proyecto">
+    <div py:for="perm in request.identity['user'].privilegios">
+	    	<div py:choose="">
+	     		<span py:when="perm.var == 'control_total'">
+    				<p><a href="${tg.url('/proyecto/agregar_proyecto')}">Agregar Proyecto</a></p>
+    			</span>
+    		</div>
+    </div>
     <table class="proyectos" py:when="0">
       <tr><th>No hay Proyectos registrados..</th></tr>
     </table>
@@ -33,8 +43,19 @@
         <th>Descripcion</th>
       </tr>
 		<tr align="center" py:for="proyecto in proyectos">
-		<td><a href="${tg.url('/proyecto/editar_proyecto?id_proyecto=%d' % proyecto.id_proyecto)}">Editar</a>
-		<a href="${tg.url('/proyecto/eliminar_proyecto?id_proyecto=%d' % proyecto.id_proyecto)}">Borrar</a></td>
+		<td>
+		 <div py:for="perm in request.identity['user'].privilegios">
+	    	<div py:choose="">
+	     		<span py:when="perm.var == 'control_total'">
+					<a href="${tg.url('/proyecto/editar_proyecto?id_proyecto=%d' % proyecto.id_proyecto)}"><img src="/images/lapiz.png" border="0" height="15" alt="Editar privilegio"/></a>
+					<a href="${tg.url('/proyecto/eliminar_proyecto?id_proyecto=%d' % proyecto.id_proyecto)}"><img src="/images/cross.png" border="0" alt="Borrar privilegio"/></a>
+				</span>
+				<span py:when="perm.var == 'ingresar_proyecto'">
+					<a href="${tg.url('/proyecto/ingresar?id_proyecto=%d' % proyecto.id_proyecto)}"><img src="/images/ok.png" border="0" height="15" alt="seleccionar privilegio"/></a>
+				</span>
+			</div>
+		</div>		
+		</td>
 		<td>${proyecto.nombre_proyecto}</td>
 		<td>${proyecto.lider_equipo}</td>
 		<td>${proyecto.tipos_fases}</td>
@@ -47,5 +68,6 @@
   <div class="notice"> Lista los Proyectos registrados en el sistema.
     
   </div>
+  
 </body>
 </html>

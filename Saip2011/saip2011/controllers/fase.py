@@ -53,7 +53,8 @@ class FaseController(BaseController):
     def listar_fase(self):
         """Lista fases 
         """
-        fases = Fase.get_fase()
+        #fases = Fase.get_fase()
+	fases=Fase.get_fase_by_proyecto(int (Variables.get_valor_by_nombre("proyecto_actual")) )
         return dict(pagina="listar_fase",fases=fases)
 
     @expose('saip2011.templates.fase.editar_fase')
@@ -145,6 +146,14 @@ class FaseController(BaseController):
         flash("Fase agregada!")  
         redirect('/fase/fase')
   
+    @expose('saip2011.templates.item.listar_item')
+    def seleccionar_fase(self,id_fase,*kw,**args):
+        items = Item.get_item_activados()
+
+
+        return dict(pagina="listar_item",items=items)
+
+        
   
  # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # #
 

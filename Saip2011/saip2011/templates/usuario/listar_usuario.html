@@ -16,7 +16,7 @@
 
 <body>
   <div id="mainmenu">
-    <li class="first"><a href="${tg.url('/usuario')}" class="${('', 'active')[defined('pagina') and pagina==pagina=='usuario']}">Usuario</a></li>
+    <xi:include href="buscar.html" />
   </div>  
   <div py:choose="len(usuarios)" py:strip="True" id="usuario">
     <table class="usuarios" py:when="0">

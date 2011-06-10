@@ -80,7 +80,7 @@ class Fase(DeclarativeBase):
 		"""
 		fases = DBSession.query(Fase).all()
 		lista=[]
-		for	fase in fases:
+		for fase in fases:
 			if fase.proyecto == id_proyecto:
 				lista.append(fase)
 

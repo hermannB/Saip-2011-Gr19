@@ -16,8 +16,16 @@
 
 <body>
   <div id="mainmenu">
-    <li class="first"><a href="${tg.url('/rol')}" class="${('', 'active')[defined('pagina') and pagina==pagina=='rol']}">Rol</a></li>
-  </div>  
+    <xi:include href="buscar.html" />
+  </div>
+  
+    <div py:for="perm in request.identity['user'].privilegios">
+	    	<div py:choose="">
+	     		<span py:when="perm.var == 'control_total' or perm.var == 'alta_rol'">
+    				<p><a href="${tg.url('/agregar_rol')}">Agregar Rol</a></p>
+    			</span>
+    		</div>
+    </div>  
   <div py:choose="len(roles)" py:strip="True" id="rol">
     <table class="roles" py:when="0">
       <tr><th>No hay roles registrados..</th></tr>

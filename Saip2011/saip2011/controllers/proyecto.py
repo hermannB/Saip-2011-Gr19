@@ -36,27 +36,51 @@ from psycopg2 import IntegrityError
 
 
 
+
 class ProyectoController(BaseController):
     
 
  # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # #
 
-	@expose('saip2011.templates.proyecto.proyecto')
-	def proyecto(self):
-		"""
-		Menu para Proyecto
-		"""
-		return dict(pagina="proyecto")
-    
-	@expose('saip2011.templates.proyecto.listar_proyecto')
-	def listar_proyecto(self):
+    @expose('saip2011.templates.proyecto.listar_proyecto')
+    def proyecto(self):
+        """Lista proyectos 
+        """
+        proyectos=""
+
+        nom_proyecto=Variables.get_valor_by_nombre("nombre_proyecto_actual")
+       
+        usuario=Usuario.get_user_by_alias(request.identity['repoze.who.userid'])
+        rol=usuario.roles[0]
+        if rol.nombrerol == "Administrador":
+            proyectos = Proyecto.get_proyecto()
+            return dict(pagina="listar_proyecto",proyectos=proyectos,nom_proyecto=nom_proyecto)
+
+        else:
+            proy = Proyecto.get_proyecto()
+            proyectos = []
+            miembros=Equipo_Desarrollo.get_miembros_by_usuario(usuario.idusuario)
+
+            for miembro in miembros:
+                for p in proy:
+                    if (miembro.proyecto == p.id_proyecto):
+                        proyectos.append(p)
+
+            return dict(pagina="listar_proyecto",proyectos=proyectos,nom_proyecto=nom_proyecto)
+
+        #return dict(pagina="ingresar_proyecto",proyectos=proyectos)
+
+        #return dict(pagina="listar_proyecto",proyectos=proyectos)
+        
+    @expose('saip2011.templates.proyecto.listar_proyecto')
+    def listar_proyecto(self):
 		"""Lista proyectos 
 		"""
 		proyectos = Proyecto.get_proyecto()
 		return dict(pagina="listar_proyecto",proyectos=proyectos)
 
-	@expose('saip2011.templates.proyecto.ingresar_proyecto')
-	def ingresar_proyecto(self):
+    @expose('saip2011.templates.proyecto.ingresar_proyecto')
+    def ingresar_proyecto(self):
 		"""lista de los  proyectos del usuario
 		"""
 		usuario=Usuario.get_user_by_alias(request.identity['repoze.who.userid'])
@@ -71,68 +95,81 @@ class ProyectoController(BaseController):
 
 		return dict(pagina="ingresar_proyecto",proyectos=proyectos)
 
-	@expose()
-	def ingresar(self,id_proyecto):
-		usuario=Variables.get_valor_by_nombre("usuario_actual")
-		proyecto=Proyecto.get_proyecto_by_id(id_proyecto)
-		Variables.set_valor_by_nombre("proyecto_actual",proyecto.id_proyecto)
-		miembros=Equipo_Desarrollo.get_miembros_by_proyecto(proyecto.id_proyecto)
-		for miembro in miembros:
-			if ( miembro.nombre_usuario == usuario ):
-				Variables.set_valor_by_nombre("rol_actual",miembro.idrol)
+    @expose()
+    def ingresar(self,id_proyecto):
+        usuario=Usuario.get_user_by_alias( request.identity['repoze.who.userid'])
+        proyecto=Proyecto.get_proyecto_by_id(id_proyecto)
 
-		redirect('/proyecto/proyecto')
+        Variables.set_valor_by_nombre("proyecto_actual",proyecto.id_proyecto)
+        Variables.set_valor_by_nombre("nombre_proyecto_actual",proyecto.nombre_proyecto)
+        miembros=Equipo_Desarrollo.get_miembros_by_proyecto(proyecto.id_proyecto)
+        rol=""
+        for miembro in miembros:
+            if ( miembro.idusuario == usuario.idusuario ):
+                Variables.set_valor_by_nombre("rol_actual",miembro.idrol)
+                rol=Rol.get_roles_by_id(miembro.idrol)
+                usuario.roles=[]
+                DBSession.flush()
+                usuario.roles.append(rol)
+                DBSession.flush()
+                break;
 
-	@expose('saip2011.templates.proyecto.agregar_proyecto')
-	def agregar_proyecto(self, *args, **kw):
+
+        redirect('/')
+
+    @expose('saip2011.templates.proyecto.agregar_proyecto')
+    def agregar_proyecto(self, *args, **kw):
 		usuarios = DBSession.query(Usuario).all()
 		tipos_fases = DBSession.query(Tipo_Fase).all()	
 
 		return dict(pagina="agregar_proyecto",values=kw, tipos_fases=tipos_fases, usuarios=usuarios)
     
-	@validate({'nombre_proyecto':NotEmpty, 
+    @validate({'nombre_proyecto':NotEmpty, 
 				'idusuario':Int(not_empty=True), 
 				'tipos_fases':NotEmpty,
 				#		'descripcion':NotEmpty
 				}, error_handler=agregar_proyecto)
 
-	@expose()
-	def post_proyecto(self, nombre_proyecto, idusuario, tipos_fases, asmSelect0, descripcion):
-		if idusuario is not None:
-			idusuario = int(idusuario)
+    
+    @expose('saip2011.templates.fase.listar_fase')
+    def post_proyecto(self, nombre_proyecto, idusuario, tipos_fases, asmSelect0, descripcion):
+        if idusuario is not None:
+            idusuario = int(idusuario)
 
-		if tipos_fases is not None:
-			if not isinstance(tipos_fases, list):
-				tipos_fases = [tipos_fases]
-		tipos_fases = [DBSession.query(Tipo_Fase).get(tipo_fase) for tipo_fase in tipos_fases]
+        if tipos_fases is not None:
+            if not isinstance(tipos_fases, list):
+                tipos_fases = [tipos_fases]
+        tipos_fases = [DBSession.query(Tipo_Fase).get(tipo_fase) for tipo_fase in tipos_fases]
         
-		proyecto = Proyecto (nombre_proyecto=nombre_proyecto, idusuario=idusuario, 
-				descripcion=descripcion, tipos_fases=tipos_fases, estado ="Desactivado")
-		DBSession.add(proyecto)
+        proyecto = Proyecto (nombre_proyecto=nombre_proyecto, idusuario=idusuario, 
+                descripcion=descripcion, tipos_fases=tipos_fases, estado ="Desactivado")
+        DBSession.add(proyecto)
 
-		proy=Proyecto.get_ultimo_id()
-		cant=1
-		for tipo_fase in tipos_fases:
-			fase = Fase (nombre_fase=tipo_fase.nombre_tipo_fase, id_tipo_fase=tipo_fase.id_tipo_fase, estado ="Nuevo", 
-								proyecto=proy,orden=cant,linea_base="Abierta", descripcion=tipo_fase.descripcion)
-			DBSession.add(fase)
-			DBSession.flush()
-			cant+=1
+        proy=Proyecto.get_ultimo_id()
+        cant=1
+	lista=[]
+        for tipo_fase in tipos_fases:
+            fase = Fase (nombre_fase=tipo_fase.nombre_tipo_fase, id_tipo_fase=tipo_fase.id_tipo_fase, estado ="Nuevo", 
+                                proyecto=proy,orden=cant,linea_base="Abierta", descripcion=tipo_fase.descripcion)
+            lista.append(fase)
+            DBSession.add(fase)
+            DBSession.flush()
+            cant+=1
 
-		fases = Fase.get_fase_by_proyecto(Proyecto.get_ultimo_id())
-		nom="Lider Proyecto"
-		mirol=Rol.get_roles_by_nombre(nom)
-		equipo = Equipo_Desarrollo(proyecto=Proyecto.get_ultimo_id(), idusuario=idusuario, 
-										idrol=mirol.idrol,fases=fases)
+        fases = Fase.get_fase_by_proyecto(Proyecto.get_ultimo_id())
+        nom="Lider Proyecto"
+        mirol=Rol.get_roles_by_nombre(nom)
+        equipo = Equipo_Desarrollo(proyecto=Proyecto.get_ultimo_id(), idusuario=idusuario, 
+                                        idrol=mirol.idrol,fases=fases)
 
-		DBSession.add(equipo)
-		DBSession.flush()
+        DBSession.add(equipo)
+        DBSession.flush()
+	return dict(pagina="/fase/listar_fase", fases=fases)
+        #flash("Proyecto Agregado!")  
+        #redirect('/proyecto/proyecto')
 
-		flash("Proyecto Agregado!")  
-		redirect('/proyecto/proyecto')
-
-	@expose('saip2011.templates.proyecto.editar_proyecto')
-	def editar_proyecto(self, id_proyecto, *args, **kw):
+    @expose('saip2011.templates.proyecto.editar_proyecto')
+    def editar_proyecto(self, id_proyecto, *args, **kw):
 		usuarios = DBSession.query(Usuario).all()
 		tipos_fases = DBSession.query(Tipo_Fase).all()
 		proyecto = DBSession.query(Proyecto).get(id_proyecto)
@@ -153,14 +190,14 @@ class ProyectoController(BaseController):
 		values.update(kw)
 		return dict(pagina="editar_proyecto",values=values, usuarios=usuarios, tipos_fases=tipos_fases, tipos_fases2=tipos_fases2,usuario2=usuario2)
 
-	@validate({'id_proyecto':Int(not_empty=True), 
+    @validate({'id_proyecto':Int(not_empty=True), 
 				'nombre_proyecto':NotEmpty, 
 				'tipos_fases':NotEmpty,
 				#               'descripcion':NotEmpty, 
 				'idusuario':Int(not_empty=True)}, error_handler=editar_proyecto)
 
-	@expose()
-	def put_proyecto(self, id_proyecto, nombre_proyecto, idusuario, descripcion, asmSelect0, tipos_fases,**kw):
+    @expose()
+    def put_proyecto(self, id_proyecto, nombre_proyecto, idusuario, descripcion, asmSelect0, tipos_fases,**kw):
 		proyecto = DBSession.query(Proyecto).get(id_proyecto)
 		miembro=Equipo_Desarrollo.get_miembro(proyecto.idusuario)
 		id_miembro=miembro.id_equipo
@@ -204,8 +241,8 @@ class ProyectoController(BaseController):
 		flash("Proyecto Modificado!")  
 		redirect('/proyecto/proyecto')
  
-	@expose('saip2011.templates.proyecto.eliminar_proyecto')
-	def eliminar_proyecto(self,id_proyecto, *args, **kw):
+    @expose('saip2011.templates.proyecto.eliminar_proyecto')
+    def eliminar_proyecto(self,id_proyecto, *args, **kw):
 		proyecto = DBSession.query(Proyecto).get(id_proyecto)	
 
 		values = dict(id_proyecto=proyecto.id_proyecto, 
@@ -217,14 +254,14 @@ class ProyectoController(BaseController):
 
 		return dict(pagina="eliminar_proyecto",values=values)
 
-	@validate({'id_proyecto':Int(not_empty=True), 
+    @validate({'id_proyecto':Int(not_empty=True), 
 				'nombre_proyecto':NotEmpty, 
 				'tipos_fases':NotEmpty,
 				#               'descripcion':NotEmpty
 				}, error_handler=eliminar_proyecto)	
 
-	@expose()
-	def post_delete_proyecto(self, id_proyecto, nombre_proyecto, descripcion, tipos_fases, **kw):
+    @expose()
+    def post_delete_proyecto(self, id_proyecto, nombre_proyecto, descripcion, tipos_fases, **kw):
 
 		proyecto = DBSession.query(Proyecto).get(id_proyecto)
 		miembros=Equipo_Desarrollo.get_miembros_by_proyecto(proyecto.idusuario)
@@ -246,3 +283,18 @@ class ProyectoController(BaseController):
 		flash("Proyecto eliminado!")
 		redirect('/proyecto/proyecto')
 
+    @expose('saip2011.templates.index')
+    def salir_proyecto(self):
+
+        usuario=Usuario.get_user_by_alias( request.identity['repoze.who.userid'])
+
+        Variables.set_valor_by_nombre("proyecto_actual",0)
+        Variables.set_valor_by_nombre("nombre_proyecto_actual","")
+        rol=int(Variables.get_valor_by_nombre("rol_por_defecto"))
+        Variables.set_valor_by_nombre("rol_actual",rol)
+        rol2=Rol.get_roles_by_id(rol)
+        usuario.roles=[]
+        usuario.roles.append(rol2)
+        DBSession.flush()
+
+        return dict(pagina="/index")
