@@ -38,6 +38,42 @@ function eliminarElemento(id){
 
 </script>
 
+<script language="javascript" type="text/javascript">
+
+function validacion(formulario) {
+
+	var er_nombre = /^([a-z]|[A-Z]|á|é|í|ó|ú|ñ|ü|\s|\.|-[0-9]*)+$/			//letras, '.' y '-' o vacio
+	var er_codigo = /^([a-z]|[A-Z]|á|é|í|ó|ú|ñ|ü)+$/			//letras, '.' y '-' o vacio
+
+	//comprueba campo de nombre
+	if(!er_nombre.test(formulario.nombre_tipo_item.value)) { 
+		alert('Contenido del campo nombre del tipo de item no válido.')
+		return false;
+	}   	
+   	
+	//comprueba campo de nombre
+	if(!er_codigo.test(formulario.codigo_tipo_item.value)) { 
+		alert('Contenido del campo codigo del tipo de item no válido.')
+		return false;
+	}   	
+
+	//comprueba campo de nombre
+	if (formulario.descripcion.value.length == 0 ) { 
+		alert('Contenido del campo descripcion no válido.')
+		return false;
+	}  
+ 
+	if(!er_nombre.test(formulario.campo.value)) { 
+        alert("Debe cargar un campo por lo menos."); 
+        return true;  
+    }
+
+    alert('Los campos introducidos son CORRECTOS.')
+	return false;			
+}
+
+
+</script>
 	<title>Sistema de Administracion de Item</title>
 </head>
 
@@ -47,7 +83,7 @@ function eliminarElemento(id){
 		<div>
 			<h2>Editar Tipo de Item</h2>
 		</div>
-		  <form action="put" method="PUT">
+		  <form name="formulario" id="formulario" onsubmit="return validacion(this)" action="put" method="PUT">
 			<table summary="">
 			<tbody>
 		      	<tr><td><input class="required" maxlength="50" type="hidden" name="id_tipo_item" value="${values['id_tipo_item']}"/>${tmpl_context.form_errors.get('id_tipo_item')}</td></tr>

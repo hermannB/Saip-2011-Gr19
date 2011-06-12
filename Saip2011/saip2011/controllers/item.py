@@ -43,29 +43,17 @@ class ItemController(BaseController):
 
 ################################################################################
     @expose('saip2011.templates.item.item')
-    def item(self,start=0,end=5):
+    def item(self):
         """
         Menu para Item
         """
         nom_proyecto=Variables.get_valor_by_nombre("nombre_proyecto_actual")
         nom_fase=Variables.get_valor_by_nombre("nombre_fase_actual")
-        #fases=Fase.get_fase_by_proyecto(int (Variables.get_valor_by_nombre
-       #                                         ("proyecto_actual")) )
-        
-        paginado = 5
-        if start <> 0:
-            end=int(start.split('=')[1]) #obtiene el fin de pagina
-            start=int(start.split('&')[0]) #obtiene el inicio de pagina
-        #print start,end
-        total = len(Fase.get_fase_by_proyecto(int (Variables.get_valor_by_nombre
-                                                ("proyecto_actual")) ))
-        pagina_actual = ((start % end) / paginado) + 1
-         
-        fases=Fase.get_fase_by_proyecto_por_pagina(int (Variables.get_valor_by_nombre
-                                                ("proyecto_actual")), start,end )
+        fases=Fase.get_fase_by_proyecto(int (Variables.get_valor_by_nombre
+                                                ("proyecto_actual")) )
         
         return dict(pagina="listar_fase",fases=fases,nom_proyecto=nom_proyecto
-                    ,nom_fase=nom_fase,inicio=start,fin=end,pagina_actual=pagina_actual,paginado=paginado,total=total)
+                    ,nom_fase=nom_fase)
 
 ###############################################################################
 
@@ -97,7 +85,6 @@ class ItemController(BaseController):
         ids=0
         for i in items:
             ids=i.id_item
-        flash(_('Bienvenido, %d!') % ids)
         return dict(pagina="listar_item",items=items,nom_proyecto=nom_proyecto
                     ,nom_fase=nom_fase)
 
@@ -131,54 +118,92 @@ class ItemController(BaseController):
     def editar_item(self,id_item,*args, **kw):
         nom_proyecto=Variables.get_valor_by_nombre("nombre_proyecto_actual")
         nom_fase=Variables.get_valor_by_nombre("nombre_fase_actual")
+        id_fase=int(Variables.get_valor_by_nombre("fase_actual"))
         item = DBSession.query(Item).get(id_item)
-        if request.method != 'PUT':  
-            values = dict(id_item=item.id_item, 
+        fase = DBSession.query(Fase).get(id_fase)	
+        tipos_items=fase.tipos_items
+        lista=[]
+        lista.append(item.nombre_tipo_item )
+
+        values = dict(id_item=item.id_item, 
 						nombre_item=item.nombre_item,        
 						codigo_item=item.codigo_item,
-						nombre_tipo_item=item.nombre_tipo_item, 
 						estado=item.estado,
 						complejidad=item.complejidad,
 						)
         adjuntos=Adjunto.get_adjuntos_by_item(item.id_item)
         #decodificar
         adjuntos2=[]
-        for adj in adjuntos:
+        for adj in adjuntos:        
             var=binascii.b2a_base64(adj.archivo)
-            archivo=base64.b64decode(var)
-            adjuntos2.append(archivo)
+            archivo=base64.b64decode(var)  
+            adj.archvivo=archivo
+            adjuntos2.append(adj)
 
         return dict(pagina="editar_item",values=values,adjuntos2=adjuntos2,
-                        nom_proyecto=nom_proyecto,nom_fase=nom_fase)
+                        nom_proyecto=nom_proyecto,nom_fase=nom_fase,
+                        lista=lista,tipos_items=tipos_items)
 
     @validate({'id_item':Int(not_empty=True),
 				'nombre_item':NotEmpty,
-                'codigo_item':NotEmpty,  
-				'complejidad':Int(not_empty=True), 
-				'estado':NotEmpty}, error_handler=editar_item)
+				'complejidad':Int(not_empty=True)}, error_handler=editar_item)
 
-    @expose()
-    def put_item(self, id_item, nombre_item, nombre_tipo_item, codigo_item,
-                     complejidad, estado, **kw):
+    @expose('saip2011.templates.item.editar_item')
+    def put_item(self, id_item, nombre_item, id_tipo_item,complejidad,
+                     adjuntos,**data):
 
         item = DBSession.query(Item).get(int(id_item))
-        version=item.version+1
-        item.estado_oculto="Desactivado"
-        DBSession.flush()
+        items= Item.get_nombres_items()
+        items.remove(item.nombre_item)
+        
+        if nombre_item not in items:
 
-        item2 = Item (nombre_item=nombre_item , codigo_item=codigo_item ,
-                       id_tipo_item=item.id_tipo_item , complejidad=complejidad,
-                       estado = estado ,fase=int( Variables.get_valor_by_nombre
-                        ("fase_actual") ) , proyecto=
-                        int( Variables.get_valor_by_nombre("proyecto_actual") ),
-    					creado_por=Variables.get_valor_by_nombre("usuario_actual")
-                        ,fecha_creacion = time.ctime() ,
-        				version =version ,estado_oculto="Activo")
 
-        DBSession.add(item2)
-        DBSession.flush()
-        flash("Item Modificado!")
-        redirect('/item/item')
+            version=item.version+1
+            item.estado_oculto="Desactivado"
+            DBSession.flush()
+
+            item2 = Item (nombre_item=nombre_item , codigo_item=item.codigo_item ,
+                           id_tipo_item=item.id_tipo_item , complejidad=complejidad,
+                           estado = item.estado ,fase=int( Variables.get_valor_by_nombre
+                            ("fase_actual") ) , proyecto=
+                            int( Variables.get_valor_by_nombre("proyecto_actual") ),
+        					creado_por=Variables.get_valor_by_nombre("usuario_actual")
+                            ,fecha_creacion = time.ctime() ,
+            				version =version ,estado_oculto="Activo")
+
+            DBSession.add(item2)
+            DBSession.flush()
+            flash("Item Modificado!")
+            redirect('/item/item')
+        else:
+            nom_proyecto=Variables.get_valor_by_nombre("nombre_proyecto_actual")
+            nom_fase=Variables.get_valor_by_nombre("nombre_fase_actual")
+            id_fase=int(Variables.get_valor_by_nombre("fase_actual"))          
+            fase = DBSession.query(Fase).get(id_fase)	
+            tipos_items=fase.tipos_items
+            lista=[]
+            lista.append(item.nombre_tipo_item )
+            item = DBSession.query(Item).get(int(id_item))
+            values = dict(id_item=id_item, 
+				            nombre_item=nombre_item,        
+				            codigo_item=item.codigo_item,
+    			            complejidad=complejidad,
+				            )
+            if adjuntos is not None:
+                if not isinstance(adjuntos, list):
+                    adjuntos = [adjuntos]
+
+            adjuntos=Adjunto.get_adjuntos_by_item(item.id_item)
+            #decodificar
+            adjuntos2=[]
+            for adj in adjuntos:
+                adjuntos2.append(adj)
+            flash("EL NOMBRE DEL ITEM YA ESXISTE!")
+            return dict(pagina="editar_item",values=values,adjuntos2=adjuntos2,
+                            nom_proyecto=nom_proyecto,nom_fase=nom_fase,
+                            lista=lista,tipos_items=tipos_items)
+
 
 ################################################################################
 
@@ -187,7 +212,7 @@ class ItemController(BaseController):
         nom_proyecto=Variables.get_valor_by_nombre("nombre_proyecto_actual")
         nom_fase=Variables.get_valor_by_nombre("nombre_fase_actual")
         item = DBSession.query(Item).get(id_item)	
-        values = dict(id_item=item.id_item, 
+        values = dict(id_item=id_item, 
 						nombre_item=item.nombre_item,
 						codigo_item=item.codigo_item,
 						nombre_tipo_item=item.nombre_tipo_item, 
@@ -314,55 +339,65 @@ class ItemController(BaseController):
 			    'complejidad':Int(not_empty=True)}, error_handler=agregar_item
 			    )
 
-    @expose()
+    @expose('saip2011.templates.item.agregar_item')
     def post_item(self, nombre_item, complejidad, adjunto, id_tipo_item):
+
+
+        items= Item.get_nombres_items()
+        if nombre_item not in items:
         
-        if id_tipo_item is not None:
-            id_tipo_item = int(id_tipo_item)
-        tipo_item = DBSession.query(Tipo_Item).get(int(id_tipo_item))
-        pre_codigo=tipo_item.codigo_tipo_item
-        proy_act=int (Variables.get_valor_by_nombre("proyecto_actual"))
-        fas_act=int (Variables.get_valor_by_nombre("fase_actual"))
-        codigo_item=Item.crear_codigo(id_tipo_item,pre_codigo,proy_act,fas_act)
+            if id_tipo_item is not None:
+                id_tipo_item = int(id_tipo_item)
+            tipo_item = DBSession.query(Tipo_Item).get(int(id_tipo_item))
+            pre_codigo=tipo_item.codigo_tipo_item
+            proy_act=int (Variables.get_valor_by_nombre("proyecto_actual"))
+            fas_act=int (Variables.get_valor_by_nombre("fase_actual"))
+            codigo_item=Item.crear_codigo(id_tipo_item,pre_codigo,proy_act,fas_act)
 
-        item = Item (nombre_item=nombre_item, codigo_item=codigo_item,
-                        id_tipo_item=id_tipo_item, 
-				        complejidad=complejidad, estado = "nuevo", 
-                        fase=fas_act,proyecto=proy_act,
-				        creado_por=Variables.get_valor_by_nombre
-                                        ("usuario_actual"),
-				        fecha_creacion = time.ctime(), version =1 ,
-                        estado_oculto="Activo"
-				        )
-        DBSession.add(item)
-        DBSession.flush()
-        mayor =Item.get_ultimo_id()
-
+            item = Item (nombre_item=nombre_item, codigo_item=codigo_item,
+                            id_tipo_item=id_tipo_item, 
+	                        complejidad=complejidad, estado = "nuevo", 
+                            fase=fas_act,proyecto=proy_act,
+	                        creado_por=Variables.get_valor_by_nombre
+                                            ("usuario_actual"),
+	                        fecha_creacion = time.ctime(), version =1 ,
+                            estado_oculto="Activo"
+	                        )
+            DBSession.add(item)
+            DBSession.flush()
+           
+            mayor =Item.get_ultimo_id()
+            if adjunto is not None:
+                if not isinstance(adjunto, list):
+                    adjunto = [adjunto]
+            for adj in adjunto:
+                data = adj.file.read()
+                encode=base64.b64encode(data)
+                var=binascii.a2b_base64(encode)
+                adj = Adjunto (id_item=mayor, archivo=var,nombre_archivo=adj.filename)
+                DBSession.add(adj)
+                DBSession.flush() 
        
-        mayor =Item.get_ultimo_id()
-        if adjunto is not None:
-            if not isinstance(adjunto, list):
-                adjunto = [adjunto]
-        for adj in adjunto:
-            data = adj.file.read()
-            encode=base64.b64encode(data)
-            var=binascii.a2b_base64(encode)
-            adj = Adjunto (id_item=mayor, archivo=var,nombre_archivo=adj.filename)
-            DBSession.add(adj)
-            DBSession.flush()        
+            flash("Item Agregado!")  
+            redirect('/item/item')
+        else:
+            nom_fase=Variables.get_valor_by_nombre("nombre_fase_actual")
+            nom_proyecto=Variables.get_valor_by_nombre("nombre_proyecto_actual")
 
-        adj = DBSession.query(Adjunto).get(5)
-        var=binascii.b2a_base64(adj.archivo)
-        archivo=base64.b64decode(var)
+            id_fase=int(Variables.get_valor_by_nombre("fase_actual"))
         
-        
-        self.descargar(destino,7)
+            fase = DBSession.query(Fase).get(id_fase)	
+            tipos_items=fase.tipos_items
 
-        redirect('/item/item')
+            values = dict(nombre_item=nombre_item,
+						id_tipo_item=id_tipo_item, 
+						complejidad=complejidad,
+						)
 
-     
-        flash("Item Agregado!")  
-        redirect('/item/item')
+            flash("Nombre de fase ya existente!")
+            return dict(pagina="agregar_item",values=values, tipos_items=tipos_items
+                        ,nom_proyecto=nom_proyecto,nom_fase=nom_fase)
+
 ################################################################################
 
     @expose('saip2011.templates.item.listar_mis_adjuntos')

@@ -30,7 +30,9 @@ class Tipo_Fase(DeclarativeBase):
 
     __tablename__ = 'Tabla_Tipo_Fase'
 
-    #{ Columns
+################################################################################
+
+    #                   Columnas
 
     id_tipo_fase = Column(Integer, autoincrement=True, primary_key=True)
 
@@ -38,45 +40,38 @@ class Tipo_Fase(DeclarativeBase):
 
     descripcion = Column(Text)
 
-     #{ Relations
+################################################################################
+
+     #                  Relaciones
 
     proyectos = relation(Proyecto, secondary=proyecto_tipo_fase_tabla,
-	                  backref='tipos_fases')
+                      backref='tipos_fases')
 
     tipos_items = relation(Tipo_Item, secondary=tipo_fase_tipo_item_tabla,
-	                  backref='tipos_fases')
+                      backref='tipos_fases')
 
+################################################################################
 
-
-    #{ Special methods
+    #                   Metodos
 
     def __repr__(self):
-	    return '<Fase: Nombre=%s>' % self.nombre_tipo_fase
+        return '<Fase: Nombre=%s>' % self.nombre_tipo_fase
 
     def __unicode__(self):
-	    return self.nombre_tipo_fase
+        return self.nombre_tipo_fase
+
+#-------------------------------------------------------------------------------
 
     @classmethod
-    def get_tipo_fase(self):
-	    """
-	    Obtiene la lista de todos los roles
-	    registrados en el sistema
-	    """
-
-	    tipos_fases = DBSession.query(Tipo_Fase).all()
-	        
-	    return tipos_fases
-
-    @classmethod
-    def get_tipo_fase_por_pagina(self,start=0,end=5):
+    def get_tipo_fases(self):
         """
         Obtiene la lista de todos los roles
         registrados en el sistema
         """
-
-        tipos_fases = DBSession.query(Tipo_Fase).slice(start,end).all()
-            
+        tipos_fases = DBSession.query(Tipo_Fase).all()
         return tipos_fases
+
+#-------------------------------------------------------------------------------
 
     @classmethod
     def get_tipo_fase_by_id(self,tipo_fase_id):
@@ -89,6 +84,16 @@ class Tipo_Fase(DeclarativeBase):
             if tipo_fase.id_tipo_fase == tipo_fase_id:
                 return tipo_fase
 
+#-------------------------------------------------------------------------------
 
-    #}
 
+    @classmethod
+    def borrar_by_id(self,id_tipo_fase):
+        """
+        Obtiene la lista de todos los adjuntos         
+        """
+        DBSession.delete(DBSession.query(Tipo_Fase).get(id_tipo_fase))
+        DBSession.flush()	
+
+#-------------------------------------------------------------------------------
+################################################################################

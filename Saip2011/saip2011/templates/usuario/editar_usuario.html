@@ -7,8 +7,65 @@
 
   <head>
   <meta content="text/html; charset=UTF-8" http-equiv="content-type" py:replace="''"/>
-<script type="text/javascript" src="js/jquery-1.4.2.min.js"></script>
-	<script src="js/vanadium-min.js" type="text/javascript"></script>
+
+ <script language="javascript" type="text/javascript">
+
+function validacion(formulario) {
+
+	var er_nombre = /^([a-z]|[A-Z]|á|é|í|ó|ú|ñ|ü|\s|\.|-)+$/			//letras, '.' y '-' o vacio
+	var er_nrodoc = /^([0-9\s\+\-])+$/						//numeros, espacios, + o -
+	var er_email = /^(.+\@.+\..+)$/                                             	//direccion de correo electronico
+	var x
+   	
+	//comprueba campo de nombre
+	if(!er_nombre.test(formulario.alias.value)) { 
+		alert('Contenido del campo Alias no válido.');
+		return false;
+	}   	
+   	
+	//comprueba campo de nombre
+	if(!er_nombre.test(formulario.nombre.value)) { 
+		alert('Contenido del campo Nombre no válido.');
+		return false;
+	}  
+ 
+	//comprueba campo de nombre
+	if(!er_nombre.test(formulario.apellido.value)) { 
+		alert('Contenido del campo Apellido no válido.');
+		return false;
+	}   
+
+	//comprueba campo de nombre
+	if(!er_nombre.test(formulario.nacionalidad.value)) { 
+		alert('Contenido del campo Nacionalidad no válido.');
+		return false;
+    }
+
+    //comprueba campo de nombre
+	if(!er_nombre.test(formulario.tipodocumento.value)) { 
+		alert('Contenido del campo Tipo de documento no válido.');
+		return false;
+	} 
+
+	//comprueba campos de telefonos (permite campos vacios y guiones)
+	if( !er_nrodoc.test(formulario.nrodoc.value) ) {
+		alert('Contenido del campo nro Documento no válido.');
+		return false;
+	}
+   
+
+	//comprueba campo de email
+	if(!er_email.test(formulario.email.value)) { 
+		alert('Contenido del campo E-MAIL no válido.');
+		return false;
+	}   	
+ 
+	alert('Los campos introducidos son CORRECTOS.')
+	return true;		//cambiar por return true para ejecutar la accion del formulario
+
+}
+
+</script>
 
   <title>Sistema de Administracion de Item</title>
 </head>
@@ -17,7 +74,7 @@
       <h2>Modificar usuario</h2>
     </div>
 
-      <form action="put_usuario" method="PUT">
+      <form name="formulario" id="formulario" action="put_usuario" onsubmit="return validacion(this)" method="PUT">
       <table summary=""><tbody>
         <tr><td><input type="hidden" name="idusuario" value="${values['idusuario']}"/>${tmpl_context.form_errors.get('idusuario')}</td></tr>
       	<tr><td>alias </td><td><input class="required" maxlength="50" type="textfield" name="alias" value="${values['alias']}"/>${tmpl_context.form_errors.get('alias')}</td></tr>

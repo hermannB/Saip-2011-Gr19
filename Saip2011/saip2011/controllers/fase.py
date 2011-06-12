@@ -43,29 +43,16 @@ class FaseController(BaseController):
 ################################################################################
 
     @expose('saip2011.templates.fase.listar_fase')
-    def fase(self,start=0,end=5):
+    def fase(self):
         """
         Menu para Fases
         """
         nom_proyecto=Variables.get_valor_by_nombre("nombre_proyecto_actual")
         nom_fase=Variables.get_valor_by_nombre("nombre_fase_actual")
-        #fases=Fase.get_fase_by_proyecto(int (Variables.get_valor_by_nombre
-                                               # ("proyecto_actual")) )
-        
-        paginado = 5
-        if start <> 0:
-            end=int(start.split('=')[1]) #obtiene el fin de pagina
-            start=int(start.split('&')[0]) #obtiene el inicio de pagina
-        #print start,end
-        total = len(Fase.get_fase_by_proyecto(int (Variables.get_valor_by_nombre
-                                                ("proyecto_actual")) ))
-        pagina_actual = ((start % end) / paginado) + 1
-         
-        fases = Fase.get_fase_by_proyecto_por_pagina(int (Variables.get_valor_by_nombre
-                                                ("proyecto_actual")),start,end )
-        
+        fases=Fase.get_fase_by_proyecto(int (Variables.get_valor_by_nombre
+                                                ("proyecto_actual")) )
         return dict(pagina="listar_fase",fases=fases,nom_proyecto=nom_proyecto
-                        ,nom_fase=nom_fase,inicio=start,fin=end,paginado=paginado,pagina_actual=pagina_actual,total=total)
+                        ,nom_fase=nom_fase)
         #return dict(pagina="fase",nom_proyecto=nom_proyecto)
 
 ################################################################################
@@ -92,7 +79,9 @@ class FaseController(BaseController):
         tipos_fases = DBSession.query(Tipo_Fase).all()
         fase = DBSession.query(Fase).get(id_fase)
         tipos_items = DBSession.query(Tipo_Item).all()
-        id_tipo_fase=fase.id_tipo_fase, 
+        id_tipo_fase=int(fase.id_tipo_fase)
+        lista=[]
+        lista.append(id_tipo_fase)
         tipos = fase.tipos_items
         tipos_items2 = []
         for tip in tipos:
@@ -101,15 +90,13 @@ class FaseController(BaseController):
         if request.method != 'PUT':  
             values = dict(id_fase=fase.id_fase, 
                             nombre_fase=fase.nombre_fase, 
-                            estado=fase.estado,
-                            linea_base=fase.linea_base,
                             descripcion=fase.descripcion,
                             )
 
         return dict(pagina="editar_fase",values=values,tipos_fases=tipos_fases,
                         tipos_items=tipos_items,tipos_items2=tipos_items2,
-                        id_tipo_fase=id_tipo_fase,nom_fase=nom_fase,
-                            nom_proyecto= nom_proyecto )
+                        lista=lista,nom_fase=nom_fase,
+                        nom_proyecto= nom_proyecto )
 
     @validate({'id_fase':Int(not_empty=True), 
                 'nombre_fase':NotEmpty, 
@@ -117,25 +104,50 @@ class FaseController(BaseController):
                 #       'descripcion':NotEmpty
                 }, error_handler=editar_fase)	
 
-    @expose()
+    @expose('saip2011.templates.fase.editar_fase')
     def put_fase(self, id_fase, nombre_fase, id_tipo_fase, tipos_items,
-                    descripcion, asmSelect0, **kw):
+                    descripcion, asmSelect0,  **kw):
+
         fase = DBSession.query(Fase).get(int(id_fase))
+        nombres=Fase.get_nombres_by_id(int(fase.proyecto))
+        nombres.remove(fase.nombre_fase)
+        
         if not isinstance(tipos_items, list):
 			tipos_items = [tipos_items]
         tipos_items = [DBSession.query(Tipo_Item).get(tipo_item) for tipo_item
                                  in tipos_items]
 
-        fase.nombre_fase = nombre_fase
-        fase.id_tipo_fase=id_tipo_fase
-        fase.estado = fase.estado
-        fase.linea_base = fase.linea_base
-        fase.descripcion = descripcion
-        fase.tipos_items=tipos_items
+        if nombre_fase not in nombres:
+            fase.nombre_fase = nombre_fase
+            fase.id_tipo_fase=id_tipo_fase
+            fase.estado = fase.estado
+            fase.linea_base = fase.linea_base
+            fase.descripcion = descripcion
+            fase.tipos_items=tipos_items
 
-        DBSession.flush()
-        flash("Fase modificada!")
-        redirect('/fase/fase')
+            DBSession.flush()
+            flash("Fase modificada!")
+            redirect('/fase/fase')
+    
+        else:
+            nom_proyecto=Variables.get_valor_by_nombre("nombre_proyecto_actual")
+            nom_fase=Variables.get_valor_by_nombre("nombre_fase_actual")
+            id_tipo_fase=fase.id_tipo_fase
+            tipos_fases = DBSession.query(Tipo_Fase).all()
+            tipos = fase.tipos_items
+            tipos_items2 = []
+            for tip in tipos:
+                tipos_items2.append(tip.id_tipo_item)
+
+            values = dict(id_fase=id_fase, 
+                            nombre_fase=nombre_fase, 
+                            descripcion=descripcion,
+                            )
+            flash("El nombre de fase solicitado ya existe!")
+            return dict(pagina="editar_fase",values=values,tipos_fases=tipos_fases,
+                          tipos_items=tipos_items,tipos_items2=tipos_items2,
+                          id_tipo_fase=id_tipo_fase,nom_fase=nom_fase,
+                          nom_proyecto= nom_proyecto )
 
 ################################################################################
 
@@ -186,26 +198,37 @@ class FaseController(BaseController):
                 #		'descripcion':NotEmpty
                 }, error_handler=agregar_fase)
 
-    @expose()
+    @expose('saip2011.templates.fase.agregar_fase')
     def post_fase(self, nombre_fase, id_tipo_fase, tipos_items, descripcion,
                     asmSelect0):
-        
-        if id_tipo_fase is not None:
-            id_tipo_fase = int(id_tipo_fase)
-        if tipos_items is not None:
-            if not isinstance(tipos_items, list):
-                tipos_items = [tipos_items]
-        tipos_items = [DBSession.query(Tipo_Item).get(tipo_item) for tipo_item 
-                                                in tipos_items]
-        fase = Fase (nombre_fase=nombre_fase, id_tipo_fase=id_tipo_fase, 
-                    estado="nuevo", linea_base="abierta", 
-                    descripcion=descripcion,tipos_items=tipos_items,
-                    proyecto=0,orden=0)
-  
-        DBSession.add(fase)
-        DBSession.flush()
-        flash("Fase agregada!")  
-        redirect('/fase/fase')
+        proyecto=int(Variables.get_valor_by_nombre("proyecto_actual"))
+        nombres=Fase.get_nombres_by_id(int(proyecto))   
+
+
+        if not isinstance(nombres, list):
+            nombres = [nombres]
+
+        if nombre_fase not in nombres:
+
+            if id_tipo_fase is not None:
+                id_tipo_fase = int(id_tipo_fase)
+            if tipos_items is not None:
+                if not isinstance(tipos_items, list):
+                    tipos_items = [tipos_items]
+            tipos_items = [DBSession.query(Tipo_Item).get(tipo_item) for tipo_item 
+                                                    in tipos_items]
+            fase = Fase (nombre_fase=nombre_fase, id_tipo_fase=id_tipo_fase, 
+                        estado="nuevo", linea_base="abierta", 
+                        descripcion=descripcion,tipos_items=tipos_items,
+                        proyecto=0,orden=0)
+      
+            DBSession.add(fase)
+            DBSession.flush()
+            flash("Fase agregada!")  
+            redirect('/fase/fase')
+        else:
+            flash("Fase repetidas!")  
+            redirect('/fase/fase')
 
 ################################################################################
   

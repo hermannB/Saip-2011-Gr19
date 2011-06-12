@@ -14,14 +14,49 @@
 emails=0;
 function agregar() {
 	emails=emails+1;
-	$("#campos").append('<li class="campo'+emails+'"><input type="text" name="campo" size="25" /><select name="valor"><option value="numerico" >numerico</option><option value="alfanumerico" >alfanumerico</option><option value="fecha" >fecha</option></select>&nbsp;&nbsp;<a href="#" onclick="javascript:borrar('+emails+');">Borrar</a></li>');
+	$("#campos").append('<li class="campo'+emails+'"><input type="text" name="campo" size="25" /><select name="valor"><option value="numerico" >numerico</option><option value="alfanumerico" >alfanumerico</option><option value="fecha" >fecha</option></select>&nbsp;&nbsp;<a href="javascript:borrar('+emails+');">Borrar</a></li>');
 }
 function borrar(cual) {
 	$("li.campo"+cual).remove();
-	return false;
-}
+	}
 </script>
 
+<script language="javascript" type="text/javascript">
+
+function validacion(formulario) {
+
+	var er_nombre = /^([a-z]|[A-Z]|á|é|í|ó|ú|ñ|ü|\s|\.|-[0-9]*)+$/			//letras, '.' y '-' o vacio
+	var er_codigo = /^([a-z]|[A-Z]|á|é|í|ó|ú|ñ|ü)+$/			//letras, '.' y '-' o vacio
+
+	//comprueba campo de nombre
+	if(!er_nombre.test(formulario.nombre_tipo_item.value)) { 
+		alert('Contenido del campo nombre del tipo de item no válido.')
+		return false;
+	}   	
+   	
+	//comprueba campo de nombre
+	if(!er_codigo.test(formulario.codigo_tipo_item.value)) { 
+		alert('Contenido del campo codigo del tipo de item no válido.')
+		return false;
+	}   	
+
+	//comprueba campo de nombre
+	if (formulario.descripcion.value.length == 0 ) { 
+		alert('Contenido del campo descripcion no válido.')
+		return false;
+	}  
+ 
+	if(!er_nombre.test(formulario.campo.value)) { 
+        alert("Debe cargar un campo por lo menos."); 
+        return false;  
+    }
+
+    alert('Los campos introducidos son CORRECTOS.')
+	return true;			
+}
+
+
+</script>
 
 <title>Sistema de Administracion de Item</title>
 </head>
@@ -31,7 +66,7 @@ function borrar(cual) {
       <h2>Agregar nuevo Tipo de Item</h2>
     </div>
 
-    <form action="post_tipo_item" method="POST">
+    <form name="formulario" id="formulario" onsubmit="return validacion(this)" action="post_tipo_item" method="POST">
       <table summary=""><tbody><tr>
 	    <tr><td>Nombre del Tipo Item </td><td><input class="required" maxlength="50" type="textfield" name="nombre_tipo_item" value="${values.get('nombre_tipo_item', '')}"/>${tmpl_context.form_errors.get('nombre_tipo_item')}</td></tr>
         <tr><td>Codigo del Tipo Item </td><td><input class="required" maxlength="50" type="textfield" name="codigo_tipo_item" value="${values.get('codigo_tipo_item', '')}"/>${tmpl_context.form_errors.get('codigo_tipo_item')}</td></tr>

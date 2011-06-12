@@ -11,8 +11,6 @@ from pylons.i18n import ugettext as _, lazy_ugettext as l_
 from catwalk.tg2 import Catwalk
 from repoze.what import predicates
 from tgext.crud import CrudRestController
-#from sprox.tablebase import TableBase
-#from sprox.fillerbase import TableFiller
 import transaction
 from saip2011.lib.base import BaseController
 from saip2011.model import DBSession, metadata
@@ -77,10 +75,6 @@ class RootController(BaseController):
     tipo_item = Tipo_ItemController()
 
     secc = SecureController()
-
-    #    admin = Catwalk(model, DBSession)
-    #    proyecto = Catwalk(model,DBSession)
-
     error = ErrorController()
 
 
@@ -172,7 +166,7 @@ class RootController(BaseController):
             rol=int (Variables.get_valor_by_nombre("rol_anterior") )
             Variables.set_valor_by_nombre("rol_actual",0)
             Variables.set_valor_by_nombre("rol_anterior",0)
-            rol2=Rol.get_roles_by_id(rol)
+            rol2=Rol.get_rol_by_id(rol)
             usuario.roles=[]
             usuario.roles.append(rol2)
             DBSession.flush()
@@ -189,8 +183,6 @@ class RootController(BaseController):
         """
         nom_proyecto=Variables.get_valor_by_nombre("nombre_proyecto_actual")
         nom_fase=Variables.get_valor_by_nombre("nombre_fase_actual")
-        
-               
         return dict(pagina="usuario",nom_proyecto=nom_proyecto,nom_fase=nom_fase)
 
  ################################################################################
@@ -262,7 +254,7 @@ class RootController(BaseController):
             redirect('/usuario')
 
         usuario = DBSession.query(Usuario).get(int(idusuario))
-        usuarios=Usuario.get_alias()
+        usuarios= Usuario.get_alias()
         usuarios.remove(usuario.alias)
 
         if alias not in usuarios:
@@ -298,25 +290,14 @@ class RootController(BaseController):
  ################################################################################
 
     @expose('saip2011.templates.usuario.listar_usuario')
-    def listar_usuario(self,start=0,end=5):
+    def listar_usuario(self):
         """Lista usuarios 
         """
         nom_proyecto=Variables.get_valor_by_nombre("nombre_proyecto_actual")
         nom_fase=Variables.get_valor_by_nombre("nombre_fase_actual")
-        #usuarios = Usuario.get_usuarios()
-        
-        paginado = 5
-        if start <> 0:
-            end=int(start.split('=')[1]) #obtiene el fin de pagina
-            start=int(start.split('&')[0]) #obtiene el inicio de pagina
-        #print start,end
-        total = len(Usuario.get_usuarios())
-        pagina_actual = ((start % end) / paginado) + 1
-         
-        usuarios = Usuario.get_usuarios_por_pagina(start,end)
-        
+        usuarios = Usuario.get_usuarios()
         return dict(pagina="listar_usuario",usuarios=usuarios,
-                        nom_proyecto=nom_proyecto,nom_fase=nom_fase,inicio=start,fin=end,paginado=paginado,pagina_actual=pagina_actual,total=total)
+                        nom_proyecto=nom_proyecto,nom_fase=nom_fase)
 
  ################################################################################
 
@@ -419,26 +400,15 @@ class RootController(BaseController):
  ################################################################################
 
     @expose('saip2011.templates.rol.listar_rol')
-    def rol(self,start=0,end=5):
+    def rol(self):
         """
         Menu para Rol
         """
         nom_proyecto=Variables.get_valor_by_nombre("nombre_proyecto_actual")
         nom_fase=Variables.get_valor_by_nombre("nombre_fase_actual")
-        #roles = Rol.get_roles()
-        
-        paginado = 5
-        if start <> 0:
-            end=int(start.split('=')[1]) #obtiene el fin de pagina
-            start=int(start.split('&')[0]) #obtiene el inicio de pagina
-        #print start,end
-        total = len(Rol.get_roles())
-        pagina_actual = ((start % end) / paginado) + 1
-         
-        roles = Rol.get_roles_por_pagina(start,end)
-        
+        roles = Rol.get_roles()
         return dict(pagina="listar_rol",roles=roles,nom_proyecto=nom_proyecto
-                        ,nom_fase=nom_fase,inicio=start,fin=end,paginado=paginado,pagina_actual=pagina_actual,total=total)
+                        ,nom_fase=nom_fase)
         #return dict(pagina="rol",nom_proyecto=nom_proyecto)
 
  ################################################################################
@@ -507,7 +477,7 @@ class RootController(BaseController):
         """
         nom_proyecto=Variables.get_valor_by_nombre("nombre_proyecto_actual")
         nom_fase=Variables.get_valor_by_nombre("nombre_fase_actual")
-        rol=Rol.get_roles_by_id(int(idrol))
+        rol=Rol.get_rol_by_id(int(idrol))
         values = dict(idrol=rol.idrol, 
 				        nombrerol=rol.nombrerol, 
 				        descripcion=rol.descripcion
@@ -583,27 +553,15 @@ class RootController(BaseController):
  ################################################################################
 
     @expose('saip2011.templates.privilegio.listar_privilegio')
-    def privilegio(self,start=0,end=5):
+    def privilegio(self):
         """
         Menu para Privilegio
         """
-        
         nom_proyecto=Variables.get_valor_by_nombre("nombre_proyecto_actual")
         nom_fase=Variables.get_valor_by_nombre("nombre_fase_actual")
-        
-        paginado = 5
-        if start <> 0:
-            end=int(start.split('=')[1]) #obtiene el fin de pagina
-            start=int(start.split('&')[0]) #obtiene el inicio de pagina
-        #print start,end
-        total = len(Privilegios.get_privilegio())
-        pagina_actual = ((start % end) / paginado) + 1
-         
-        privilegios = Privilegios.get_privilegio_por_pagina(start,end)
-        
+        privilegios = Privilegios.get_privilegios()
         return dict(pagina="listar_privilegio",privilegios=privilegios,
-                        nom_proyecto=nom_proyecto,nom_fase=nom_fase,inicio=start,fin=end,total=total,paginado=paginado,pagina_actual=pagina_actual)
-
+                        nom_proyecto=nom_proyecto,nom_fase=nom_fase)
         #return dict(pagina="privilegenres = DBSession.query(Genre).all()gio",
          #               nom_proyecto=nom_proyecto)
 
@@ -627,14 +585,35 @@ class RootController(BaseController):
 				'nombreprivilegio':NotEmpty, 
 				'descripcion':NotEmpty}, error_handler=editar_privilegio)	
 
-    @expose()
+    @expose('saip2011.templates.privilegio.editar_privilegio')
     def put_privilegio(self, idprivilegio, nombreprivilegio, descripcion, **kw):
         privilegio = DBSession.query(Privilegios).get(int(idprivilegio))
-        privilegio.nombreprivilegio = nombreprivilegio
-        privilegio.descripcion = descripcion
-        DBSession.flush()
-        flash("Privilegio modificado!")
-        redirect('/privilegio') 
+        nombres=Privilegios.get_nombreprivilegio()
+
+        if not isinstance(nombres, list):
+			nombres = [nombres]
+
+        if privilegio.nombreprivilegio in nombres:
+            nombres.remove(privilegio.nombreprivilegio)
+        if nombreprivilegio not in nombres:
+
+            privilegio.nombreprivilegio = nombreprivilegio
+            privilegio.descripcion = descripcion
+            DBSession.flush()
+            flash("Privilegio modificado!")
+            redirect('/privilegio') 
+
+        else:
+            nom_proyecto=Variables.get_valor_by_nombre("nombre_proyecto_actual")
+            nom_fase=Variables.get_valor_by_nombre("nombre_fase_actual")
+
+            values = dict(idprivilegio=idprivilegio, 
+					        nombreprivilegio=nombreprivilegio, 
+					        descripcion=descripcion,
+					        )
+            flash("Nombre del Privilegio ya existe!")
+            return dict(pagina="editar_privilegio",values=values,
+                nom_proyecto=nom_proyecto,nom_fase=nom_fase)
 
 ################################################################################
 
@@ -698,6 +677,7 @@ class RootController(BaseController):
                 DBSession.flush()
                 print privilegio
                 flash("Privilegio agregado!")
+                redirect('/privilegio')
             except Invalid, e:
                 print e
                 privilegio = None
@@ -709,7 +689,7 @@ class RootController(BaseController):
                 redirect('/agregar_privilegio')
         else:
             errors = {}        
-            return dict(pagina='agregar_privilegio',
+            return dict(pagina='/privilegio',
                             data=data.get('nombreprivilegio'),errors=errors,
                             nom_proyecto=nom_proyecto,nom_fase=nom_fase)
 

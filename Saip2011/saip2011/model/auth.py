@@ -30,20 +30,22 @@ from saip2011.model import DeclarativeBase, metadata, DBSession
 __all__ = ['Usuario', 'Rol', 'Privilegios']
 
 
-#{ Association tables
+################################################################################
+
+#               Tablas Intermedias para relaciones muchos a muchos
 
 
-# This is the association table for the many-to-many relationship between
-# groups and permissions. This is required by repoze.what.
+# Tabla rol - Privilegio
+
 rol_privilegio_tabla = Table('Tabla_Rol_Privilegios', metadata,
     Column('rol_id', Integer, ForeignKey('Tabla_Rol.idrol',
         onupdate="CASCADE", ondelete="CASCADE")),
-    Column('privilegio_id', Integer, ForeignKey('Tabla_Privilegios.idprivilegio',
+    Column('privilegio_id',Integer, ForeignKey('Tabla_Privilegios.idprivilegio',
         onupdate="CASCADE", ondelete="CASCADE"))
 )
 
-# This is the association table for the many-to-many relationship between
-# groups and members - this is, the memberships. It's required by repoze.what.
+# Tabla Usuario - Rol
+
 usuario_rol_tabla = Table('Tabla_Usuario_Rol', metadata,
     Column('usuario_id', Integer, ForeignKey('Tabla_Usuario.idusuario',
         onupdate="CASCADE", ondelete="CASCADE")),
@@ -51,39 +53,39 @@ usuario_rol_tabla = Table('Tabla_Usuario_Rol', metadata,
         onupdate="CASCADE", ondelete="CASCADE"))
 )
 
-
-#{ The auth* model itself
+################################################################################
 
 
 class Rol(DeclarativeBase):
     """
     Group definition for :mod:`repoze.what`.
-    
+
     Only the ``group_name`` column is required by :mod:`repoze.what`.
-    
+
     """
-    
+
     __tablename__ = 'Tabla_Rol'
-    
-    #{ Columns
-    
+
+    #              Columnas
+
     idrol = Column(Integer, autoincrement=True, primary_key=True)
-    
+
     nombrerol = Column(Unicode(50), unique=True, nullable=False)
 
     descripcion = Column(Text)
 
+################################################################################
     
-	#{ Special methods
-
-   
+    #               Metodos
 
     def __repr__(self):
         return '<Rol: nombre=%s>' % self.nombrerol
 
     def __unicode__(self):
         return self.nombrerol
-    
+
+#-------------------------------------------------------------------------------
+
     @classmethod
     def get_roles(self):
         """
@@ -94,20 +96,24 @@ class Rol(DeclarativeBase):
         roles = DBSession.query(Rol).all()
             
         return roles
-    
-    @classmethod
-    def get_roles_por_pagina(self,start=0,end=5):
-        """
-        Obtiene la lista de todos los roles
-        registrados en el sistema
-        """
-        """roles = session.query(cls).all()"""
-        roles = DBSession.query(Rol).slice(start,end).all()
-            
-        return roles
+
+#-------------------------------------------------------------------------------
 
     @classmethod
-    def get_roles_by_nombre(self,nombre):
+    def get_nombreroles(self):
+        """
+        Obtiene 
+        """
+        roles = DBSession.query(Rol).all()
+        lista=[]
+        for rol in roles:
+            lista.append(rol.nombrerol)    
+        return lista
+
+#-------------------------------------------------------------------------------
+
+    @classmethod
+    def get_rol_by_nombre(self,nombre):
         """
         Obtiene la lista de los roles
         registrados en el sistema
@@ -115,11 +121,13 @@ class Rol(DeclarativeBase):
         """roles = session.query(cls).all()"""
         roles = DBSession.query(Rol).all()
         for rol in roles:
-			if rol.nombrerol == nombre: 
-				return rol
+		    if rol.nombrerol == str(nombre): 
+			    return rol
+
+#-------------------------------------------------------------------------------
 
     @classmethod
-    def get_roles_by_id(self,id_rol):
+    def get_rol_by_id(self,id_rol):
         """
         Obtiene la lista de los roles
         registrados en el sistema
@@ -127,43 +135,60 @@ class Rol(DeclarativeBase):
         """roles = session.query(cls).all()"""
         roles = DBSession.query(Rol).all()
         for rol in roles:
-	        if rol.idrol == id_rol: 
-		        return rol
+            if rol.idrol == id_rol: 
+	            return rol
 
-    #{ Relations
+#-------------------------------------------------------------------------------
+
+    @classmethod
+    def borrar_by_id(self,id_rol):
+        """
+        Obtiene la lista de todos los adjuntos         
+        """
+        DBSession.delete(DBSession.query(Rol).get(id_rol))
+        DBSession.flush()	
+
+#-------------------------------------------------------------------------------
+
+    #                   Relaciones
     
-    usuarios = relation('Usuario', secondary=usuario_rol_tabla, backref='roles')
+    usuarios = relation('Usuario', secondary=usuario_rol_tabla,backref='roles')
     
+
+################################################################################
         
-    #}
+
 
 
 # The 'info' argument we're passing to the email_address and password columns
 # contain metadata that Rum (http://python-rum.org/) can use generate an
 # admin interface for your models.
+
 class Usuario(DeclarativeBase):
     """
     User definition.
-    
+
     This is the user definition used by :mod:`repoze.who`, which requires at
     least the ``user_name`` column.
-    
+
     """
     __tablename__ = 'Tabla_Usuario'
-    
-    #{ Columns
+
+                #       Columnas
 
     idusuario = Column(Integer, autoincrement=True, primary_key=True)
-    
+
     alias = Column(Unicode(50), unique=True, nullable=False)
 
     nombre = Column(Unicode(50), nullable=False)
 
     apellido = Column(Unicode(50), nullable=False)
 
-    _password = Column('password', Unicode(80),info={'rum': {'field':'Password'}})
+    _password = Column('password', Unicode(80),
+                                        info={'rum': {'field':'Password'}})
 
-    email_address = Column(Unicode(50),  nullable=False, info={'rum': {'field':'Email'}})
+    email_address = Column(Unicode(50),  nullable=False, 
+                                            info={'rum': {'field':'Email'}})
 
     nacionalidad = Column(Unicode(50))
 
@@ -171,16 +196,18 @@ class Usuario(DeclarativeBase):
 
     nrodoc = Column(Integer, nullable=True)
 
+################################################################################
     
-    #{ Special methods
+    #               Metodos
 
     def __repr__(self):
-        return '<User: email="%s", Alias="%s">' % (self.email_address, self.alias)
+        return '<User: email="%s", Alias="%s">' % (self.email_address, 
+                                                        self.alias)
 
     def __unicode__(self):
         return self.alias
-    
-    #{ Getters and setters
+
+#-------------------------------------------------------------------------------
 
     @property
     def privilegios(self):
@@ -190,16 +217,23 @@ class Usuario(DeclarativeBase):
             perms = perms | set(g.privilegios)
         return perms
 
+#-------------------------------------------------------------------------------
+
     @classmethod
     def by_email_address(cls, email):
         """Return the user object whose email address is ``email``."""
         return DBSession.query(cls).filter(cls.email_address==email).first()
+
+#-------------------------------------------------------------------------------
 
     @classmethod
     def by_alias(cls, username):
         """Return the user object whose user name is ``username``."""
         return DBSession.query(cls).filter(cls.alias==username).first()
 
+#-------------------------------------------------------------------------------
+
+   
     def _set_password(self, password):
         """Hash ``password`` on the fly and store its hashed version."""
         hashed_password = password
@@ -223,15 +257,20 @@ class Usuario(DeclarativeBase):
 
         self._password = hashed_password
 
+#-------------------------------------------------------------------------------
+
+   
     def _get_password(self):
         """Return the hashed version of the password."""
         return self._password
 
     password = synonym('_password', descriptor=property(_get_password,
                                                         _set_password))
-    
-    #}
-    
+
+   
+#-------------------------------------------------------------------------------
+
+   
     def validate_password(self, password):
         """
         Check the password against existing credentials.
@@ -248,6 +287,8 @@ class Usuario(DeclarativeBase):
         hashed_pass.update(password + self.password[:40])
         return self.password[40:] == hashed_pass.hexdigest()
 
+#-------------------------------------------------------------------------------
+
     @classmethod
     def get_usuarios(self):
         """
@@ -256,19 +297,9 @@ class Usuario(DeclarativeBase):
         """
         """usuarios = session.query(cls).all()"""
         usuarios = DBSession.query(Usuario).all()
-            
         return usuarios
-    
-    @classmethod
-    def get_usuarios_por_pagina(self,start=0,end=5):
-        """
-        Obtiene la lista de todos los usuarios
-        registrados en el sistema
-        """
-        """usuarios = session.query(cls).all()"""
-        usuarios = DBSession.query(Usuario).slice(start,end).all()
-            
-        return usuarios
+
+#-------------------------------------------------------------------------------
 
     @classmethod
     def get_alias(self):
@@ -276,13 +307,13 @@ class Usuario(DeclarativeBase):
         Obtiene la lista de todos los usuarios
         registrados en el sistema
         """
-        """usuarios = session.query(cls).all()"""
         usuarios = DBSession.query(Usuario).all()
         lista=[]
         for usuario in usuarios:
             lista.append(usuario.alias)    
         return lista
 
+#-------------------------------------------------------------------------------
 
     @classmethod
     def get_user_by_alias(self,name):
@@ -290,12 +321,12 @@ class Usuario(DeclarativeBase):
         Obtiene la lista de todos los usuarios
         registrados en el sistema
         """
-        """usuarios = session.query(cls).all()"""
-
         usuarios = DBSession.query(Usuario).all()
         for usuario in usuarios:    
-	  if (usuario.alias==name):	
-	        return usuario
+            if (usuario.alias==name):	
+                    return usuario
+
+#-------------------------------------------------------------------------------
 
     @classmethod
     def get_user_by_id(self, iduser):
@@ -303,8 +334,21 @@ class Usuario(DeclarativeBase):
         Obtiene el usuario por su id
         """
         usuario = DBSession.query(Usuario).filter_by(idusuario=iduser)
-        
         return usuario
+
+#-------------------------------------------------------------------------------
+
+    @classmethod
+    def borrar_by_id(self,iduser):
+        """
+        Obtiene la lista de todos los adjuntos         
+        """
+        DBSession.delete(DBSession.query(Usuario).get(iduser))
+        DBSession.flush()	
+
+#-------------------------------------------------------------------------------
+
+################################################################################
 
 class Privilegios(DeclarativeBase):
     """
@@ -316,7 +360,7 @@ class Privilegios(DeclarativeBase):
     
     __tablename__ = 'Tabla_Privilegios'
     
-    #{ Columns
+    #               Columnas
 
     idprivilegio = Column(Integer, autoincrement=True, primary_key=True)
     
@@ -326,43 +370,67 @@ class Privilegios(DeclarativeBase):
 
     descripcion = Column(Text)
     
-    #{ Relations
+################################################################################
+
+    #               Relaciones
     
     roles = relation(Rol, secondary=rol_privilegio_tabla,
                       backref='privilegios')
+
+################################################################################
     
-    #{ Special methods
+    #               Metodos
     
     def __repr__(self):
         return '<Privilegio: nombre=%s>' % self.nombreprivilegio
 
     def __unicode__(self):
         return self.nombreprivilegio
+
+#-------------------------------------------------------------------------------
     
     @classmethod
-    def get_privilegio(self):
+    def get_privilegios(self):
         """
         Obtiene la lista de todos los usuarios
         registrados en el sistema
         """
         """privilegios = session.query(cls).all()"""
         privilegios = DBSession.query(Privilegios).all()
-            
         return privilegios
+
+#-------------------------------------------------------------------------------
 
     @classmethod
-    def get_privilegio_por_pagina(self,start=0,end=5):
+    def get_nombreprivilegios(self):
         """
-        Obtiene la lista de todos los usuarios
-        registrados en el sistema
+        Obtiene 
         """
-        """privilegios = session.query(cls).all()"""
-        #privilegios = DBSession.query(Privilegios).all()
-        privilegios = DBSession.query(Privilegios).slice(start,end).all()
-            
-        return privilegios
+        privilegios = DBSession.query(Privilegios).all()
+        lista=[]
+        for privilegio in privilegios:
+            lista.append(privilegio.nombreprivilegio)    
+        return lista
 
-    #}
+#-------------------------------------------------------------------------------
 
+    @classmethod
+    def get_privilegio_by_id(self,idprivilegio):
+        """
+        Obtiene
+        """
+        privilegio = DBSession.query(Privilegios).get(int(idprivilegio))
+        return privilegio
 
-#}
+#-------------------------------------------------------------------------------
+
+    @classmethod
+    def borrar_by_id(self,idprivilegio):
+        """
+        Obtiene la lista de todos los adjuntos         
+        """
+        DBSession.delete(DBSession.query(Privilegios).get(idprivilegio))
+        DBSession.flush()	
+
+#-------------------------------------------------------------------------------
+

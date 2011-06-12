@@ -26,6 +26,41 @@
 		}); 
 
 	</script>
+<script language="javascript" type="text/javascript">
+
+function validacion(formulario) {
+
+	var er_nombre = /^([a-z]|[A-Z]|á|é|í|ó|ú|ñ|ü|\s|\.|-[0-9]*)+$/			//letras, '.' y '-' o vacio
+
+	//comprueba campo de nombre
+	if(!er_nombre.test(formulario.nombre_proyecto.value)) { 
+		alert('Contenido del campo nombre de proyecto no válido.')
+		return false;
+	}   	
+   	
+	//comprueba campo de nombre
+	if (formulario.descripcion.value.length == 0 ) { 
+		alert('Contenido del campo descripcion no válido.')
+		return false;
+	}  
+ 
+    if (formulario.idusuario.selectedIndex == -1){ 
+        alert("Debe seleccionar un usuario"); 
+        return false;  
+    }
+    
+    if (formulario.tipos_fases.selectedIndex==-1){
+        alert("Debes seleccionar al menos 1 una fase");
+        return false;
+    }
+	
+    alert('Los campos introducidos son CORRECTOS.')
+	return true;			
+}
+
+
+</script>
+
 
   <title>Sistema de Administracion de Item</title>
 </head>
@@ -34,7 +69,7 @@
       <h2>Agregar nuevo Proyecto</h2>
     </div>
 
-    <form action="post_proyecto" method="POST">
+    <form name="formulario" id="formulario" onsubmit="return validacion(this)" action="post_proyecto" method="POST">
     <table summary=""><tbody><tr>
        
 	<tr><td>Nombre del Proyecto </td><td><input class="required" maxlength="50" type="textfield" name="nombre_proyecto" value="${values.get('nombre_proyecto', '')}"/>${tmpl_context.form_errors.get('nombre_proyecto')}</td></tr>

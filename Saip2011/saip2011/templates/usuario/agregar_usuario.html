@@ -35,49 +35,49 @@ function validacion(formulario) {
   }
 	//comprueba campo de nombre
 	if(!er_nombre.test(formulario.alias.value)) { 
-		alert('Contenido del campo Alias no válido.')
-		return false
+		alert('Contenido del campo Alias no válido.');
+		return false;
 	}   	
    	
 	//comprueba campo de nombre
 	if(!er_nombre.test(formulario.nombre.value)) { 
-		alert('Contenido del campo Nombre no válido.')
-		return false
+		alert('Contenido del campo Nombre no válido.');
+		return false;
 	}  
  
 	//comprueba campo de nombre
 	if(!er_nombre.test(formulario.apellido.value)) { 
-		alert('Contenido del campo Apellido no válido.')
-		return false
+		alert('Contenido del campo Apellido no válido.');
+		return false;
 	}   
 
 	//comprueba campo de nombre
 	if(!er_nombre.test(formulario.nacionalidad.value)) { 
-		alert('Contenido del campo Nacionalidad no válido.')
-		return false
+		alert('Contenido del campo Nacionalidad no válido.');
+		return false;
     }
 
     //comprueba campo de nombre
 	if(!er_nombre.test(formulario.tipodocumento.value)) { 
-		alert('Contenido del campo Tipo de documento no válido.')
-		return false
+		alert('Contenido del campo Tipo de documento no válido.');
+		return false;
 	} 
 
 	//comprueba campos de telefonos (permite campos vacios y guiones)
 	if( !er_nrodoc.test(formulario.nrodoc.value) ) {
-		alert('Contenido del campo nro Documento no válido.')
-		return false
+		alert('Contenido del campo nro Documento no válido.');
+		return false;
 	}
    
 
 	//comprueba campo de email
 	if(!er_email.test(formulario.email.value)) { 
-		alert('Contenido del campo E-MAIL no válido.')
-		return false
+		alert('Contenido del campo E-MAIL no válido.');
+		return false;
 	}   	
  
-	alert('Los campos introducidos son CORRECTOS.')
-	return true			//cambiar por return true para ejecutar la accion del formulario
+	alert('Los campos introducidos son CORRECTOS.');
+	return true;			//cambiar por return true para ejecutar la accion del formulario
 
 }
 

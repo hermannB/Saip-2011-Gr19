@@ -1,6 +1,6 @@
 # -*- coding: utf-8 -*-
 """The application's model objects"""
-
+################################################################################
 from zope.sqlalchemy import ZopeTransactionExtension
 from sqlalchemy.orm import scoped_session, sessionmaker
 #from sqlalchemy import MetaData
@@ -38,6 +38,8 @@ metadata = DeclarativeBase.metadata
 #
 ######
 
+################################################################################
+
 def init_model(engine):
     """Call me before using any of the tables or classes in the model."""
 
@@ -59,6 +61,7 @@ def init_model(engine):
     #mapper(Reflected, t_reflected)
 
 # Import your model modules here.
+################################################################################
 
 from saip2011.model.auth import Usuario , Rol , Privilegios
 from saip2011.model.item import Item
@@ -73,3 +76,4 @@ from saip2011.model.proyecto import Proyecto
 from saip2011.model.historial import Historial
 from saip2011.model.tipo_campos import Tipo_Campos
 
+################################################################################

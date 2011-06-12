@@ -29,6 +29,37 @@
 	</script>
 
 
+<script language="javascript" type="text/javascript">
+
+function validacion(formulario) {
+
+	var er_nombre = /^([a-z]|[A-Z]|á|é|í|ó|ú|ñ|ü|\s|\.|-[0-9]*)+$/			//letras, '.' y '-' o vacio
+
+	//comprueba campo de nombre
+	if(!er_nombre.test(formulario.nombre_tipo_fase.value)) { 
+		alert('Contenido del campo nombre de tipo fase no válido.')
+		return false;
+	}   	
+   	
+	//comprueba campo de nombre
+	if (formulario.descripcion.value.length == 0 ) { 
+		alert('Contenido del campo descripcion no válido.')
+		return false;
+	}  
+ 
+   
+    if (formulario.tipos_items.selectedIndex==-1){
+        alert("Debes seleccionar al menos 1 tipo de item");
+        return false;
+    }
+	
+    alert('Los campos introducidos son CORRECTOS.')
+	return true;			
+}
+
+
+</script>
+
 
 	<title>Sistema de Administracion de Item</title>
 </head>
@@ -39,7 +70,7 @@
 		<div>
 			<h2>Editar Tipo de Fase</h2>
 		</div>
-		  <form action="put_tipo_fase" method="PUT">
+		  <form name="formulario" id="formulario" onsubmit="return validacion(this)" action="put_tipo_fase" method="PUT">
 			<table summary="">
 			<tbody>
                 <tr><td><input type="hidden" name="id_tipo_fase" value="${values['id_tipo_fase']}"/>${tmpl_context.form_errors.get('id_tipo_fase')}</td></tr>

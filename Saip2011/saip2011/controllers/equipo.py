@@ -95,10 +95,35 @@ class EquipoController(BaseController):
     def agregar_miembro(self, *args, **kw):
         nom_proyecto=Variables.get_valor_by_nombre("nombre_proyecto_actual")
         nom_fase=Variables.get_valor_by_nombre("nombre_fase_actual")
-        roles = DBSession.query(Rol).all()
-        usuarios = DBSession.query(Usuario).all()	
         proy=int(Variables.get_valor_by_nombre("proyecto_actual") )
+        roles = DBSession.query(Rol).all()
+        usuarios = DBSession.query(Usuario).all()
+        miembros=Equipo_Desarrollo.get_miembros_by_proyecto(proy)
         fases = Fase.get_fase_by_proyecto(proy)
+        lider=Rol.get_rol_by_nombre("Lider Proyecto")
+
+        if usuarios is not None:
+            if not isinstance(usuarios, list):
+                usuarios = [usuarios]
+        if roles is not None:
+            if not isinstance(roles, list):
+                roles = [roles]
+        if miembros is not None:
+            if not isinstance(miembros, list):
+                miembros = [miembros]
+
+        for usuario in usuarios:
+            for miembro in miembros:
+                if usuario.idusuario == miembro.idusuario:
+                    usuarios.remove(usuario)
+
+        for miembro in miembros:
+            for rol in roles:
+                if rol.idrol == miembro.idrol:          
+                    roles.remove(rol)
+                if rol.nombrerol =="Administrador":
+                    roles.remove(rol)            
+
 
         return dict(pagina="agregar_miembro",values=kw, roles=roles,
                      usuarios=usuarios, fases=fases,nom_proyecto=nom_proyecto

@@ -34,17 +34,16 @@ from saip2011.form import ItemForm , TipoItemForm , EquipoForm , ProyectoForm
 from saip2011.form import TipoFaseForm , TipoCamposForm
 from formencode import Invalid
 from psycopg2 import IntegrityError
-
+import string
 
 
 
 class ProyectoController(BaseController):
-    
 
 ################################################################################
 
     @expose('saip2011.templates.proyecto.listar_proyecto')
-    def proyecto(self,start=0,end=5):
+    def proyecto(self):
         """Lista proyectos 
         """
         proyectos=""
@@ -54,25 +53,12 @@ class ProyectoController(BaseController):
 
         usuario=Usuario.get_user_by_alias(request.identity['repoze.who.userid'])
         rol=usuario.roles[0]
-        
-        ############################
-        paginado = 5
-        if start <> 0:
-            end=int(start.split('=')[1]) #obtiene el fin de pagina
-            start=int(start.split('&')[0]) #obtiene el inicio de pagina
-        #print start,end
-        total = len(Proyecto.get_proyecto())
-        pagina_actual = ((start % end) / paginado) + 1
-         
-        #roles = Rol.get_roles_por_pagina(start,end)
-        ###########################
-        
         if rol.nombrerol == "Administrador":
-            proyectos = Proyecto.get_proyecto_por_pagina(start,end)
+            proyectos = Proyecto.get_proyectos()
             return dict(pagina="listar_proyecto",proyectos=proyectos,
-                            nom_proyecto=nom_proyecto,inicio=start,fin=end,paginado=paginado,pagina_actual=pagina_actual,total=total)
+                            nom_proyecto=nom_proyecto)
         else:
-            proy = Proyecto.get_proyecto_por_pagina(start,end)
+            proy = Proyecto.get_proyectos()
             proyectos = []
             miembros=Equipo_Desarrollo.get_miembros_by_usuario(usuario.idusuario)
 
@@ -82,7 +68,7 @@ class ProyectoController(BaseController):
                     proyectos.append(p)
 
         return dict(pagina="listar_proyecto",proyectos=proyectos,
-                        nom_proyecto=nom_proyecto,nom_fase=nom_fase,inicio=start,fin=end,paginado=paginado,pagina_actual=pagina_actual,total=total)
+                        nom_proyecto=nom_proyecto,nom_fase=nom_fase)
 
 
 ################################################################################
@@ -173,7 +159,7 @@ class ProyectoController(BaseController):
         nom_proyecto=Variables.get_valor_by_nombre("nombre_proyecto_actual")	
         nom_fase=Variables.get_valor_by_nombre("nombre_fase_actual")	
         usuario=Usuario.get_user_by_alias(request.identity['repoze.who.userid'])
-        proy = Proyecto.get_proyecto()
+        proy = Proyecto.get_proyectos()
         proyectos = []
         miembros=Equipo_Desarrollo.get_miembros_by_usuario(usuario.idusuario)
 
@@ -205,7 +191,7 @@ class ProyectoController(BaseController):
                                                     usuario.roles[0].idrol)
 
                 Variables.set_valor_by_nombre("rol_actual",miembro.idrol)
-                rol=Rol.get_roles_by_id(miembro.idrol)
+                rol=Rol.get_rol_by_id(miembro.idrol)
                 usuario.roles=[]
                 DBSession.flush()
                 usuario.roles.append(rol)
@@ -235,64 +221,67 @@ class ProyectoController(BaseController):
     
     @expose('saip2011.templates.fase.listar_fase')
     def post_proyecto(self, nombre_proyecto, idusuario, tipos_fases, asmSelect0,
-                             descripcion,start=0,end=5):
+                             descripcion, **kw):
         nom_proyecto=Variables.get_valor_by_nombre("nombre_proyecto_actual")
         nom_fase=Variables.get_valor_by_nombre("nombre_fase_actual")
-        if idusuario is not None:
-            idusuario = int(idusuario)
-
-        if tipos_fases is not None:
-            if not isinstance(tipos_fases, list):
-                tipos_fases = [tipos_fases]
-        tipos_fases = [DBSession.query(Tipo_Fase).get(tipo_fase) for tipo_fase 
-                                                in tipos_fases]
+        nombres=Proyecto.get_nombres()
+        if not isinstance(nombres, list):
+            nombres = [nombres]
         
-        proyecto = Proyecto (nombre_proyecto=nombre_proyecto, 
-                                idusuario=idusuario, 
-                                descripcion=descripcion, tipos_fases=tipos_fases,
-                                estado ="Desactivado")
-        DBSession.add(proyecto)
+        if nombre_proyecto not in nombres:
+            if idusuario is not None:
+                idusuario = int(idusuario)
 
-        proy=Proyecto.get_ultimo_id()
-        cant=1
-        lista=[]
-        for tipo_fase in tipos_fases:
-            fase = Fase (nombre_fase=tipo_fase.nombre_tipo_fase, 
-                            id_tipo_fase=tipo_fase.id_tipo_fase, estado ="Nuevo", 
-                            proyecto=proy,orden=cant,linea_base="Abierta", 
-                            descripcion=tipo_fase.descripcion)
-            lista.append(fase)
-            DBSession.add(fase)
-            DBSession.flush()
-            cant+=1
-        proy=int (Proyecto.get_ultimo_id())
-        fases = Fase.get_fase_by_proyecto_por_pagina(proy,start,end)
-        nom="Lider Proyecto"
-        mirol=Rol.get_roles_by_nombre(nom)
-        equipo = Equipo_Desarrollo(proyecto=Proyecto.get_ultimo_id(), 
+            if tipos_fases is not None:
+                if not isinstance(tipos_fases, list):
+                    tipos_fases = [tipos_fases]
+            tipos_fases = [DBSession.query(Tipo_Fase).get(tipo_fase) for tipo_fase 
+                                                    in tipos_fases]
+            
+            proyecto = Proyecto (nombre_proyecto=nombre_proyecto, 
                                     idusuario=idusuario, 
-                                    idrol=mirol.idrol,fases=fases)
+                                    descripcion=descripcion, tipos_fases=tipos_fases,
+                                    estado ="Desactivado")
+            DBSession.add(proyecto)
 
-        DBSession.add(equipo)
-        DBSession.flush()
-        
-        ############
-        paginado = 5
-        if start <> 0:
-            end=int(start.split('=')[1]) #obtiene el fin de pagina
-            start=int(start.split('&')[0]) #obtiene el inicio de pagina
-        #print start,end
-        total = len(Fase.get_fase_by_proyecto(proy))
-        pagina_actual = ((start % end) / paginado) + 1
-         
-        #roles = Fase.get_fase_by_proyecto_por_pagina(proy,start,end)
-        ###########
-        return dict(pagina="/fase/listar_fase", fases=fases,
-                            nom_proyecto=nom_proyecto,nom_fase=nom_fase,inicio=start,fin=end,paginado=paginado,pagina_actual=pagina_actual,total=total)
-        #flash("Proyecto Agregado!")  
-        #redirect('/proyecto/proyecto')
+            proy=Proyecto.get_ultimo_id()
+            cant=1
+            lista=[]
+            for tipo_fase in tipos_fases:
+                fase = Fase (nombre_fase=tipo_fase.nombre_tipo_fase, 
+                                id_tipo_fase=tipo_fase.id_tipo_fase, estado ="Nuevo", 
+                                proyecto=proy,orden=cant,linea_base="Abierta", 
+                                descripcion=tipo_fase.descripcion)
+                lista.append(fase)
+                DBSession.add(fase)
+                DBSession.flush()
+                cant+=1
+            proy=int (Proyecto.get_ultimo_id())
+            fases = Fase.get_fase_by_proyecto(proy)
+            nom="Lider Proyecto"
+            mirol=Rol.get_rol_by_nombre(nom)
+            equipo = Equipo_Desarrollo(proyecto=Proyecto.get_ultimo_id(), 
+                                        idusuario=idusuario, 
+                                        idrol=mirol.idrol,fases=fases)
+
+            DBSession.add(equipo)
+            DBSession.flush()
+            return dict(pagina="/fase/listar_fase", fases=fases,
+                                nom_proyecto=nom_proyecto,nom_fase=nom_fase)
+            #flash("Proyecto Agregado!")  
+            #redirect('/proyecto/proyecto')
+        else:
+            nom_proyecto=Variables.get_valor_by_nombre("nombre_proyecto_actual")
+            nom_fase=Variables.get_valor_by_nombre("nombre_fase_actual")
+
+            usuarios = DBSession.query(Usuario).all()
+            tipos_fases = DBSession.query(Tipo_Fase).all()	
+            flash("Nombre del Proyecto ya existe!")  
+            redirect('/proyecto/agregar_proyecto')
 
 ################################################################################
+
+
 
     @expose('saip2011.templates.proyecto.editar_proyecto')
     def editar_proyecto(self, id_proyecto, *args, **kw):
@@ -324,64 +313,79 @@ class ProyectoController(BaseController):
 				'nombre_proyecto':NotEmpty, 
 				'tipos_fases':NotEmpty,
 				#               'descripcion':NotEmpty, 
-				'idusuario':Int(not_empty=True)}, error_handler=editar_proyecto)
+				'idusuario':Int(not_empty=True)
+               }, error_handler=editar_proyecto)
 
     @expose('saip2011.templates.fase.listar_fase')
     def put_proyecto(self, id_proyecto, nombre_proyecto, idusuario, descripcion,
                          asmSelect0, tipos_fases,**kw):
         nom_proyecto=Variables.get_valor_by_nombre("nombre_proyecto_actual")
-        proyecto = DBSession.query(Proyecto).get(id_proyecto)
-        miembro=Equipo_Desarrollo.get_miembro(proyecto.idusuario)
-        id_miembro=miembro.id_equipo
-        DBSession.delete(DBSession.query(Equipo_Desarrollo).get(id_miembro))
-        DBSession.flush()
+        nom_fase=Variables.get_valor_by_nombre("nombre_fase_actual")
+        nombres=Proyecto.get_nombres()
+        proyecto = DBSession.query(Proyecto).get(int(id_proyecto))
+        if not isinstance(nombres, list):
+            nombres = [nombres]
+        nombres.remove(proyecto.nombre_proyecto)
 
-        idusuario = int(idusuario)
+        if nombre_proyecto not in nombres:
 
-        fases=Fase.get_fase_by_proyecto(proyecto.id_proyecto)
-        for fase in fases:
-			DBSession.delete(DBSession.query(Fase).get(fase.id_fase))
-			DBSession.flush()
-
-        if not isinstance(tipos_fases, list):
-			tipos_fases = [tipos_fases]
-        tipos_fases = [DBSession.query(Tipo_Fase).get(tipo_fase) for tipo_fase
-                                 in tipos_fases]
-
-        cant=1
-        for tipo_fase in tipos_fases:
-            fase = Fase (nombre_fase=tipo_fase.nombre_tipo_fase, 
-                            id_tipo_fase=tipo_fase.id_tipo_fase, estado ="Nuevo", 
-							proyecto=proyecto.id_proyecto,orden=cant,
-                            linea_base="Abierta", 
-                            descripcion=tipo_fase.descripcion)
-            DBSession.add(fase)
+            miembro=Equipo_Desarrollo.get_miembro_by_usuario_by_proyecto(proyecto.idusuario,proyecto.id_proyecto)
+            id_miembro=miembro.id_equipo
+            DBSession.delete(DBSession.query(Equipo_Desarrollo).get(id_miembro))
             DBSession.flush()
-            cant+=1
 
-        proyecto.idusuario = idusuario
-        proyecto.nombre_proyecto=nombre_proyecto
-        proyecto.descripcion = descripcion
-        proyecto.tipos_fases = tipos_fases
-        proyecto.estado="Desactivado"
-        DBSession.flush()
+            idusuario = int(idusuario)
 
-        fases = Fase.get_fase_by_proyecto(Proyecto.get_ultimo_id())
-        nom="Lider Proyecto"
-        mirol=Rol.get_roles_by_nombre(nom)
-        equipo = Equipo_Desarrollo(proyecto=Proyecto.get_ultimo_id(), 
-                                    idusuario=idusuario, 
-						            idrol=mirol.idrol,fases=fases)
-        DBSession.add(equipo)
-        DBSession.flush()
-        #flash("Proyecto Modificado!")  
-        #redirect('/proyecto/proyecto')
-        fases = Fase.get_fase_by_proyecto(proyecto.id_proyecto)
-        return dict(pagina="/fase/listar_fase", fases=fases,
-                        nom_proyecto=nom_proyecto,nom_fase=nom_fase)
+            fases=Fase.get_fase_by_proyecto(proyecto.id_proyecto)
+            for fase in fases:
+			    DBSession.delete(DBSession.query(Fase).get(fase.id_fase))
+			    DBSession.flush()
+
+            if not isinstance(tipos_fases, list):
+			    tipos_fases = [tipos_fases]
+            tipos_fases = [DBSession.query(Tipo_Fase).get(tipo_fase) for tipo_fase
+                                     in tipos_fases]
+
+            cant=1
+            for tipo_fase in tipos_fases:
+                fase = Fase (nombre_fase=tipo_fase.nombre_tipo_fase, 
+                                id_tipo_fase=tipo_fase.id_tipo_fase, estado ="Nuevo", 
+							    proyecto=proyecto.id_proyecto,orden=cant,
+                                linea_base="Abierta", 
+                                descripcion=tipo_fase.descripcion)
+                DBSession.add(fase)
+                DBSession.flush()
+                cant+=1
+
+            proyecto.idusuario = idusuario
+            proyecto.nombre_proyecto=nombre_proyecto
+            proyecto.descripcion = descripcion
+            proyecto.tipos_fases = tipos_fases
+            proyecto.estado="Desactivado"
+            DBSession.flush()
+
+            fases = Fase.get_fase_by_proyecto(Proyecto.get_ultimo_id())
+            nom="Lider Proyecto"
+            mirol=Rol.get_rol_by_nombre(nom)
+            equipo = Equipo_Desarrollo(proyecto=Proyecto.get_ultimo_id(), 
+                                        idusuario=idusuario, 
+						                idrol=mirol.idrol,fases=fases)
+            DBSession.add(equipo)
+            DBSession.flush()
+            #flash("Proyecto Modificado!")  
+            #redirect('/proyecto/proyecto')
+            fases = Fase.get_fase_by_proyecto(proyecto.id_proyecto)
+            return dict(pagina="/fase/listar_fase", fases=fases,
+                            nom_proyecto=nom_proyecto,nom_fase=nom_fase)
+        else:
+            flash("nombre proyecto repetido!")  
+            redirect('/proyecto/editar_proyecto?id_proyecto=%d' % id_proyecto)
+        
+            
 
 ################################################################################
- 
+
+
     @expose('saip2011.templates.proyecto.eliminar_proyecto')
     def eliminar_proyecto(self,id_proyecto, *args, **kw):
         nom_proyecto=Variables.get_valor_by_nombre("nombre_proyecto_actual")
@@ -443,7 +447,7 @@ class ProyectoController(BaseController):
             rol=int (Variables.get_valor_by_nombre("rol_anterior") )
             Variables.set_valor_by_nombre("rol_actual",rol)
             Variables.set_valor_by_nombre("rol_anterior",0)
-            rol2=Rol.get_roles_by_id(rol)
+            rol2=Rol.get_rol_by_id(rol)
             usuario.roles=[]
             usuario.roles.append(rol2)
             DBSession.flush()

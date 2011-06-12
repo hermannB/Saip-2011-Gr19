@@ -6,7 +6,7 @@
   <xi:include href="master.html" />
 
   <head>
-  <meta content="text/html; charset=UTF-8" http-equiv="content-type" py:replace="''"/>
+    <meta content="text/html; charset=UTF-8" http-equiv="content-type" py:replace="''"/>
 	<script src="/js/vanadium-min.js" type="text/javascript"></script>
 	<script type="text/javascript" src="/js/js/jquery.js"></script>
 	<script type="text/javascript" src="/js/jquery.ui.js"></script>
@@ -28,6 +28,41 @@
 
 	</script>
 
+<script language="javascript" type="text/javascript">
+
+function validacion(formulario) {
+
+	var er_nombre = /^([a-z]|[A-Z]|á|é|í|ó|ú|ñ|ü|\s|\.|-[0-9]*)+$/			//letras, '.' y '-' o vacio
+
+	//comprueba campo de nombre
+	if(!er_nombre.test(formulario.nombre_fase.value)) { 
+		alert('Contenido del campo nombre de fase no válido.')
+		return false;
+	}   	
+   	
+	//comprueba campo de nombre
+	if (formulario.descripcion.value.length == 0 ) { 
+		alert('Contenido del campo descripcion no válido.')
+		return false;
+	}  
+ 
+    if (formulario.id_tipo_fase.selectedIndex == 0){ 
+        alert("Debe seleccionar una fase."); 
+        return false;  
+    }
+    
+    if (formulario.tipos_items.selectedIndex==-1){
+        alert("Debes seleccionar al menos 1 tipo de item");
+        return false;
+    }
+	
+    alert('Los campos introducidos son CORRECTOS.')
+	return true;			
+}
+
+
+</script>
+
 
   <title>Sistema de Administracion de Item</title>
 </head>
@@ -36,14 +71,14 @@
       <h2>Agregar nueva Fase</h2>
     </div>
 
-    <form action="post_fase" class="cmxform" method="POST">
+    <form name="formulario" id="formulario" onsubmit="return validacion(this)" action="post_fase" class="cmxform" method="POST">
     <table summary=""><tbody><tr>
        
 	<tr><td>Nombre de la Fase </td><td><input class="required" maxlength="50" type="textfield" name="nombre_fase" value="${values.get('nombre_fase', '')}"/>${tmpl_context.form_errors.get('nombre_fase')}</td></tr>
 
          <tr><td>Tipo de Fase</td>
      	     <td>
-     	     <select name="id_tipo_fase">
+     	     <select name="id_tipo_fase" id="id_tipo_fase">
 		<py:for each="tipo_fase in tipos_fases">
          	       <option value="$tipo_fase.id_tipo_fase" >$tipo_fase.nombre_tipo_fase</option>
 	        </py:for>
