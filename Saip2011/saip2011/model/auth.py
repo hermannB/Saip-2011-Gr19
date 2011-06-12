@@ -152,13 +152,13 @@ class Usuario(DeclarativeBase):
 
     _password = Column('password', Unicode(80),info={'rum': {'field':'Password'}})
 
-    email_address = Column(Unicode(50), unique=True, nullable=False, info={'rum': {'field':'Email'}})
+    email_address = Column(Unicode(50),  nullable=False, info={'rum': {'field':'Email'}})
 
     nacionalidad = Column(Unicode(50))
 
     tipodocumento = Column(Unicode(50), nullable=True)
 
-    nrodoc = Column(Integer, unique=True, nullable=True)
+    nrodoc = Column(Integer, nullable=True)
 
     
     #{ Special methods
@@ -247,6 +247,20 @@ class Usuario(DeclarativeBase):
         usuarios = DBSession.query(Usuario).all()
             
         return usuarios
+
+    @classmethod
+    def get_alias(self):
+        """
+        Obtiene la lista de todos los usuarios
+        registrados en el sistema
+        """
+        """usuarios = session.query(cls).all()"""
+        usuarios = DBSession.query(Usuario).all()
+        lista=[]
+        for usuario in usuarios:
+            lista.append(usuario.alias)    
+        return lista
+
 
     @classmethod
     def get_user_by_alias(self,name):

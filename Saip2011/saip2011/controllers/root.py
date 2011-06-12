@@ -251,7 +251,7 @@ class RootController(BaseController):
 				'nrodoc':Int(not_empty=True),
 				'email_address':NotEmpty}, error_handler=editar_usuario)	
   
-    @expose()
+    @expose('saip2011.templates.usuario.editar_usuario')
     def put_usuario(self, idusuario, alias, nombre,  apellido, nacionalidad,
                          tipodocumento, nrodoc , email_address,cancel=False, 
                             **kw):
@@ -260,18 +260,38 @@ class RootController(BaseController):
             redirect('/usuario')
 
         usuario = DBSession.query(Usuario).get(int(idusuario))
+        usuarios=Usuario.get_alias()
+        usuarios.remove(usuario.alias)
 
-        usuario.alias=alias, 
-        usuario.nombre=nombre, 
-        usuario.apellido=apellido,
-        usuario.nacionalidad=nacionalidad,
-        usuario.tipodocumento=tipodocumento,
-        usuario.nrodoc=nrodoc,
-        usuario.email_address=email_address,
+        if alias not in usuarios:
+            
 
-        DBSession.flush()
-        flash("Usuario modificado!")
-        redirect('/usuario')
+            usuario.alias=alias, 
+            usuario.nombre=nombre, 
+            usuario.apellido=apellido,
+            usuario.nacionalidad=nacionalidad,
+            usuario.tipodocumento=tipodocumento,
+            usuario.nrodoc=nrodoc,
+            usuario.email_address=email_address,
+
+            DBSession.flush()
+            flash("Usuario modificado!")
+            redirect('/usuario')
+        else:
+            nom_proyecto=Variables.get_valor_by_nombre("nombre_proyecto_actual")
+            nom_fase=Variables.get_valor_by_nombre("nombre_fase_actual")
+            values = dict(idusuario=idusuario, 
+			                alias=alias, 
+			                nombre=nombre, 
+			                apellido=apellido,
+			                nacionalidad=nacionalidad,
+			                tipodocumento=tipodocumento,
+			                nrodoc=nrodoc,
+			                email_address=email_address,
+			                )
+            flash("El alias solicitado ya existe!")
+            return dict(pagina="editar_usuario",values=values,
+                        nom_proyecto=nom_proyecto,nom_fase=nom_fase)
 
  ################################################################################
 
@@ -329,6 +349,8 @@ class RootController(BaseController):
     def agregar_usuario(self,cancel=False,**data):
         nom_proyecto=Variables.get_valor_by_nombre("nombre_proyecto_actual")
         nom_fase=Variables.get_valor_by_nombre("nombre_fase_actual")
+        usuarios=Usuario.get_alias()
+        
         errors = {}
         usuario = None
         if request.method == 'POST':
@@ -346,16 +368,25 @@ class RootController(BaseController):
 									tipodocumento=data.get('tipodocumento'),
                                     nrodoc=data.get('nrodoc'),
 									_password=data.get('clave'))
+                
 
-                usuario._set_password(data.get('clave'))
-                xdef=int (Variables.get_valor_by_nombre("rol_por_defecto") )
-                rol = DBSession.query(Rol).get(xdef)
-                usuario.roles.append(rol)
-                DBSession.add(usuario)
-                DBSession.flush()
-                print usuario
-                flash("Usuario agregado!")
-                redirect('/usuario')
+                if usuario.alias not in usuarios:
+                    usuario._set_password(data.get('clave'))
+                    xdef=int (Variables.get_valor_by_nombre("rol_por_defecto") )
+                    rol = DBSession.query(Rol).get(xdef)
+                    usuario.roles.append(rol)
+                    DBSession.add(usuario)
+                    DBSession.flush()
+                    print usuario
+                    flash("Usuario agregado!")
+                    redirect('/usuario')
+                else:
+                    flash(_("Favor cambie el alias es repetido"),'warning')
+                    return dict(pagina='usuarios',usuario=usuario,
+                                errors=errors,data=data.get('alias'),
+                                nom_proyecto=nom_proyecto,nom_fase=nom_fase,
+                                usuarios=usuarios)
+
             except Invalid, e:
                 print e
                 usuario = None
@@ -368,7 +399,8 @@ class RootController(BaseController):
         else:
             errors = {}        
             return dict(pagina='usuarios',data=data.get('alias'),errors=errors,
-                                nom_proyecto=nom_proyecto,nom_fase=nom_fase)
+                                nom_proyecto=nom_proyecto,nom_fase=nom_fase,
+                                usuario=usuario)
 
  ################################################################################
  ################################################################################
