@@ -7,8 +7,85 @@
 
   <head>
   <meta content="text/html; charset=UTF-8" http-equiv="content-type" py:replace="''"/>
-<script type="text/javascript" src="js/jquery-1.4.2.min.js"></script>
-	<script src="js/vanadium-min.js" type="text/javascript"></script>
+ <script language="javascript" type="text/javascript">
+
+function validacion(formulario) {
+
+	var er_nombre = /^([a-z]|[A-Z]|á|é|í|ó|ú|ñ|ü|\s|\.|-)+$/			//letras, '.' y '-' o vacio
+	var er_nrodoc = /^([0-9\s\+\-])+$/						//numeros, espacios, + o -
+	var er_email = /^(.+\@.+\..+)$/                                             	//direccion de correo electronico
+	var x
+   	
+  var p1 = formulario.clave.value;
+  var p2 = formulario.clave2.value;
+  var espacios = false;
+  var cont = 0;
+
+
+
+
+  if (p1.length == 0 || p2.length == 0) {
+   alert("Los campos de la password no pueden quedar vacios");
+   return false;
+  }
+   
+  if (p1 != p2) {
+   alert("Las passwords deben de coincidir");
+   return false;
+  }
+	//comprueba campo de nombre
+	if(!er_nombre.test(formulario.alias.value)) { 
+		alert('Contenido del campo Alias no válido.');
+		return false;
+	}   	
+   	
+	//comprueba campo de nombre
+	if(!er_nombre.test(formulario.nombre.value)) { 
+		alert('Contenido del campo Nombre no válido.');
+		return false;
+	}  
+ 
+	//comprueba campo de nombre
+	if(!er_nombre.test(formulario.apellido.value)) { 
+		alert('Contenido del campo Apellido no válido.');
+		return false;
+	}   
+
+	//comprueba campo de nombre
+	if(!er_nombre.test(formulario.nacionalidad.value)) { 
+		alert('Contenido del campo Nacionalidad no válido.');
+		return false;
+    }
+
+    //comprueba campo de nombre
+	if(!er_nombre.test(formulario.tipodocumento.value)) { 
+		alert('Contenido del campo Tipo de documento no válido.');
+		return false;
+	} 
+
+	//comprueba campos de telefonos (permite campos vacios y guiones)
+	if( !er_nrodoc.test(formulario.nrodoc.value) ) {
+		alert('Contenido del campo nro Documento no válido.');
+		return false;
+	}
+   
+
+	//comprueba campo de email
+	if(!er_email.test(formulario.email.value)) { 
+		alert('Contenido del campo E-MAIL no válido.');
+		return false;
+	}   	
+ 
+	alert('Los campos introducidos son CORRECTOS.');
+	return true;			//cambiar por return true para ejecutar la accion del formulario
+
+}
+
+    
+
+
+</script>
+
 
   <title>Sistema de Administracion de Item</title>
 </head>
@@ -17,48 +94,66 @@
       <h2>Agregar nuevo usuario</h2>
     </div>
 
-    <form action="/agregar_usuario" method="post">
+    <form name="formulario" id="formulario" onsubmit="return validacion(this)" action="/agregar_usuario" method="post">
       <table summary=""><tbody><tr>
         <th><label for="alias">Alias:</label></th>
         <td>
-           <input  class="required" maxlength="50" type="text" id="alias" name="alias" />
+           <span py:if="usuario is not None "><input  class="required" maxlength="50" type="text" id="alias" name="alias" value="$usuario.alias"/></span> 
+           <span py:if="usuario is None "><input  class="required" maxlength="50" type="text" id="alias" name="alias" value=""/></span>
            <span py:if="'alias' in errors" class="fielderror">${errors.alias}</span>   
         </td>
       </tr><tr>
         <th><label for="nombre">Nombre:</label></th>
         <td>
-           <input class="required" maxlength="50" type="text" id="nombre" name="nombre" />
+           <span py:if="usuario is not None "><input class="required" maxlength="50" type="text" id="nombre" name="nombre" value="$usuario.nombre"/></span>
+           <span py:if="usuario is None "><input class="required" maxlength="50" type="text" id="nombre" name="nombre" /></span>
            <span py:if="'nombre' in errors" class="fielderror">${errors.nombre}</span>
         </td>
       </tr><tr>
         <th><label for="apellido">Apellido:</label></th>
-        <td><input class="required" maxlength="50" type="text" name="apellido" /></td>
-	<span py:if="'apellido' in errors" class="fielderror">${errors.apellido}</span>
+        <td>
+            <span py:if="usuario is not None "><input class="required" maxlength="50" type="text" name="apellido" value="$usuario.apellido"/></span>
+            <span py:if="usuario is None "><input class="required" maxlength="50" type="text" name="apellido" /></span>
+            <span py:if="'apellido' in errors" class="fielderror">${errors.apellido}</span>
+        </td>
       </tr><tr>
            
         <th><label for="nacionalidad">Nacionalidad:</label></th>
-	<td><input class="required" maxlength="50" type="text" name="nacionalidad" /></td>
-	<span py:if="'nacionalidad' in errors" class="fielderror">${errors.nacionalidad}</span>
+    	<td>
+            <span py:if="usuario is not None "><input class="required" maxlength="50" type="text" name="nacionalidad" value="$usuario.nacionalidad"/></span>
+            <span py:if="usuario is None "><input class="required" maxlength="50" type="text" name="nacionalidad" /></span>
+            <span py:if="'nacionalidad' in errors" class="fielderror">${errors.nacionalidad}</span>
+        </td>
+	
       </tr><tr>
-	<th><label class="required" maxlength="50" for="tipodocumento">Tipo de Documento:</label></th>
-        <td><input type="text" name="tipodocumento" /></td>
-	<span py:if="'tipodocumento' in errors" class="fielderror">${errors.tipodocumento}</span>	
+    	<th><label class="required" maxlength="50" for="tipodocumento">Tipo de Documento:</label></th>
+        <td>
+            <span py:if="usuario is not None "><input type="text" name="tipodocumento" value="$usuario.tipodocumento"/></span>
+            <span py:if="usuario is None "><input type="text" name="tipodocumento" /></span>
+        	<span py:if="'tipodocumento' in errors" class="fielderror">${errors.tipodocumento}</span>	
+        </td>
+
       </tr><tr>
         <th><label for="nrodoc">Nro.Documento:</label></th>
-        <td><input type="text" name="nrodoc" /></td>
-	<span py:if="'nrodoc' in errors" class="fielderror">${errors.nrodoc}</span>
+        <td>
+            <span py:if="usuario is not None "><input type="text" name="nrodoc" value="$usuario.nrodoc"/></span>
+            <span py:if="usuario is None "><input type="text" name="nrodoc" /></span>
+        	<span py:if="'nrodoc' in errors" class="fielderror">${errors.nrodoc}</span>
+        </td>
+
       </tr><tr>
         <th><label for="email">Email:</label></th>
         <td>
-            <input type="text" name="email" />
-             <span py:if="'email' in errors" class="fielderror">${errors.email}</span>
+            <span py:if="usuario is not None "><input type="text" name="email" value="$usuario.email_address"/></span>
+            <span py:if="usuario is None "><input type="text" name="email" /></span>
+            <span py:if="'email' in errors" class="fielderror">${errors.email}</span>
         </td>
       </tr><tr>
         <th><label for="password">Clave:</label></th>
         <td>
            <input type="password" name="clave" />
-            <span py:if="'clave' in errors" class="fielderror">${errors.clave}</span>
-           </td>
+           <span py:if="'clave' in errors" class="fielderror">${errors.clave}</span>
+         </td>
       </tr><tr>
         <th><label for="password">Confirmar clave:</label></th>
         <td>

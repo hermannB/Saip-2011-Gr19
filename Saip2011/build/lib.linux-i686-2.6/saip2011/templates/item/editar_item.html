@@ -8,10 +8,69 @@
 <head>
 	<meta content="text/html; charset=UTF-8" http-equiv="content-type" py:replace="''"/>
 
-	<script src="/js/vanadium-min.js" type="text/javascript"></script>
-<script src="/js/jquery-1.6.1.js" type="text/javascript" language="javascript"></script>
-<script src="/js/jquery.MultiFile.js" type="text/javascript" language="javascript"></script>
+	<script src='/js/jquery.js' type="text/javascript"></script>
+	<script type="text/javaScript" src="/js/jquery.chili-2.0.js"></script>
+	<script src='/js/jquery.form.js' type="text/javascript" language="javascript"></script>
+	<script src='/js/jquery.MetaData.js' type="text/javascript" language="javascript"></script>
+	<script src='/js/jquery.MultiFile.js' type="text/javascript" language="javascript"></script>
+	<script src='/js/jquery.blockUI.js' type="text/javascript" language="javascript"></script>
+ 	<script src="/js/vanadium-min.js" type="text/javascript"></script>
+	<script type="text/javascript" src="/js/js/jquery.js"></script>
+	<script type="text/javascript" src="/js/jquery.ui.js"></script>
+	<script type="text/javascript" src="/js/jquery.asmselect.js"></script>
+	<link rel="stylesheet" type="text/css" href="/css/jquery.asmselect.css" />
+	<link rel="stylesheet" type="text/css" href="/css/example.css" />
 
+	<script type="text/javascript">
+
+		$(document).ready(function() {
+			$("#padres").asmSelect({
+				addItemTarget: 'bottom',
+				animate: true,
+				highlight: true,
+				sortable: true
+			});
+			
+		}); 
+
+	</script>
+
+<script language="javascript" type="text/javascript">
+
+function validacion(formulario) {
+
+    var er_nombre = /^([a-z]|[A-Z]|á|é|í|ó|ú|ñ|ü|\s|\.|-[0-9]+)+$/			//letras, '.' y '-' o vacio
+    var er_complejidad = /^([0-9]+)+$/
+
+	//comprueba campo de nombre
+	if(!er_nombre.test(formulario.nombre_item.value)) { 
+		alert('Contenido del campo Nombre del Item no válido.')
+		return false
+	}   	
+
+	if(!er_complejidad.test(formulario.complejidad.value)) { 
+		alert('Contenido del campo complejidad no válido.')
+		return false;
+	}   	
+   	
+
+    if (formulario.id_tipo_item.selectedIndex == -1){ 
+        alert("Debe seleccionar un tipo de item"); 
+        return false;  
+    }
+
+    if (formulario.padres.selectedIndex==-1){
+        alert("Debes seleccionar al menos 1 Antecesor");
+        return false;
+    }
+    
+  
+    alert('Los campos introducidos son CORRECTOS.')
+	return true;			
+}
+
+
+</script>
 
 
 	<title>Sistema de Administracion de Item</title>
@@ -23,18 +82,48 @@
 		<div>
 			<h2>Editar Item</h2>
 		</div>
-		  <form action="put_item" method="PUT">
+		  <form name="formulario" id="formulario" onsubmit="return validacion(this)" action="put_item" method="PUT" enctype="multipart/form-data" >
 			<table summary="">
 			<tbody>
              <tr><td><input type="hidden" name="id_item" value="${values['id_item']}"/>${tmpl_context.form_errors.get('id_item')}</td></tr>
             <tr><td>nombre_item </td><td><input class="required" maxlength="50" type="textfield" name="nombre_item" value="${values['nombre_item']}"/>          ${tmpl_context.form_errors.get('nombre_fase')}</td></tr>	
-		      	<tr><td>codigo_item </td><td><input readonly="readonly" class="required" maxlength="50" type="textfield" name="codigo_item" value="${values['codigo_item']}"/>${tmpl_context.form_errors.get('codigo_fase')}</td></tr>	
-				<tr><td>nombre_tipo_item </td><td><input readonly="readonly" class="required" maxlength="50" type="textfield" name="nombre_tipo_item" value="${values['nombre_tipo_item']}"/>${tmpl_context.form_errors.get('nombre_tipo_item')}</td></tr>
+              <tr><td>Tipo de Item</td>
+     	     <td>
+     	     <select name="id_tipo_item">
+		          <py:for each="tipo_item in tipos_items">
+                    <div py:choose="">
+						    <span py:when="tipo_item.nombre_tipo_item in lista" >
+			       				<option value="$tipo_item.id_tipo_item" selected="selected" >$tipo_item.nombre_tipo_item</option>
+           					</span>
+           					<span py:otherwise="">
+						      <option value="$tipo_item.id_tipo_item" >$tipo_item.nombre_tipo_item</option>
+	       			        </span>
+				    </div>
+                  </py:for>
+			 </select>
+            </td></tr>
+
+                <tr><td>Lista de Antecesores</td>
+					<td>
+					<select id="padres" multiple="multiple" name="padres" title="Seleccionar los Antecesores Necesarios">
+				   	       <py:for each="padre in padres">
+								<div py:choose="">
+									<span py:when="padre.id_item in padres" >
+						   				<option value="$padre.id_item" selected="selected" >$padre.nombre_item</option>
+			       					</span>
+			       					<span py:otherwise="">
+									   <option value="$padre.id_item"  >$padre.nombre_item</option>
+				   			        </span>
+								</div>
+
+					       </py:for>
+					  </select>
+					</td></tr>		 
 				
 				<tr><td>complejidad </td><td><input type="textfield" name="complejidad" value="${values['complejidad']}"/>${tmpl_context.form_errors.get('complejidad')}</td></tr>				        	
 				         <tr><td>Adjuntos Actuales</td> 
 			            <td><py:for each="adj in adjuntos2">
-			                <li><input  type="textfield" name="adj" value="$adj"/></li>
+			                <li><input  type="textfield" name="adjuntos" value="$adj.nombre_archivo"/></li>
 		                </py:for></td>
            
         </tr>

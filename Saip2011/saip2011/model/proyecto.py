@@ -89,6 +89,18 @@ class Proyecto(DeclarativeBase):
 #-------------------------------------------------------------------------------
 
     @classmethod
+    def get_proyecto_por_pagina(self,start=0,end=5):
+        """
+        Obtiene la lista de todos los usuarios
+        registrados en el sistema
+        """
+        proyectos = DBSession.query(Proyecto).slice(start,end).all()
+        return proyectos
+
+#-------------------------------------------------------------------------------
+
+
+    @classmethod
     def get_nombres(self):
         """
         Obtiene la
@@ -100,6 +112,7 @@ class Proyecto(DeclarativeBase):
         return lista
 
 #-------------------------------------------------------------------------------
+
     @classmethod
     def get_ultimo_id(self):
 	    """

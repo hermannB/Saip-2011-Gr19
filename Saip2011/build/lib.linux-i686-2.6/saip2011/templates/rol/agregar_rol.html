@@ -8,7 +8,39 @@
   <head>
    <meta content="text/html; charset=UTF-8" http-equiv="content-type" py:replace="''"/>
    <link type="text/css" rel="stylesheet" href="css/selectMultiple.css" />
-   <script type="text/javascript" src="js/selectMultiple.js"></script>
+   <script type="text/javascript" src="/js/selectMultiple.js"></script>
+
+<script language="javascript" type="text/javascript">
+
+function validacion(formulario) {
+
+	var er_nombre = /^([a-z]|[A-Z]|á|é|í|ó|ú|ñ|ü|\s|\.|-[0-9]*)+$/			//letras, '.' y '-' o vacio
+
+	//comprueba campo de nombre
+	if(!er_nombre.test(formulario.nombrerol.value)) { 
+		alert('Contenido del campo nombre de rol no válido.')
+		return false;
+	}   	
+   	
+	//comprueba campo de nombre
+	if (formulario.descripcion.value.length == 0 ) { 
+		alert('Contenido del campo descripcion no válido.')
+		return false;
+	}  
+ 
+   
+    if (formulario.privilegios.selectedIndex==-1){
+        alert("Debes seleccionar al menos 1 privilegio");
+        return false;
+    }
+	
+    alert('Los campos introducidos son CORRECTOS.')
+	return true;			
+}
+
+</script>
+
+
   <title>Sistema de Administracion de Item</title>
 </head>
   <body class="submit">
@@ -16,7 +48,7 @@
       <h2>Agregar nuevo Rol</h2>
     </div>
 
-    <form action="post_rol" method="POST">
+    <form name="formulario" id="formulario" onsubmit="return validacion(this)" action="post_rol" method="POST">
    
       <table summary=""><tbody>
          <tr><td>Nombre </td><td><input class="required" maxlength="50" type="textfield" name="nombrerol" value="${values.get('nombrerol', '')}"/>${tmpl_context.form_errors.get('nombrerol')}</td></tr>

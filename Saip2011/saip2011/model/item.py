@@ -129,6 +129,24 @@ class Item(DeclarativeBase):
 #-------------------------------------------------------------------------------
 
     @classmethod
+    def get_item_activos_por_pagina(self,id_fase,start=0,end=5):
+        """
+        Obtiene la lista de todos los usuarios
+        registrados en el sistema
+        """
+        id_proyecto=int(Variables.get_valor_by_nombre("proyecto_actual"))
+        item = DBSession.query(Item).slice(start,end).all()
+        lista=[]
+        for item in items:
+            if( item.estado_oculto=="Activo" and item.proyecto == proy
+                and item.fase == fase):
+                lista.append(item)
+
+        return lista
+
+#-------------------------------------------------------------------------------
+
+    @classmethod
     def get_nombres_items(self):
         """
         Obtiene la lista de todos los items
@@ -215,6 +233,25 @@ class Item(DeclarativeBase):
 #-------------------------------------------------------------------------------
 
     @classmethod
+    def get_item_eliminados_por_pagina(self,id_fase,start=0,end=5):
+        """
+        Obtiene la lista de todos los usuarios
+        registrados en el sistema
+        """
+        id_proyecto=int(Variables.get_valor_by_nombre("proyecto_actual"))
+        item = DBSession.query(Item).slice(start,end).all()
+        lista=[]
+        for item in items:
+            if( item.estado_oculto=="Eliminado" and item.proyecto == proy
+                and item.fase == fase):
+                lista.append(item)
+
+        return lista
+
+#-------------------------------------------------------------------------------
+
+
+    @classmethod
     def get_historial(self, id_item):
         """
         Obtiene la lista de todos los items
@@ -233,21 +270,24 @@ class Item(DeclarativeBase):
 #-------------------------------------------------------------------------------
 
     @classmethod
-    def get_item_eliminados_by_fase(self,fase):
+    def get_historial_por_pagina(self,id_item,start=0,end=5):
         """
-        Obtiene la lista de todos los items
+        Obtiene la lista de todos los usuarios
         registrados en el sistema
         """
-        proyecto=int(Variables.get_valor_by_nombre("proyecto_actual"))
+        id_proyecto=int(Variables.get_valor_by_nombre("proyecto_actual"))
+        item = DBSession.query(Item).slice(start,end).all()
         lista=[]
-        items = DBSession.query(Item).all()
         for item in items:
-            if( item.estado_oculto=="Eliminado"and item.proyecto == proyecto
-                and item.fase == fase):
-                lista.append(item)  
+            if( (item.proyecto== muestra.proyecto)and(item.fase == muestra.fase) 
+			        and ( item.codigo_item ==muestra.codigo_item) and
+                         (item.estado_oculto == "Desactivado") ):
+                lista.append(item)
+
         return lista
 
 #-------------------------------------------------------------------------------
+
 
     @classmethod
     def version_actual(self, id_item):

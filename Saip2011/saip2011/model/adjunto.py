@@ -72,6 +72,22 @@ class Adjunto(DeclarativeBase):
 #-------------------------------------------------------------------------------
 
     @classmethod
+    def get_adjunto_by_item_por_pagina(self,id_item,start=0,end=5):
+        """
+        Obtiene la lista de todos los usuarios
+        registrados en el sistema
+        """
+        adjuntos = DBSession.query(Adjunto).slice(start,end).all()
+        lista=[]
+        for    adjunto in adjuntos:
+            if adjunto.id_item == id_item:
+                lista.append(adjunto)
+
+        return lista
+
+#-------------------------------------------------------------------------------
+
+    @classmethod
     def get_adjunto_by_id(self,id_adjunto):
         """
         Obtiene la lista de todos los adjuntos         

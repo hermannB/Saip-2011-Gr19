@@ -80,6 +80,23 @@ class Equipo_Desarrollo(DeclarativeBase):
 #-------------------------------------------------------------------------------
 
     @classmethod
+    def get_equipo_by_proyecto_por_pagina(self,id_proyecto,start=0,end=5):
+        """
+        Obtiene la lista de todos los roles
+        registrados en el sistema
+        """
+        equipos = DBSession.query(Equipo_Desarrollo).slice(start,end).all()
+            
+        lista = []
+        for equipo in equipos:
+	        if (equipo.proyecto == id_proyecto):
+		        lista.append(equipo)
+        return lista
+
+
+#-------------------------------------------------------------------------------
+
+    @classmethod
     def get_miembros_by_proyecto(self, id_proyecto):
         equipos = DBSession.query(Equipo_Desarrollo).all()
         lista = []

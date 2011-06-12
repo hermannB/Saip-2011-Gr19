@@ -16,37 +16,37 @@ from saip2011.model import DeclarativeBase, metadata, DBSession
 
 __all__ = ['Variables']
 
-
-#{ Association tables
-
-
+################################################################################
 
 class Variables (DeclarativeBase):
     """
-   Definicion de las variables.
-    
+    Definicion de las variables.
+
     """
-    
+
     __tablename__ = 'Tabla_Variables'
+
+################################################################################
     
-    #{ Columns
-    
+    #               Columnas
+
     id_variable = Column(Integer, autoincrement=True, primary_key=True)
 
     nombre =Column(Unicode(50),  nullable=False)
-    
+
     valor =Column(Unicode(50),  nullable=False)
-   
-   
-    
-    #{ Special methods
-    
+
+################################################################################
+
+    #               Metodos
+
     def __repr__(self):
         return '<Variables : id=%s>' % self.id_variable
-    
+
     def __unicode__(self):
         return self.nombre
 
+#-------------------------------------------------------------------------------
 
     @classmethod
     def get_variables(self):
@@ -57,21 +57,23 @@ class Variables (DeclarativeBase):
         var = DBSession.query(Variables).all()
         return var
 
+#-------------------------------------------------------------------------------
 
     @classmethod
     def get_valor_by_nombre(self, nombre):
         variables = DBSession.query(Variables).all()
         for var in variables:
             if (var.nombre == nombre):
-				return var.valor
+			    return var.valor
 
+#-------------------------------------------------------------------------------
 
     @classmethod
     def set_valor_by_nombre(self, nombre, valor):
         variables = DBSession.query(Variables).all()
         for var in variables:
             if (var.nombre == nombre):
-					var.valor=valor
-					DBSession.flush()
+				    var.valor=valor
+				    DBSession.flush()
 
-#
+#-------------------------------------------------------------------------------

@@ -141,6 +141,19 @@ class Rol(DeclarativeBase):
 #-------------------------------------------------------------------------------
 
     @classmethod
+    def get_roles_por_pagina(self,start=0,end=5):
+        """
+        Obtiene la lista de todos los roles
+        registrados en el sistema
+        """
+        """roles = session.query(cls).all()"""
+        roles = DBSession.query(Rol).slice(start,end).all()
+            
+        return roles
+
+#-------------------------------------------------------------------------------
+
+    @classmethod
     def borrar_by_id(self,id_rol):
         """
         Obtiene la lista de todos los adjuntos         
@@ -348,6 +361,19 @@ class Usuario(DeclarativeBase):
 
 #-------------------------------------------------------------------------------
 
+    @classmethod
+    def get_usuarios_por_pagina(self,start=0,end=5):
+        """
+        Obtiene la lista de todos los usuarios
+        registrados en el sistema
+        """
+        """usuarios = session.query(cls).all()"""
+        usuarios = DBSession.query(Usuario).slice(start,end).all()
+            
+        return usuarios
+
+#-------------------------------------------------------------------------------
+
 ################################################################################
 
 class Privilegios(DeclarativeBase):
@@ -434,3 +460,16 @@ class Privilegios(DeclarativeBase):
 
 #-------------------------------------------------------------------------------
 
+    @classmethod
+    def get_privilegio_por_pagina(self,start=0,end=5):
+        """
+        Obtiene la lista de todos los usuarios
+        registrados en el sistema
+        """
+        """privilegios = session.query(cls).all()"""
+        #privilegios = DBSession.query(Privilegios).all()
+        privilegios = DBSession.query(Privilegios).slice(start,end).all()
+            
+        return privilegios
+
+#-------------------------------------------------------------------------------

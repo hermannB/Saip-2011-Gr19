@@ -63,6 +63,20 @@ class Campos (DeclarativeBase):
 #-------------------------------------------------------------------------------
 
     @classmethod
+    def get_campo_por_pagina(self,start=0,end=5):
+        """
+        Obtiene la lista de todos los roles
+        registrados en el sistema
+        """
+
+        campos = DBSession.query(Campos).slice(start,end).all()
+            
+        return campos
+
+
+#-------------------------------------------------------------------------------
+
+    @classmethod
     def get_campos_by_item(self, id_item):
         campos = DBSession.query(Campos).all()
         lista = []
@@ -84,11 +98,11 @@ class Campos (DeclarativeBase):
 #-------------------------------------------------------------------------------
 
     @classmethod
-    def borrar_by_id(self,id_adjunto):
+    def borrar_by_id(self,id_campos):
         """
         Obtiene la lista de todos los adjuntos         
         """
-        DBSession.delete(DBSession.query(Adjunto).get(id_adjunto))
+        DBSession.delete(DBSession.query(Campos).get(id_campos))
         DBSession.flush()	
 
 #-------------------------------------------------------------------------------

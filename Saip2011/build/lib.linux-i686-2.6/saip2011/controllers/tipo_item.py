@@ -44,18 +44,30 @@ class Tipo_ItemController(BaseController):
 ################################################################################
 
     @expose('saip2011.templates.tipo_item.listar_tipo_item')
-    def tipo_item(self):
+    def tipo_item(self,start=0,end=5):
         """
            Menu para Tipos de Item
         """
         nom_proyecto=Variables.get_valor_by_nombre("nombre_proyecto_actual")
         nom_fase=Variables.get_valor_by_nombre("nombre_fase_actual")
-        tipos_items = Tipo_Item.get_tipo_item()
+
+        paginado = 5
+        if start <> 0:
+            end=int(start.split('=')[1]) #obtiene el fin de pagina
+            start=int(start.split('&')[0]) #obtiene el inicio de pagina
+        #print start,end
+        total = len(Tipo_Item.get_tipos_items())
+        pagina_actual = ((start % end) / paginado) + 1
+         
+        tipos_items = Tipo_Item.get_tipo_item_por_pagina(start,end)
+
+
         tipos_campos = Tipo_Campos.get_tipo_campos()
+
         return dict(pagina="listar_tipo_item",tipos_items=tipos_items, 
-                    tipos_campos=tipos_campos,nom_proyecto=nom_proyecto
-                    ,nom_fase=nom_fase)
-        #return dict(pagina="tipo_item",nom_proyecto=nom_proyecto)
+                    tipos_campos=tipos_campos,nom_proyecto=nom_proyecto,
+                    nom_fase=nom_fase,inicio=start,fin=end,
+                    paginado=paginado,pagina_actual=pagina_actual,total=total)
 
 ################################################################################
        
@@ -65,11 +77,41 @@ class Tipo_ItemController(BaseController):
         """
         nom_proyecto=Variables.get_valor_by_nombre("nombre_proyecto_actual")
         nom_fase=Variables.get_valor_by_nombre("nombre_fase_actual")
+
         tipos_items = Tipo_Item.get_tipo_item()
         tipos_campos = Tipo_Campos.get_tipo_campos()
+
         return dict(pagina="listar_tipo_item",tipos_items=tipos_items, 
-                    tipos_campos=tipos_campos,nom_proyecto=nom_proyecto
-                    ,nom_fase=nom_fase)
+                    tipos_campos=tipos_campos,nom_proyecto=nom_proyecto,
+                    nom_fase=nom_fase)
+
+###############################################################################
+
+    @expose('saip2011.templates.tipo_item.listar_mis_campos')
+    def ver_campos(self,id_tipo_item):
+        """Lista  
+        """
+        nom_proyecto=Variables.get_valor_by_nombre("nombre_proyecto_actual")
+        nom_fase=Variables.get_valor_by_nombre("nombre_fase_actual")
+
+        if id_tipo_item is not None:
+            id_tipo_item=int(id_tipo_item)
+
+        tipo_item=Tipo_Item.get_tipo_item_by_id(id_tipo_item)
+
+        values = dict(id_tipo_item=tipo_item.id_tipo_item, 
+				        nombre_tipo_item=tipo_item.nombre_tipo_item, 
+				        descripcion=tipo_item.descripcion
+				        )
+
+        camp =Tipo_Campos.get_campos_by_tipo_item(tipo_item.id_tipo_item)
+        campos = []
+        for c in camp:
+            campos.append(c)
+
+        return dict(pagina="listar_mis_campos",campos=campos,
+                        nom_proyecto=nom_proyecto,nom_fase=nom_fase,
+                        values=values)
 
 ################################################################################
 
@@ -78,8 +120,14 @@ class Tipo_ItemController(BaseController):
     def editar_tipo_item(self,id_tipo_item,*args, **kw):
         nom_proyecto=Variables.get_valor_by_nombre("nombre_proyecto_actual")
         nom_fase=Variables.get_valor_by_nombre("nombre_fase_actual")
-        tipo_item = DBSession.query(Tipo_Item).get(id_tipo_item)
-        campos2=Tipo_Campos.get_nombres_by_tipo_item(tipo_item.id_tipo_item)
+
+        if id_tipo_item is not None:
+            id_tipo_item=int(id_tipo_item)
+
+        tipo_item = Tipo_Item.get_tipo_item_by_id(id_tipo_item)
+        campos2=Tipo_Campos.get_campos_by_tipo_item(id_tipo_item)
+        valores_permitidos=["alfanumerico","numerico","fecha"]
+
         if request.method != 'PUT':  
             values = dict(id_tipo_item=tipo_item.id_tipo_item, 
 							nombre_tipo_item=tipo_item.nombre_tipo_item, 
@@ -88,22 +136,29 @@ class Tipo_ItemController(BaseController):
 							)
 
         return dict(pagina="editar_tipo_item",values=values,campos2=campos2,
-                        nom_proyecto=nom_proyecto,nom_fase=nom_fase)
+                        nom_proyecto=nom_proyecto,nom_fase=nom_fase,
+                        valores_permitidos=valores_permitidos)
+
+#-------------------------------------------------------------------------------
 
     @validate({'id_tipo_item':Int(not_empty=True),
 				'nombre_tipo_item':NotEmpty, 
-				#               'descripcion':NotEmpty
 				}, error_handler=editar_tipo_item)	
+
+#-------------------------------------------------------------------------------
 
     @expose()
     def put(self, id_tipo_item, nombre_tipo_item, codigo_tipo_item,
-                    descripcion, campo,**kw):
-        tipo_item = DBSession.query(Tipo_Item).get(id_tipo_item)
+                    descripcion, campo,valor,**kw):
+
+        if id_tipo_item is not None:
+            id_tipo_item=int(id_tipo_item)
+
+        tipo_item = Tipo_Item.get_tipo_item_by_id(id_tipo_item)
         campos2=Tipo_Campos.get_campos_by_tipo_item(tipo_item.id_tipo_item)
 
         for cam in campos2:
-            DBSession.delete(DBSession.query(Tipo_Campos).get
-                                (cam.id_tipo_campos))
+            Tipo_Campos.borrar_by_id(cam.id_tipo_campos)
             DBSession.flush()
 
         tipo_item.nombre_tipo_item = nombre_tipo_item
@@ -114,10 +169,21 @@ class Tipo_ItemController(BaseController):
             if not isinstance(campo, list):
                 campo = [campo]
 
-        for camp in campo:
-            if camp != "":
-                campoG =Tipo_Campos(id_tipo_item=id_tipo_item,nombre_campo=camp)
-                DBSession.add(campoG)
+        if valor is not None:
+            if not isinstance(valor, list):
+                valor = [valor]
+
+        indice=0
+             
+        for c in campo:
+            if len(c)>0:
+                camp =Tipo_Campos(id_tipo_item=id_tipo_item,
+                                nombre_campo=c,
+                                valor_campo=valor[indice])
+                DBSession.add(camp)
+            indice+=1
+            
+
         DBSession.flush()
         flash("Tipo de Item modificada!")
         redirect('/tipo_item/tipo_item')
@@ -129,8 +195,13 @@ class Tipo_ItemController(BaseController):
     def clonar_tipo_item(self,id_tipo_item,*args, **kw):
         nom_proyecto=Variables.get_valor_by_nombre("nombre_proyecto_actual")
         nom_fase=Variables.get_valor_by_nombre("nombre_fase_actual")
-        tipo_item = DBSession.query(Tipo_Item).get(id_tipo_item)
-        campos = Tipo_Campos.get_nombres_by_tipo_item(tipo_item.id_tipo_item)
+
+        if id_tipo_item is not None:
+            id_tipo_item=int(id_tipo_item)
+
+        tipo_item = Tipo_Item.get_tipo_item_by_id(id_tipo_item)
+        valores_permitidos=["alfanumerico","numerico","fecha"]
+        campos = Tipo_Campos.get_campos_by_tipo_item(tipo_item.id_tipo_item)
 
         if request.method != 'PUT':  
             values = dict( id_tipo_item=tipo_item.id_tipo_item, 
@@ -140,89 +211,23 @@ class Tipo_ItemController(BaseController):
 							)
 
         return dict(pagina="clonar_tipo_item",values=values,campos=campos,
-                        nom_proyecto=nom_proyecto,nom_fase=nom_fase)
+                        nom_proyecto=nom_proyecto,nom_fase=nom_fase,
+                        valores_permitidos=valores_permitidos)
+
+#-------------------------------------------------------------------------------
 
     @validate({'nombre_tipo_item':NotEmpty, 
-				#'descripcion':NotEmpty
 				}, error_handler=clonar_tipo_item)	
+
+#-------------------------------------------------------------------------------
 
     @expose()
     def put_item(self, nombre_tipo_item,codigo_tipo_item,
-                     descripcion, campo,**kw):
+                     descripcion, campo,valor,**kw):
         tipo_item = Tipo_Item (nombre_tipo_item=nombre_tipo_item,
                                     descripcion=descripcion,
                                     codigo_tipo_item=codigo_tipo_item)
-        DBSession.add(tipo_item)
 
-        if campo is not None:
-            if not isinstance(campo, list):
-                campo = [campo]
-
-        id_tipo=Tipo_Item.get_ultimo_id()        
-        for camp in campo:
-            if camp != "":
-                camp =Tipo_Campos(id_tipo_item=id_tipo,nombre_campo=camp)
-                DBSession.add(camp)
-        DBSession.flush()
-        flash("Tipo de Item clonada!")
-        redirect('/tipo_item/tipo_item')
-
-################################################################################
-
-    @expose('saip2011.templates.tipo_item.eliminar_tipo_item')
-    def eliminar_tipo_item(self,id_tipo_item, *args, **kw):
-        nom_proyecto=Variables.get_valor_by_nombre("nombre_proyecto_actual")
-        nom_fase=Variables.get_valor_by_nombre("nombre_fase_actual")
-        tipo_item = DBSession.query(Tipo_Item).get(id_tipo_item)	
-        values = dict(id_tipo_item=tipo_item.id_tipo_item, 
-						nombre_tipo_item=tipo_item.nombre_tipo_item, 
-                        codigo_tipo_item=tipo_item.codigo_tipo_item,
-						descripcion=tipo_item.descripcion,
-						)
-        return dict(pagina="eliminar_tipo_item",values=values,
-                        nom_proyecto=nom_proyecto,nom_fase=nom_fase)
-
-    @validate({'id_tipo_item':Int(not_empty=True), 
-				'nombre_tipo_item':NotEmpty, 
-                'codigo_tipo_item':NotEmpty, 
-				#               'descripcion':NotEmpty
-				}, error_handler=eliminar_tipo_item)	
-
-    @expose()
-    def post_delete(self, id_tipo_item, nombre_tipo_item, codigo_tipo_item,
-                        descripcion, **kw):
-        campos2=Tipo_Campos.get_campos_by_tipo_item(id_tipo_item)
-
-        for cam in campos2:
-            DBSession.delete(DBSession.query(Tipo_Campos).get
-                                (cam.id_tipo_campos))
-            DBSession.flush()
-
-        DBSession.delete(DBSession.query(Tipo_Item).get(id_tipo_item))
-        DBSession.flush()
-        flash("Tipo de Item eliminado!")
-        redirect('/tipo_item/tipo_item')
-
-################################################################################
-
-    @expose('saip2011.templates.tipo_item.agregar_tipo_item')
-    def agregar_tipo_item(self, *args, **kw):
-        nom_proyecto=Variables.get_valor_by_nombre("nombre_proyecto_actual")
-        nom_fase=Variables.get_valor_by_nombre("nombre_fase_actual")
-        return dict(pagina="agregar_tipo_item",values=kw,
-                        nom_proyecto=nom_proyecto,nom_fase=nom_fase)
-    
-    @validate({'nombre_tipo_item':NotEmpty, 
-                'codigo_tipo_item':NotEmpty, 
-				#'descripcion':NotEmpty
-				}, error_handler=agregar_tipo_item)
-
-    @expose()
-    def post_tipo_item(self, nombre_tipo_item, codigo_tipo_item, descripcion,
-                        campo, valor):
-        tipo_item = Tipo_Item (nombre_tipo_item=nombre_tipo_item,
-                                codigo_tipo_item=codigo_tipo_item,
-                                descripcion=descripcion)
         DBSession.add(tipo_item)
 
         if campo is not None:
@@ -236,12 +241,112 @@ class Tipo_ItemController(BaseController):
         indice=0
         id_tipo=Tipo_Item.get_ultimo_id()        
         for c in campo:
-            camp =Tipo_Campos(id_tipo_item=id_tipo,
+            if (len(c)>0):
+                camp =Tipo_Campos(id_tipo_item=id_tipo,
                                 nombre_campo=c,
                                 valor_campo=valor[indice])
+                DBSession.add(camp)
             indice+=1
-            DBSession.add(camp)
+            
+
+        DBSession.flush()
+        flash("Tipo de Item clonada!")
+        redirect('/tipo_item/tipo_item')
+
+################################################################################
+
+    @expose('saip2011.templates.tipo_item.eliminar_tipo_item')
+    def eliminar_tipo_item(self,id_tipo_item, *args, **kw):
+        nom_proyecto=Variables.get_valor_by_nombre("nombre_proyecto_actual")
+        nom_fase=Variables.get_valor_by_nombre("nombre_fase_actual")
+
+        if id_tipo_item is not None:
+            id_tipo_item=int(id_tipo_item)
+
+        tipo_item =Tipo_Item.get_tipo_item_by_id(id_tipo_item)	
+
+        values = dict(id_tipo_item=tipo_item.id_tipo_item, 
+						nombre_tipo_item=tipo_item.nombre_tipo_item, 
+                        codigo_tipo_item=tipo_item.codigo_tipo_item,
+						descripcion=tipo_item.descripcion,
+						)
+
+        return dict(pagina="eliminar_tipo_item",values=values,
+                        nom_proyecto=nom_proyecto,nom_fase=nom_fase)
+
+#-------------------------------------------------------------------------------
+
+    @validate({'id_tipo_item':Int(not_empty=True), 
+				'nombre_tipo_item':NotEmpty, 
+                'codigo_tipo_item':NotEmpty, 
+				}, error_handler=eliminar_tipo_item)	
+
+#-------------------------------------------------------------------------------
+
+    @expose()
+    def post_delete(self, id_tipo_item, nombre_tipo_item, codigo_tipo_item,
+                        descripcion, **kw):
+
+        if id_tipo_item is not None:
+            id_tipo_item=int(id_tipo_item)
+
+        campos2=Tipo_Campos.get_campos_by_tipo_item(id_tipo_item)
+
+        for cam in campos2:
+            Tipo_Campos.borrar_by_id(cam.id_tipo_campos)
+            DBSession.flush()
+
+        Tipo_Item.borrar_by_id(id_tipo_item)
+        DBSession.flush()
+        flash("Tipo de Item eliminado!")
+        redirect('/tipo_item/tipo_item')
+
+################################################################################
+
+    @expose('saip2011.templates.tipo_item.agregar_tipo_item')
+    def agregar_tipo_item(self, *args, **kw):
+        nom_proyecto=Variables.get_valor_by_nombre("nombre_proyecto_actual")
+        nom_fase=Variables.get_valor_by_nombre("nombre_fase_actual")
+
+        return dict(pagina="agregar_tipo_item",values=kw,
+                        nom_proyecto=nom_proyecto,nom_fase=nom_fase)
+
+#-------------------------------------------------------------------------------
+    
+    @validate({'nombre_tipo_item':NotEmpty, 
+                'codigo_tipo_item':NotEmpty, 
+				}, error_handler=agregar_tipo_item)
+
+#-------------------------------------------------------------------------------
+
+    @expose()
+    def post_tipo_item(self, nombre_tipo_item, codigo_tipo_item, descripcion,
+                        campo, valor):
+        tipo_item = Tipo_Item (nombre_tipo_item=nombre_tipo_item,
+                                codigo_tipo_item=codigo_tipo_item,
+                                descripcion=descripcion)
+
+        DBSession.add(tipo_item)
+
+        if campo is not None:
+            if not isinstance(campo, list):
+                campo = [campo]
+
+        if valor is not None:
+            if not isinstance(valor, list):
+                valor = [valor]
+
+        indice=0
+        id_tipo=Tipo_Item.get_ultimo_id()        
+        for c in campo:
+            if len(c)>0:
+                camp =Tipo_Campos(id_tipo_item=id_tipo,
+                                nombre_campo=c,
+                                valor_campo=valor[indice])
+                DBSession.add(camp)
+            indice+=1
+            
 
         flash("Tipo Item Agregado!")  
         redirect('/tipo_item/tipo_item')
-
+#-------------------------------------------------------------------------------

@@ -95,6 +95,35 @@ class Fase(DeclarativeBase):
 #-------------------------------------------------------------------------------
 
     @classmethod
+    def get_fase_by_id(self,fase_id):
+        """
+        Obtiene la lista de todos los usuarios
+        registrados en el sistema
+        """
+        fases = DBSession.query(Fase).all()
+        for fase in fases:
+            if fase.id_fase == fase_id:
+                return fase
+
+#-------------------------------------------------------------------------------
+
+    @classmethod
+    def get_fase_by_proyecto_por_pagina(self,id_proyecto,start=0,end=5):
+        """
+        Obtiene la lista de todos los usuarios
+        registrados en el sistema
+        """
+        fases = DBSession.query(Fase).slice(start,end).all()
+        lista=[]
+        for    fase in fases:
+            if fase.proyecto == id_proyecto:
+                lista.append(fase)
+
+        return lista
+
+#-------------------------------------------------------------------------------
+
+    @classmethod
     def get_nombres_by_id(self,proyecto_id):
         """
         Obtiene la lista de todos los usuarios

@@ -14,6 +14,7 @@ body {
 	font-family:"Lucida Grande","Lucida Sans Unicode",geneva,verdana,sans-serif;
 }
 
+
 a {
 	color: #286571;
 }
@@ -103,6 +104,36 @@ ul#mainmenu li.loginlogout a:hover
 #content .currentpage {
 	margin-top: 0;
 }
+
+/* buscar form*/
+#buscar
+{
+    text-align: left;
+}
+
+form.buscar
+{
+    text-align: right;
+    width: 380px;
+    /*background: url('../images/loginbg.png') top left no-repeat;*/
+    padding: 0;
+    margin: 0 auto;
+    border: 0;
+    float: right;
+}
+
+/* navegacion */
+#navegar
+{
+    text-align: center;
+    
+    /*background: url('../images/loginbg.png') top left no-repeat;*/
+    padding: 0;
+    margin: 0 auto;
+    border: 0;
+    
+}
+
 
 /* Login form*/
 
@@ -259,7 +290,7 @@ form.loginfields input#submit
 	padding-top:0px;
 }
 .foottext p {
-	margin: 0; padding: 0;
+	padding-left: 280px;
 }
 .code {
 font-family:monospace;

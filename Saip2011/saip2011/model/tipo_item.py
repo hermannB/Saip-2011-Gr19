@@ -85,6 +85,19 @@ class Tipo_Item(DeclarativeBase):
 #-------------------------------------------------------------------------------
 
     @classmethod
+    def get_tipo_item_por_pagina(self,start=0,end=5):
+        """
+        Obtiene la lista de todos los tipos de item
+        registrados en el sistema
+        """
+
+        tipos_items = DBSession.query(Tipo_Item).slice(start,end).all()
+            
+        return tipos_items
+
+#-------------------------------------------------------------------------------
+
+    @classmethod
     def get_tipo_item_by_id(self,tipo_item_id):
         """
         Obtiene la lista de todos los usuarios

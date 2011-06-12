@@ -348,16 +348,27 @@ class RootController(BaseController):
  ################################################################################
 
     @expose('saip2011.templates.usuario.listar_usuario')
-    def listar_usuario(self):
+    def listar_usuario(self,start=0,end=5):
         """Lista usuarios 
         """
         nom_proyecto=Variables.get_valor_by_nombre("nombre_proyecto_actual")
         nom_fase=Variables.get_valor_by_nombre("nombre_fase_actual")
 
-        usuarios = Usuario.get_usuarios()
+        paginado = 5
+        if start <> 0:
+            end=int(start.split('=')[1]) #obtiene el fin de pagina
+            start=int(start.split('&')[0]) #obtiene el inicio de pagina
+        #print start,end
+        total = len(Usuario.get_usuarios())
+        pagina_actual = ((start % end) / paginado) + 1
+         
+        usuarios = Usuario.get_usuarios_por_pagina(start,end)
+
 
         return dict(pagina="listar_usuario",usuarios=usuarios,
-                        nom_proyecto=nom_proyecto,nom_fase=nom_fase)
+                        nom_proyecto=nom_proyecto,nom_fase=nom_fase,
+                        inicio=start,fin=end,paginado=paginado,
+                        pagina_actual=pagina_actual,total=total)
 
  ################################################################################
 
@@ -477,17 +488,28 @@ class RootController(BaseController):
  ################################################################################
 
     @expose('saip2011.templates.rol.listar_rol')
-    def rol(self):
+    def rol(self,start=0,end=5):
         """
         Menu para Rol
         """
         nom_proyecto=Variables.get_valor_by_nombre("nombre_proyecto_actual")
         nom_fase=Variables.get_valor_by_nombre("nombre_fase_actual")
 
-        roles = Rol.get_roles()
+        paginado = 5
+        if start <> 0:
+            end=int(start.split('=')[1]) #obtiene el fin de pagina
+            start=int(start.split('&')[0]) #obtiene el inicio de pagina
+        #print start,end
+        total = len(Rol.get_roles())
+        pagina_actual = ((start % end) / paginado) + 1
+         
+        roles = Rol.get_roles_por_pagina(start,end)
+
 
         return dict(pagina="listar_rol",roles=roles,nom_proyecto=nom_proyecto
-                        ,nom_fase=nom_fase)
+                                ,nom_fase=nom_fase,inicio=start,fin=end,
+                                paginado=paginado,pagina_actual=pagina_actual,
+                                total=total)
 
  ################################################################################
     
@@ -667,17 +689,28 @@ class RootController(BaseController):
  ################################################################################
 
     @expose('saip2011.templates.privilegio.listar_privilegio')
-    def privilegio(self):
+    def privilegio(self,start=0,end=5):
         """
         Menu para Privilegio
         """
         nom_proyecto=Variables.get_valor_by_nombre("nombre_proyecto_actual")
         nom_fase=Variables.get_valor_by_nombre("nombre_fase_actual")
 
-        privilegios = Privilegios.get_privilegios()
+        paginado = 5
+        if start <> 0:
+            end=int(start.split('=')[1]) #obtiene el fin de pagina
+            start=int(start.split('&')[0]) #obtiene el inicio de pagina
+        #print start,end
+        total = len(Privilegios.get_privilegios())
+        pagina_actual = ((start % end) / paginado) + 1
+         
+        privilegios = Privilegios.get_privilegio_por_pagina(start,end)
+
 
         return dict(pagina="listar_privilegio",privilegios=privilegios,
-                        nom_proyecto=nom_proyecto,nom_fase=nom_fase)
+                        nom_proyecto=nom_proyecto,nom_fase=nom_fase,
+                        inicio=start,fin=end,total=total,paginado=paginado,
+                        pagina_actual=pagina_actual)
 
  ################################################################################
     

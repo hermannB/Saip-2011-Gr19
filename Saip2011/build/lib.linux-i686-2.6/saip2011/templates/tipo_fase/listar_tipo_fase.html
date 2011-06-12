@@ -35,6 +35,7 @@
     	<th>Accion</th>
         <th>Nombre del Tipo Fase</th>
         <th>Descripcion</th>
+        <th>Tipos de Item</th>
       </tr>
       <tr align="center" py:for="tipo_fase in tipos_fases">
     	<td>
@@ -55,6 +56,7 @@
         </td>
         <td>${tipo_fase.nombre_tipo_fase}</td>
         <td>${tipo_fase.descripcion}</td>
+        <td><a href="${tg.url('/tipo_fase/ver_tipos_items?id_tipo_fase=%d' % tipo_fase.id_tipo_fase)}">ver tipos Items</a></td>
       </tr>          
     </table>   
     

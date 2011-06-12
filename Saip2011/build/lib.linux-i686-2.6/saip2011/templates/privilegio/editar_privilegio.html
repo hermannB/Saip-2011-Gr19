@@ -7,9 +7,33 @@
 
 <head>
 	<meta content="text/html; charset=UTF-8" http-equiv="content-type" py:replace="''"/>
-<script type="text/javascript" src="js/jquery-1.4.2.min.js"></script>
-	<script src="js/vanadium-min.js" type="text/javascript"></script>
+<script type="text/javascript" src="/js/jquery-1.4.2.min.js"></script>
+	<script src="/js/vanadium-min.js" type="text/javascript"></script>
 
+<script language="javascript" type="text/javascript">
+
+function validacion(formulario) {
+
+    var er_nombre = /^([a-z]|[A-Z]|á|é|í|ó|ú|ñ|ü|\s|\.|-[0-9]+)+$/			//letras, '.' y '-' o vacio
+
+	//comprueba campo de nombre
+	if(!er_nombre.test(formulario.nombreprivilegio.value)) { 
+		alert('Contenido del campo Nombre del privilegio no válido.')
+		return false
+	}   	
+
+	//comprueba campo de nombre
+	if (formulario.descripcion.value.length == 0 ) { 
+		alert('Contenido del campo descripcion no válido.')
+		return false;
+	}  
+ 
+    alert('Los campos introducidos son CORRECTOS.')
+	return true;			
+}
+
+
+</script>
 
 
 	<title>Sistema de Administracion de Item</title>
@@ -21,7 +45,7 @@
 		<div>
 			<h2>Editar Privilegio</h2>
 		</div>
-		  <form action="put_privilegio" method="PUT">
+		  <form name="formulario" id="formulario" onsubmit="return validacion(this)" action="put_privilegio" method="PUT">
 			<table summary="">
 			<tbody>
                     <tr><td><input type="hidden" name="idprivilegio" value="${values['idprivilegio']}"/>${tmpl_context.form_errors.get('idprivilegio')}</td></tr>

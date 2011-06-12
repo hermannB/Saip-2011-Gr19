@@ -68,6 +68,19 @@ class Historial(DeclarativeBase):
 #-------------------------------------------------------------------------------
 
     @classmethod
+    def get_historial_by_id(self,historial_id):
+        """
+        Obtiene la lista de todos los usuarios
+        registrados en el sistema
+        """
+        historiales = DBSession.query(Historial).all()
+        for historial in historiales:
+            if historial.id_historial == historial_id:
+                return historiales
+
+#-------------------------------------------------------------------------------
+
+    @classmethod
     def get_historial_by_id(self,id_historial):
         """
         Obtiene la lista de todos los adjuntos         

@@ -17,38 +17,39 @@ from saip2011.model import DeclarativeBase, metadata, DBSession
 __all__ = ['Campos']
 
 
-#{ Association tables
-
-
+################################################################################
 
 class Campos (DeclarativeBase):
     """
-   Definicion de Campos para item.
-    
+    Definicion de Campos para item.
+
     """
-    
+
     __tablename__ = 'Tabla_Campos'
-    
-    #{ Columns
-    
+
+    #               Columnas
+
     id_campos = Column(Integer, autoincrement=True, primary_key=True)
 
     id_item = Column(Integer)
-    
+
     nombre_campo =Column(Unicode(50),  nullable=False)
 
-    valor_campo =Column(Unicode(50),  nullable=False)
-   
-   
+    tipo_campo =Column(Unicode(50),  nullable=False)
+
+    dato =Column(Unicode(200))
+
+################################################################################   
     
-    #{ Special methods
-    
+    #               Metodos
+
     def __repr__(self):
         return '<Campos : id=%s>' % self.id_campos
-    
+
     def __unicode__(self):
         return self.id_campos
 
+#-------------------------------------------------------------------------------
 
     @classmethod
     def get_campos(self):
@@ -59,6 +60,21 @@ class Campos (DeclarativeBase):
         campos = DBSession.query(Campos).all()
         return campos
 
+#-------------------------------------------------------------------------------
+
+    @classmethod
+    def get_campo_por_pagina(self,start=0,end=5):
+        """
+        Obtiene la lista de todos los roles
+        registrados en el sistema
+        """
+
+        campos = DBSession.query(Campos).slice(start,end).all()
+            
+        return campos
+
+
+#-------------------------------------------------------------------------------
 
     @classmethod
     def get_campos_by_item(self, id_item):
@@ -67,10 +83,38 @@ class Campos (DeclarativeBase):
         for campo in campos:
             if (campo.id_item == id_item):
                 lista.append(campo)
+        return lista
+
+#-------------------------------------------------------------------------------
+
+    @classmethod
+    def get_campo_by_id(self,id_campo):
+        """
+        Obtiene la lista de todos los adjuntos         
+        """
+        campo = DBSession.query(Campo).get(int(id_campo))
+        return campo
+
+#-------------------------------------------------------------------------------
+
+    @classmethod
+    def borrar_by_id(self,id_campos):
+        """
+        Obtiene la lista de todos los adjuntos         
+        """
+        DBSession.delete(DBSession.query(Campos).get(id_campos))
+        DBSession.flush()	
+
+#-------------------------------------------------------------------------------
+
+    @classmethod
+    def get_nombres_by_item(self, id_item):
+        campos = DBSession.query(Campos).all()
+        lista = []
+        for campo in campos:
+            if (campo.id_item == id_item):
+                lista.append(campo.nombre_campo)
 
         return lista
-    #}
 
-    #}
-
-#
+#-------------------------------------------------------------------------------

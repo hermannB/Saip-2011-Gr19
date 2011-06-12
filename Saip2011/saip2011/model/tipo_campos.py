@@ -62,6 +62,24 @@ class Tipo_Campos (DeclarativeBase):
 #-------------------------------------------------------------------------------
 
     @classmethod
+    def get_tipo_campo_by_tipo_item_por_pagina(self,
+                        id_tipo_item,start=0,end=5):
+        """
+        Obtiene la lista de todos los usuarios
+        registrados en el sistema
+        """
+        tipos = DBSession.query(Tipo_Campos).slice(start,end).all()
+        lista=[]
+        for tipo_campo in tipos:
+            if tipo_campo.id_tipo_item == id_tipo_item:
+                lista.append(tipo_campo)
+
+        return lista
+
+#-------------------------------------------------------------------------------
+
+
+    @classmethod
     def get_campos_by_tipo_item(self, id_tipo):
         campos = DBSession.query(Tipo_Campos).all()
         lista = []

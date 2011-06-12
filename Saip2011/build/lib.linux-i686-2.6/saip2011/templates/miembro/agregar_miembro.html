@@ -26,6 +26,31 @@
 		}); 
 
 	</script>
+<script language="javascript" type="text/javascript">
+
+function validacion(formulario) {
+
+    if (formulario.idusuario.selectedIndex == -1){ 
+        alert("Debe seleccionar un usuario"); 
+        return false;  
+    }
+    
+    if (formulario.idrol.selectedIndex == -1){ 
+        alert("Debe seleccionar un rol"); 
+        return false;  
+    }
+
+    if (formulario.fases.selectedIndex == -1){ 
+        alert("Debe seleccionar como minimo una fase"); 
+        return false;  
+    }
+  
+    alert('Los campos introducidos son CORRECTOS.')
+	return true;			
+}
+
+
+</script>
 
   <title>Sistema de Administracion de Item</title>
 </head>
@@ -35,7 +60,7 @@
       <h2>Agregar nuevo Miembro al Equipo del Proyecto</h2>
     </div>
 
-    <form action="post_miembro" method="POST">
+    <form name="formulario" id="formulario" onsubmit="return validacion(this)" action="post_miembro" method="POST">
     <table summary=""><tbody><tr>
        
          <tr><td>Nombre del Usuario</td>

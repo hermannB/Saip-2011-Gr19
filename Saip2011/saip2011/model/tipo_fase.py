@@ -86,6 +86,18 @@ class Tipo_Fase(DeclarativeBase):
 
 #-------------------------------------------------------------------------------
 
+    @classmethod
+    def get_tipo_fase_por_pagina(self,start=0,end=5):
+        """
+        Obtiene la lista de todos los roles
+        registrados en el sistema
+        """
+
+        tipos_fases = DBSession.query(Tipo_Fase).slice(start,end).all()
+            
+        return tipos_fases
+
+#-------------------------------------------------------------------------------
 
     @classmethod
     def borrar_by_id(self,id_tipo_fase):

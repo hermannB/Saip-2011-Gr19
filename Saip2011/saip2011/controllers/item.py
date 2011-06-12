@@ -43,18 +43,29 @@ class ItemController(BaseController):
 
 ################################################################################
     @expose('saip2011.templates.item.item')
-    def item(self):
+    def item(self,start=0,end=5):
         """
         Menu para Item
         """
         nom_proyecto=Variables.get_valor_by_nombre("nombre_proyecto_actual")
         nom_fase=Variables.get_valor_by_nombre("nombre_fase_actual")
 
-        fases=Fase.get_fase_by_proyecto(int (Variables.get_valor_by_nombre
-                                                ("proyecto_actual")) )
+        paginado = 5
+        if start <> 0:
+            end=int(start.split('=')[1]) #obtiene el fin de pagina
+            start=int(start.split('&')[0]) #obtiene el inicio de pagina
+        #print start,end
+        total = len(Fase.get_fase_by_proyecto(int (Variables.get_valor_by_nombre
+                                                ("proyecto_actual")) ))
+        pagina_actual = ((start % end) / paginado) + 1
+         
+        fases=Fase.get_fase_by_proyecto_por_pagina(int (Variables.get_valor_by_nombre
+                                                ("proyecto_actual")), start,end )
         
         return dict(pagina="listar_fase",fases=fases,nom_proyecto=nom_proyecto
-                    ,nom_fase=nom_fase)
+                                ,nom_fase=nom_fase,inicio=start,fin=end,
+                                pagina_actual=pagina_actual,paginado=paginado,
+                                total=total)
 
 ###############################################################################
 
@@ -134,7 +145,7 @@ class ItemController(BaseController):
     def editar_item(self,id_item,*args, **kw):
         nom_proyecto=Variables.get_valor_by_nombre("nombre_proyecto_actual")
         nom_fase=Variables.get_valor_by_nombre("nombre_fase_actual")
-
+        padres=Item.get_item_activados()                                        #cambiar esta funcion y solo traer lo que no forman ciclos
         if id_item is not None:
             id_item=int(id_item)
 
@@ -164,7 +175,7 @@ class ItemController(BaseController):
 
         return dict(pagina="editar_item",values=values,adjuntos2=adjuntos2,
                         nom_proyecto=nom_proyecto,nom_fase=nom_fase,
-                        lista=lista,tipos_items=tipos_items)
+                        lista=lista,tipos_items=tipos_items,padres=padres)
 
 #-------------------------------------------------------------------------------
 
@@ -418,14 +429,14 @@ class ItemController(BaseController):
     def agregar_item(self, *args, **kw):
         nom_fase=Variables.get_valor_by_nombre("nombre_fase_actual")
         nom_proyecto=Variables.get_valor_by_nombre("nombre_proyecto_actual")
-
+        padres=Item.get_item_activados()                                        #cambiar esta funcion y solo traer lo que no forman ciclos
         id_fase=int(Variables.get_valor_by_nombre("fase_actual"))
     
         fase = Fase.get_fase_by_id(id_fase)	
         tipos_items=fase.tipos_items
 
         return dict(pagina="agregar_item",values=kw, tipos_items=tipos_items
-                    ,nom_proyecto=nom_proyecto,nom_fase=nom_fase)
+                    ,nom_proyecto=nom_proyecto,nom_fase=nom_fase,padres=padres)
 
 #-------------------------------------------------------------------------------
     
@@ -436,7 +447,9 @@ class ItemController(BaseController):
 #-------------------------------------------------------------------------------
 
     @expose('saip2011.templates.item.agregar_item')
-    def post_item(self, nombre_item, complejidad, adjunto, id_tipo_item):
+    def post_item(self, nombre_item, complejidad, adjunto, id_tipo_item,
+                    padres,asmSelect0):
+
         items= Item.get_nombres_items()
 
         if nombre_item not in items:
@@ -447,6 +460,9 @@ class ItemController(BaseController):
             if complejidad is not None:
                 complejidad=int(complejidad)
 
+            if padres is not None:
+                if not isinstance(padres, list):
+                    padres = [padres]
 
             tipo_item =Tipo_Item.get_tipo_item_by_id(id_tipo_item)
             pre_codigo=tipo_item.codigo_tipo_item
