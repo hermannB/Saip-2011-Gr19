@@ -347,13 +347,15 @@ class RootController(BaseController):
  ################################################################################
  ################################################################################
 
-    @expose('saip2011.templates.rol.rol')
+    @expose('saip2011.templates.rol.listar_rol')
     def rol(self):
         """
         Menu para Rol
         """
         nom_proyecto=Variables.get_valor_by_nombre("nombre_proyecto_actual")
-        return dict(pagina="rol",nom_proyecto=nom_proyecto)
+        roles = Rol.get_roles()
+        return dict(pagina="listar_rol",roles=roles,nom_proyecto=nom_proyecto)
+        #return dict(pagina="rol",nom_proyecto=nom_proyecto)
 
  ################################################################################
     
@@ -466,14 +468,17 @@ class RootController(BaseController):
  ################################################################################
  ################################################################################
 
-    @expose('saip2011.templates.privilegio.privilegio')
+    @expose('saip2011.templates.privilegio.listar_privilegio')
     def privilegio(self):
         """
         Menu para Privilegio
         """
         nom_proyecto=Variables.get_valor_by_nombre("nombre_proyecto_actual")
-        return dict(pagina="privilegenres = DBSession.query(Genre).all()gio",
+        privilegios = Privilegios.get_privilegio()
+        return dict(pagina="listar_privilegio",privilegios=privilegios,
                         nom_proyecto=nom_proyecto)
+        #return dict(pagina="privilegenres = DBSession.query(Genre).all()gio",
+         #               nom_proyecto=nom_proyecto)
 
  ################################################################################
     

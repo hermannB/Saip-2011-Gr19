@@ -42,13 +42,16 @@ class Tipo_FaseController(BaseController):
     
  ################################################################################
 
-    @expose('saip2011.templates.tipo_fase.tipo_fase')
+    @expose('saip2011.templates.tipo_fase.listar_tipo_fase')
     def tipo_fase(self):
         """
            Menu para Tipos de Fase
         """
         nom_proyecto=Variables.get_valor_by_nombre("nombre_proyecto_actual")
-        return dict(pagina="tipo_fase")
+        tipos_fases = Tipo_Fase.get_tipo_fase()
+        return dict(pagina="listar_tipo_fase",tipos_fases=tipos_fases,
+                        nom_proyecto=nom_proyecto)
+        #return dict(pagina="tipo_fase")
 
  ################################################################################
 

@@ -16,8 +16,15 @@
 
 <body>
   <div id="mainmenu">
-    <li class="first"><a href="${tg.url('/listar_privilegio')}" class="${('', 'active')[defined('pagina') and pagina==pagina=='listar_privilegio']}">Privilegio</a></li>
-  </div>  
+    <xi:include href="buscar.html" />
+  </div>
+  <div py:for="perm in request.identity['user'].privilegios">
+	    	<div py:choose="">
+	     		<span py:when="perm.var == 'control_total'">
+    				<p><a href="${tg.url('/agregar_privilegio')}">Agregar Privilegio</a></p>
+    			</span>
+    		</div>
+    </div>  
   <div py:choose="len(privilegios)" py:strip="True" id="privilegio">
     <table class="privilegios" py:when="0">
       <tr><th>No hay privilegios registrados..</th></tr>

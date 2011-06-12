@@ -42,13 +42,16 @@ class FaseController(BaseController):
 
 ################################################################################
 
-    @expose('saip2011.templates.fase.fase')
+    @expose('saip2011.templates.fase.listar_fase')
     def fase(self):
         """
         Menu para Fases
         """
         nom_proyecto=Variables.get_valor_by_nombre("nombre_proyecto_actual")
-        return dict(pagina="fase",nom_proyecto=nom_proyecto)
+        fases=Fase.get_fase_by_proyecto(int (Variables.get_valor_by_nombre
+                                                ("proyecto_actual")) )
+        return dict(pagina="listar_fase",fases=fases,nom_proyecto=nom_proyecto)
+        #return dict(pagina="fase",nom_proyecto=nom_proyecto)
 
 ################################################################################
     

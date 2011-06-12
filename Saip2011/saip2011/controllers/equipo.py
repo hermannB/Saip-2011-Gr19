@@ -41,14 +41,17 @@ class EquipoController(BaseController):
 
 ################################################################################ 
 
-    @expose('saip2011.templates.miembro.equipo')
+    @expose('saip2011.templates.miembro.listar_miembro')
     def equipo(self):
         """
         Menu para Equipo de Desarrollo
         """
-        nom_proyecto=Variables.get_valor_by_nombre("nombre_proyecto_actual",
+        nom_proyecto=Variables.get_valor_by_nombre("nombre_proyecto_actual")
+        valor=int( Variables.get_valor_by_nombre("proyecto_actual"))
+        equipos =  Equipo_Desarrollo.get_miembros_by_proyecto(valor)
+        return dict(pagina="listar_miembro",equipos=equipos,
                         nom_proyecto=nom_proyecto)
-        return dict(pagina="equipo")
+        #return dict(pagina="equipo",nom_proyecto=nom_proyecto)
 
 ################################################################################
     

@@ -6,6 +6,7 @@
       py:strip="">
     <xi:include href="header.html" />
     <xi:include href="footer.html" />
+    <xi:include href="navegacion.html" />
 <head py:match="head" py:attrs="select('@*')">
     <meta content="text/html; charset=UTF-8" http-equiv="content-type" py:replace="''"/>
     <title py:replace="''">Sistema de administracion de item</title>
@@ -16,27 +17,49 @@
 <body py:match="body" py:attrs="select('@*')">
         
   ${header()}
+  
   <ul>
   <div id="mensajes" py:choose="request.identity">
     <td>Usuario Actual</td>
     <td py:when="None">
-    	<input type="textfield" readonly="readonly" name="user" value=""/>
+    	<input type="textfield" readonly="readonly" name="user" value="" size="10"/>
     	<td>Rol Actual </td>
-    	<input type="textfield" readonly="readonly" name="user" value=""/>
+    	<input type="textfield" readonly="readonly" name="user" value="" size="10"/>
     	<td>Proyecto Actual </td>
-    	<input type="textfield" readonly="readonly" name="user" value=""/>	
+    	<input type="textfield" readonly="readonly" name="user" value="" size="10"/>
+    	<td>Fase Actual </td>
+    	<input type="textfield" readonly="readonly" name="user" value="" size="10"/>	
     </td>
     <td py:otherwise="">
-    	<input type="textfield" readonly="readonly" name="user" value="${request.identity['repoze.who.userid']}"/>	
+    	<input type="textfield" readonly="readonly" name="user" value="${request.identity['repoze.who.userid']}" size="10"/>	
     	<td>Rol Actual </td>
-    	<td><input type="textfield" readonly="readonly" name="roluser" value="${request.identity['user'].roles}"/></td>
+    	<td><input type="textfield" readonly="readonly" name="roluser" value="${request.identity['user'].roles}" size="10"/></td>
     	<td>Proyecto Actual </td>
-    	<td py:if="defined('nom_proyecto')"><input type="textfield" readonly="readonly" name="proyuser" value="${nom_proyecto}"/></td>
+    	<td py:choose="defined('nom_proyecto')">
+    		<td py:when="True">
+    			<input type="textfield" readonly="readonly" name="proyuser" value="${nom_proyecto}" size="10"/>
+    		</td>
+    		<td py:otherwise="">
+    			<input type="textfield" readonly="readonly" name="user" value="" size="10"/>
+    		</td>
+    	</td>
+    	<td>Fase Actual </td>
+    	<td py:choose="defined('nom_fase')">
+    		<td py:when="True">
+    			<input type="textfield" readonly="readonly" name="proyuser" value="${nom_fase}" size="10"/>
+    		</td>
+    		<td py:otherwise="">
+    			<input type="textfield" readonly="readonly" name="user" value="" size="10"/>
+    		</td>
+    	</td>
+    	
     </td>
      	
     </div>
     
   </ul>
+  ${navegar()}
+  
   <ul id="mainmenu">
     <py:if test="defined('pagina') and request.identity">
       <div py:for="perm in request.identity['user'].privilegios">
@@ -78,14 +101,7 @@
     <span py:if="tg.auth_stack_enabled" py:strip="True">
         <li py:if="not request.identity" id="login" class="loginlogout"><a href="${tg.url('/login')}">Entrar</a></li>
         <li py:if="request.identity" id="login" class="loginlogout"><a href="${tg.url('/logout_handler')}">Salir</a></li>
-        <li py:if="defined('nom_proyecto')" id="login" class="loginlogout">
-            <div py:choose="len(nom_proyecto)" py:strip="True" id="salir_proyecto">
-                 <div class="salir_proyecto" py:when="0"></div>
-                 <div class="salir_proyecto" py:otherwise="">   
-                     <a href="${tg.url('/proyecto/salir_proyecto')}">Salir_Proyecto</a>
-                </div>
-            </div>
-        </li>
+        <li py:if="defined('nom_proyecto')" id="login" class="loginlogout"><a href="${tg.url('/proyecto/salir_proyecto')}">Salir_Proyecto</a></li>
         	
         		
         

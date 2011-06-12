@@ -50,7 +50,7 @@ class ItemController(BaseController):
         nom_proyecto=Variables.get_valor_by_nombre("nombre_proyecto_actual")
         fases=Fase.get_fase_by_proyecto(int (Variables.get_valor_by_nombre
                                                 ("proyecto_actual")) )
-
+        
         return dict(pagina="listar_fase",fases=fases,nom_proyecto=nom_proyecto)
 
 ################################################################################

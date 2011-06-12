@@ -16,8 +16,16 @@
 
 <body>
   <div id="mainmenu">
-    <li class="first"><a href="${tg.url('/tipo_item/tipo_item')}" class="${('', 'active')[defined('pagina') and pagina==pagina=='/tipo_item']}">Tipo de Item</a></li>
-  </div>  
+    <xi:include href="buscar.html" />
+  </div>
+  <div py:for="perm in request.identity['user'].privilegios">
+	    	<div py:choose="">
+	     		<span py:when="perm.var == 'control_total' or perm.var == 'alta_tipo_item'">
+    				<p><a href="${tg.url('/tipo_item/agregar_tipo_item')}">Agregar Tipo Item</a></p>
+    			</span>
+    		</div>
+    </div>    
+  
   <div py:choose="len(tipos_items)" py:strip="True" id="tipos_item">
     <table class="tipos_items" py:when="0">
       <tr><th>No hay Tipos de Item registrados..</th></tr>

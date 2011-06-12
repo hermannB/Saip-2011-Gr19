@@ -43,13 +43,17 @@ class Tipo_ItemController(BaseController):
 
 ################################################################################
 
-    @expose('saip2011.templates.tipo_item.tipo_item')
+    @expose('saip2011.templates.tipo_item.listar_tipo_item')
     def tipo_item(self):
         """
            Menu para Tipos de Item
         """
         nom_proyecto=Variables.get_valor_by_nombre("nombre_proyecto_actual")
-        return dict(pagina="tipo_item",nom_proyecto=nom_proyecto)
+        tipos_items = Tipo_Item.get_tipo_item()
+        tipos_campos = Tipo_Campos.get_tipo_campos()
+        return dict(pagina="listar_tipo_item",tipos_items=tipos_items, 
+                    tipos_campos=tipos_campos,nom_proyecto=nom_proyecto)
+        #return dict(pagina="tipo_item",nom_proyecto=nom_proyecto)
 
 ################################################################################
        
