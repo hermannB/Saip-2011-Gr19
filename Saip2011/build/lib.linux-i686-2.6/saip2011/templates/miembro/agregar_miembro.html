@@ -1,0 +1,77 @@
+<!DOCTYPE html>
+<html xmlns="http://www.w3.org/1999/xhtml"
+      xmlns:py="http://genshi.edgewall.org/"
+      xmlns:xi="http://www.w3.org/2001/XInclude">
+
+  <xi:include href="master.html" />
+
+<head>
+  <meta content="text/html; charset=UTF-8" http-equiv="content-type" py:replace="''"/>
+	<script type="text/javascript" src="/js/js/jquery.js"></script>
+	<script type="text/javascript" src="/js/jquery.ui.js"></script>
+	<script type="text/javascript" src="/js/jquery.asmselect.js"></script>
+	<link rel="stylesheet" type="text/css" href="/css/jquery.asmselect.css" />
+	<link rel="stylesheet" type="text/css" href="/css/example.css" />
+
+	<script type="text/javascript">
+
+		$(document).ready(function() {
+			$("#fases").asmSelect({
+				addItemTarget: 'bottom',
+				animate: true,
+				highlight: true,
+				sortable: true
+			});
+			
+		}); 
+
+	</script>
+
+  <title>Sistema de Administracion de Item</title>
+</head>
+
+<body class="submit">
+    <div>
+      <h2>Agregar nuevo Miembro al Equipo del Proyecto</h2>
+    </div>
+
+    <form action="post_miembro" method="POST">
+    <table summary=""><tbody><tr>
+       
+         <tr><td>Nombre del Usuario</td>
+     	     <td>
+     	     <select name="idusuario">
+		<py:for each="usuario in usuarios">
+         	       <option value="$usuario.idusuario" selected="selected">$usuario.alias</option>
+	        </py:for>
+	      </select>
+         </td></tr>
+
+	 <tr><td>Nombre del Rol</td>
+     	     <td>
+     	     <select name="idrol">
+		<py:for each="rol in roles">
+         	       <option value="$rol.idrol" selected="selected">$rol.nombrerol</option>
+	        </py:for>
+	      </select>
+         </td></tr>
+     
+ 	 <tr><td>Fases Habilitadas</td> 
+        <td>
+		<select id="fases" multiple="multiple" name="fases" title="Seleccionar las Fases Necesarias">
+   	       <py:for each="fase in fases">
+                   <option value="$fase.id_fase" >$fase.nombre_fase</option>
+	       </py:for>
+          </select>
+        </td></tr>
+   
+	<td>
+        	<input type="submit" value="Guardar" />
+	</td>
+
+      </tr></tbody></table>
+    </form>
+
+  </body>
+</html>
+

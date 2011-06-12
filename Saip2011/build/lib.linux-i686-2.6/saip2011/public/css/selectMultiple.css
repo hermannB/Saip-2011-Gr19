@@ -1,0 +1,27 @@
+ul.selectMultiple {
+	width: 200px;
+	height: 150px;
+	margin:0;
+	padding:0;
+	background: #fff;
+	border: 1px solid #999;
+	
+	Zoutline: 1px solid #999999;
+	
+	overflow: auto;
+}
+
+	ul.selectMultiple li {
+		padding:5px;
+		font-family: verdana;
+		font-size: 11px;
+		font-color: #000;
+		list-style: none;
+		border-bottom: 1px solid #eee;
+		cursor: pointer;
+	}
+	ul.selectMultiple li.selected {
+		background: #999;
+		color: #fff;
+		border-bottom: 1px dotted #888;
+	}

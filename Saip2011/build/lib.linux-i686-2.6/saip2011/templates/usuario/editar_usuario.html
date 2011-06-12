@@ -1,0 +1,42 @@
+<!DOCTYPE html>
+<html xmlns="http://www.w3.org/1999/xhtml"
+      xmlns:py="http://genshi.edgewall.org/"
+      xmlns:xi="http://www.w3.org/2001/XInclude">
+
+  <xi:include href="master.html" />
+
+  <head>
+  <meta content="text/html; charset=UTF-8" http-equiv="content-type" py:replace="''"/>
+<script type="text/javascript" src="js/jquery-1.4.2.min.js"></script>
+	<script src="js/vanadium-min.js" type="text/javascript"></script>
+
+  <title>Sistema de Administracion de Item</title>
+</head>
+  <body class="submit">
+    <div>
+      <h2>Modificar usuario</h2>
+    </div>
+
+      <form action="put_usuario" method="PUT">
+      <table summary=""><tbody>
+        <tr><td><input type="hidden" name="idusuario" value="${values['idusuario']}"/>${tmpl_context.form_errors.get('idusuario')}</td></tr>
+      	<tr><td>alias </td><td><input class="required" maxlength="50" type="textfield" name="alias" value="${values['alias']}"/>${tmpl_context.form_errors.get('alias')}</td></tr>
+       	<tr><td>nombre </td><td><input type="textfield" name="nombre" value="${values['nombre']}"/>${tmpl_context.form_errors.get('nombre')}</td></tr>
+      	<tr><td>apellido </td><td><input  class="required" maxlength="50" type="textfield" name="apellido" value="${values['apellido']}"/>${tmpl_context.form_errors.get('apellido')}</td></tr>
+	<tr><td>nacionalidad </td><td><input class="required" maxlength="50" type="textfield" name="nacionalidad" value="${values['nacionalidad']}"/>${tmpl_context.form_errors.get('nacionalidad')}</td></tr>
+      	<tr><td>tipodocumento </td><td><input class="required" maxlength="50" type="textfield" name="tipodocumento" value="${values['tipodocumento']}"/>${tmpl_context.form_errors.get('tipodocumento')}</td></tr>
+	<tr><td>nrodoc </td><td><input type="textfield" name="nrodoc" value="${values['nrodoc']}"/>${tmpl_context.form_errors.get('nrodoc')}</td></tr>
+	<tr><td>email_address </td><td><input type="email" name="email_address" value="${values['email_address']}"/>${tmpl_context.form_errors.get('email_address')}</td></tr>
+      
+          <tr><td><input type="hidden" name="_method" value="PUT"/>
+	  <input type="submit" value="Actualizar"/>
+          <input type="submit" name="cancel" value="Cancelar" />
+        </td></tr>
+     </tbody></table>
+ 
+    </form>
+
+    
+  </body>
+</html>
+

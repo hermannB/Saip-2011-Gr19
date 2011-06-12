@@ -1,0 +1,55 @@
+<!DOCTYPE html>
+<html xmlns="http://www.w3.org/1999/xhtml"
+      xmlns:py="http://genshi.edgewall.org/"
+      xmlns:xi="http://www.w3.org/2001/XInclude">
+
+  <xi:include href="master.html" />
+
+<head>
+	<meta content="text/html; charset=UTF-8" http-equiv="content-type" py:replace="''"/>
+
+	<script src="/js/vanadium-min.js" type="text/javascript"></script>
+<script src="/js/jquery-1.6.1.js" type="text/javascript" language="javascript"></script>
+<script src="/js/jquery.MultiFile.js" type="text/javascript" language="javascript"></script>
+
+
+
+	<title>Sistema de Administracion de Item</title>
+</head>
+
+<body> 
+
+	<div class="submit">
+		<div>
+			<h2>Editar Item</h2>
+		</div>
+		  <form action="put_item" method="PUT">
+			<table summary="">
+			<tbody>
+             <tr><td><input type="hidden" name="id_item" value="${values['id_item']}"/>${tmpl_context.form_errors.get('id_item')}</td></tr>
+            <tr><td>nombre_item </td><td><input class="required" maxlength="50" type="textfield" name="nombre_item" value="${values['nombre_item']}"/>          ${tmpl_context.form_errors.get('nombre_fase')}</td></tr>	
+		      	<tr><td>codigo_item </td><td><input readonly="readonly" class="required" maxlength="50" type="textfield" name="codigo_item" value="${values['codigo_item']}"/>${tmpl_context.form_errors.get('codigo_fase')}</td></tr>	
+				<tr><td>nombre_tipo_item </td><td><input readonly="readonly" class="required" maxlength="50" type="textfield" name="nombre_tipo_item" value="${values['nombre_tipo_item']}"/>${tmpl_context.form_errors.get('nombre_tipo_item')}</td></tr>
+				
+				<tr><td>complejidad </td><td><input type="textfield" name="complejidad" value="${values['complejidad']}"/>${tmpl_context.form_errors.get('complejidad')}</td></tr>				        	
+				         <tr><td>Adjuntos Actuales</td> 
+			            <td><py:for each="adj in adjuntos2">
+			                <li><input  type="textfield" name="adj" value="$adj"/></li>
+		                </py:for></td>
+           
+        </tr>
+
+     		                <tr><td><input type="hidden" name="_method" value="PUT"/>
+					<input type="submit" value="Actualizar"/>
+				</td></tr>
+			
+			</tbody>
+			</table>
+		</form>
+		
+	</div> 
+ 
+</body>
+
+</html>
+

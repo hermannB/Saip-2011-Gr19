@@ -1,0 +1,15 @@
+<html xmlns:py="http://genshi.edgewall.org/"
+      xmlns:xi="http://www.w3.org/2001/XInclude"
+      py:strip="">
+<py:def function="navegar">
+  <div id="navegar" py:if="request.identity"> 
+       <p>
+        	
+        	<a href="javascript:history.back()"><img src="/images/atras.png" border="0" /></a>
+  			<a href="http://localhost:8080/"><img src="/images/inicio.png" border="0" /></a>
+  			<a href="javascript:history.forward()"><img src="/images/adelante.png" border="0" /></a>
+        </p>
+  </div>
+    
+</py:def>    
+</html>

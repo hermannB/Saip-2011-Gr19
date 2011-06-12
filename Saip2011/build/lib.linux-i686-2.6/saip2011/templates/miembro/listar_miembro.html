@@ -1,0 +1,71 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" 
+                      "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml"
+      xmlns:py="http://genshi.edgewall.org/"
+      xmlns:xi="http://www.w3.org/2001/XInclude">
+
+  <xi:include href="master.html" />
+
+<head>
+  <meta content="text/html; charset=UTF-8" http-equiv="content-type" py:replace="''"/>
+<script type="text/javascript" src="js/jquery-1.4.2.min.js"></script>
+	<script src="js/vanadium-min.js" type="text/javascript"></script>
+
+  <title>Sistema de Administracion de Item</title>
+</head>
+
+<body>
+  <div id="mainmenu">
+    <xi:include href="buscar.html" />
+  </div>
+  <div py:for="perm in request.identity['user'].privilegios">
+	    	<div py:choose="">
+	     		<span py:when="perm.var == 'control_total' or perm.var == 'alta_equipo'">
+    				<p><a href="${tg.url('/equipo/agregar_miembro')}">Agregar Miembro al Equipo </a></p>
+    			</span>
+    		</div>
+    </div>    
+
+
+  <div py:choose="len(equipos)" py:strip="True" id="equipo">
+    <table class="equipos" py:when="0">
+      <tr><th>No hay Miembros registrados..</th></tr>
+    </table>
+    <table border="1" cellspacing="1" cellpadding="4" class="equipos" py:otherwise="">    
+      <h2>Lista de Miembros del Proyecto</h2>
+      <tr align="center">
+    	<th>Accion</th>
+        <th>Nombre del Usuario</th>
+	    <th>Nombre del Rol</th>
+  	    <th>Fases Habilitadas</th>
+      </tr>
+      <tr align="center" py:for="equipo in equipos">
+	    <td>
+	      <div py:for="perm in request.identity['user'].privilegios">
+	    	<div py:choose="">
+	     		<span py:when="perm.var == 'control_total'">	
+	    			<a href="${tg.url('/equipo/editar_miembro?id_equipo=%d' % equipo.id_equipo)}"><img src="/images/lapiz.png" border="0" height="15"/></a>
+	    			<a href="${tg.url('/equipo/eliminar_miembro?id_equipo=%d' % equipo.id_equipo)}"><img src="/images/cross.png" border="0"/></a>
+	    		</span>
+	    		<span py:when="perm.var == 'mod_equipo'">	
+	    			<a href="${tg.url('/equipo/editar_miembro?id_equipo=%d' % equipo.id_equipo)}"><img src="/images/lapiz.png" border="0" height="15"/></a>
+	    		</span>
+	    		<span py:when="perm.var == 'elim_equipo'">
+	    			<a href="${tg.url('/equipo/eliminar_miembro?id_equipo=%d' % equipo.id_equipo)}"><img src="/images/cross.png" border="0"/></a>
+	    		</span>
+	    	</div>
+	     </div>
+	    </td>
+	    <td>${equipo.nombre_usuario}</td>
+        <td>${equipo.nombre_rol}</td>
+        <td><a href="${tg.url('/equipo/ver_fases?id_equipo=%d' % equipo.id_equipo)}">ver fases</a></td>
+      </tr>          
+    </table>   
+    
+  </div>
+  <div class="clearingdiv" />
+  <div class="notice"> Lista los Miembros de un proyecto.
+    
+  </div>
+</body>
+</html>

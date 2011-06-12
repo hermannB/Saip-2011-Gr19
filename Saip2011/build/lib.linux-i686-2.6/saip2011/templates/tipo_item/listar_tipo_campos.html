@@ -1,0 +1,48 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" 
+                      "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml"
+      xmlns:py="http://genshi.edgewall.org/"
+      xmlns:xi="http://www.w3.org/2001/XInclude">
+
+  <xi:include href="master.html" />
+
+<head>
+  <meta content="text/html; charset=UTF-8" http-equiv="content-type" py:replace="''"/>
+<script type="text/javascript" src="js/jquery-1.4.2.min.js"></script>
+	<script src="js/vanadium-min.js" type="text/javascript"></script>
+
+  <title>Sistema de Administracion de Item</title>
+</head>
+
+<body>
+  <div id="mainmenu">
+    <li class="first"><a href="${tg.url('/agregar_tipo_campos')}" class="${('', 'active')[defined('pagina') and pagina==pagina=='agregar_tipo_campos']}">Tipo de Item</a></li>
+  </div>  
+  <div py:choose="len(tipos_campos)" py:strip="True" id="tipo_campo">
+    <table class="tipos_campos" py:when="0">
+      <tr><th>No hay Campos para el Tipos de Item registrados..</th></tr>
+    </table>
+    <table border="1" cellspacing="1" cellpadding="5" class="tipos_campos" py:otherwise="">    
+      <h2>Lista de Campos del Tipo de Item</h2>
+      <tr align="center">
+	<th>Accion</th>
+    	<th>Id Tipo item</th>
+        <th>Nombre del Campo</th>
+        <th>Valor del Campo</th>
+      </tr>
+      <tr align="center" py:for="tipo_campo in tipos_campos">
+	    <td><a href="${tg.url('editar_tipo_campos?id_tipo_campos=%d' % tipo_campo.id_tipo_campos)}">Editar</a>
+	    <a href="${tg.url('eliminar_tipo_campos?id_tipo_campos=%d' % tipo_campo.id_tipo_campos)}">Borrar</a></td>
+        <td>${tipo_campo.id_tipo_item}</td>
+        <td>${tipo_campo.nombre_campo}</td>
+        <td>${tipo_campo.valor_campo}</td>
+      </tr>          
+    </table>   
+    
+  </div>
+  <div class="clearingdiv" />
+  <div class="notice"> Lista los Campos del Tipos de Item.
+    
+  </div>
+</body>
+</html>

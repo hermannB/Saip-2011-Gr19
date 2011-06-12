@@ -1,0 +1,73 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" 
+                      "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml"
+      xmlns:py="http://genshi.edgewall.org/"
+      xmlns:xi="http://www.w3.org/2001/XInclude">
+
+  <xi:include href="master.html" />
+  
+
+<head>
+  <meta content="text/html; charset=UTF-8" http-equiv="content-type" py:replace="''"/>
+<script type="text/javascript" src="js/jquery-1.4.2.min.js"></script>
+	<script src="js/vanadium-min.js" type="text/javascript"></script>
+
+  <title>Sistema de Administracion de Item</title>
+</head>
+
+<body>
+  <div id="mainmenu">
+      	<xi:include href="buscar.html" />
+  </div>  
+  
+  
+  
+  <div py:choose="len(proyectos)" py:strip="True" id="proyecto">
+    <div py:for="perm in request.identity['user'].privilegios">
+	    	<div py:choose="">
+	     		<span py:when="perm.var == 'control_total'">
+    				<p><a href="${tg.url('/proyecto/agregar_proyecto')}">Agregar Proyecto</a></p>
+    			</span>
+    		</div>
+    </div>
+    <table class="proyectos" py:when="0">
+      <tr><th>No hay Proyectos registrados..</th></tr>
+    </table>
+    <table border="1" cellspacing="1" cellpadding="6" class="proyectos" py:otherwise="">    
+      <h2>Lista de Proyectos</h2>
+      <tr align="center">
+		<th>Accion</th>
+        <th>Nombre del Proyecto</th>
+		<th>Lider del Proyecto</th>
+        <th>Lista de Fases</th>
+        <th>Descripcion</th>
+      </tr>
+		<tr align="center" py:for="proyecto in proyectos">
+		<td>
+		 <div py:for="perm in request.identity['user'].privilegios">
+	    	<div py:choose="">
+	     		<span py:when="perm.var == 'control_total'">
+					<a href="${tg.url('/proyecto/editar_proyecto?id_proyecto=%d' % proyecto.id_proyecto)}"><img src="/images/lapiz.png" border="0" height="15" alt="Editar privilegio"/></a>
+					<a href="${tg.url('/proyecto/eliminar_proyecto?id_proyecto=%d' % proyecto.id_proyecto)}"><img src="/images/cross.png" border="0" alt="Borrar privilegio"/></a>
+				</span>
+				<span py:when="perm.var == 'ingresar_proyecto'">
+					<a href="${tg.url('/proyecto/ingresar?id_proyecto=%d' % proyecto.id_proyecto)}"><img src="/images/ok.png" border="0" height="15" alt="seleccionar privilegio"/></a>
+				</span>
+			</div>
+		</div>		
+		</td>
+		<td>${proyecto.nombre_proyecto}</td>
+		<td>${proyecto.lider_equipo}</td>
+		<td><a href="${tg.url('ver_fases?id_proyecto=%d' % proyecto.id_proyecto)}">ver fases</a></td>
+		<td>${proyecto.descripcion}</td>
+      </tr>          
+    </table>   
+    
+  </div>
+  <div class="clearingdiv" />
+  <div class="notice"> Lista los Proyectos registrados en el sistema.
+    
+  </div>
+  
+</body>
+</html>

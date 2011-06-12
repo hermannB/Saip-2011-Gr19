@@ -1,0 +1,35 @@
+<html xmlns="http://www.w3.org/1999/xhtml"
+      xmlns:py="http://genshi.edgewall.org/"
+      xmlns:xi="http://www.w3.org/2001/XInclude">
+
+<xi:include href="master.html" />
+<head>
+<meta content="text/html; charset=UTF-8" http-equiv="content-type" py:replace="''"/>
+<script type="text/javascript" src="js/jquery-1.4.2.min.js"></script>
+	<script src="js/vanadium-min.js" type="text/javascript"></script>
+
+</head>
+<body>
+<div style="height:0px;">&nbsp;</div>
+<h2>Confirmacion de Eliminacion</h2>
+<div class="submit">
+
+<form action="post_delete_proyecto" method="DELETE">
+	Esta seguro que desea eliminar este registro?
+	<table>
+                <tr><td><input type="hidden" name="id_proyecto" value="${values['id_proyecto']}"/>${tmpl_context.form_errors.get('id_proyecto')}</td></tr>
+			    <tr><td>nombre_proyecto </td><td><input readonly="readonly" type="textfield" name="nombre_proyecto" value="${values['nombre_proyecto']}"/>${tmpl_context.form_errors.get('nombre_proyecto')}</td></tr>	
+				<tr><td>Lider del Equipo </td><td><input readonly="readonly" type="textfield" name="lider_equipo" value="${values['lider_equipo']}"/>${tmpl_context.form_errors.get('lider_equipo')}</td></tr>
+				<tr><td>Lista de Fases</td><td> <textarea readonly="readonly" name="tipos_fases">${values.get('tipos_fases')}</textarea>${tmpl_context.form_errors.get('tipos_fases')}</td></tr>	
+				<tr><td>descripcion</td><td> <textarea readonly="readonly" name="descripcion">${values.get('descripcion')}</textarea>${tmpl_context.form_errors.get('descripcion')}</td></tr>		
+     		               
+	</table>
+	
+	  <input type="hidden" name='_method' value='POST_DELETE'/>
+	  <input type="submit" value="Eliminar"/>
+	
+
+</form>
+</div>
+</body>
+</html>
