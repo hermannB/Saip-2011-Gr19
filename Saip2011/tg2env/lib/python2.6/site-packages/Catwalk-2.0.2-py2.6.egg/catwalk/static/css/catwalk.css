@@ -1,0 +1,87 @@
+html, body {
+  color: black;
+  background-color: #ffffff;
+  font: small "Lucida Grande", "Lucida Sans Unicode", geneva, verdana, sans-serif;
+  margin: 0;
+  padding: 0;
+  height:100%;
+}
+
+a{
+  text-decoration:none;
+}
+
+#main_content {
+  color: black;
+  height:100%;
+  float:left;
+  background:white;
+}
+
+#main_view {
+  position:fixed;
+  left:175px;
+  height:100%;
+  width:80%;
+  float:right;
+  padding-left: 5px;
+  margin:0px;
+  background:white;
+}
+
+#model_list {
+  background:#216EA9;
+  border-right:5px #aaa solid;
+  margin:0px 0px 0px 0px;
+  padding:8px;
+  padding-top:0px;
+  width:150px;
+  height:100%;
+  position:fixed;
+  overflow:auto;
+}
+
+#model_list a{
+ color:white;
+}
+
+.modellabelwidget{
+  padding-left:2px;
+  }
+
+.modellabelwidget:hover{
+  background:#aaa;
+  decoration:none;
+  border: solid 2px #333;
+  padding:2px;
+  }
+
+.modellabelwidget.a:hover{
+  color:black;
+}
+
+.code{
+  font-weight:bold;
+  background:#ddd;
+  align: center;
+  border: 1px black solid;
+  margin: 10px;
+  padding: 10px;
+}
+label.required{
+  color:blue;
+}
+tr.even:hover{
+  background:#d3e6fd;
+  }
+tr.odd:hover{
+  background:#d3e6fd;
+}
+
+.odd{
+  background:#e6e6e6
+}
+.fielderror{
+  color:red;
+  font-weight:bold;
+}

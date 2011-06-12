@@ -1,0 +1,26 @@
+<html xmlns:py="http://genshi.edgewall.org/"
+      xmlns:xi="http://www.w3.org/2001/XInclude">
+<py:def function="header">
+  <div id="header">
+    <div class="alogo">
+    </div>
+    <div class="headtext">
+    <a style="text-decoration: none; color:white;" href="${tg.url('/')}">DBMechanic</a>
+    </div>
+      <div style="color:#000000; float:right; padding:3px; text-align:right;">
+        <py:if test="tmpl_context.identity">
+              Welcome, <a href="${tg.url('/profile?user_id='+str(tmpl_context.identity.user.user_id)+'&amp;came_from='+tg.url('/'+tmpl_context.controller_url))}">${tmpl_context.identity.user.display_name}</a><br/>
+              <a href="${tg.url('/logout_handler')}" style="color:black">logout</a>
+              <py:if test="'admin' in tmpl_context.identity['groups']">
+                <a href="${tg.url('/admin/')}">admin</a>
+              </py:if>
+              <br/>
+
+        </py:if>
+        <py:if test="not tmpl_context.identity">
+                <a href="${tg.url('/login/')}">login</a>
+        </py:if>
+      </div>
+  </div>
+</py:def>
+</html>

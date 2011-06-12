@@ -1,0 +1,11 @@
+Metadata-Version: 1.0
+Name: Catwalk
+Version: 2.0.2
+Summary: A way to view your models using TurboGears
+Home-page: http://code.google.com/p/tgtools/wiki/Catwalk
+Author: Christopher Perkins
+Author-email: chris@percious.com
+License: MIT
+Description: UNKNOWN
+Keywords: sqlalchemy,TurboGears,Sprox,tgext.admin
+Platform: UNKNOWN

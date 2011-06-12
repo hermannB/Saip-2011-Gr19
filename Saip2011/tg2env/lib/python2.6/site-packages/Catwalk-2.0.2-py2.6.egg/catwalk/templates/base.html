@@ -1,0 +1,23 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+                      "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml"
+      xmlns:py="http://genshi.edgewall.org/"
+      xmlns:xi="http://www.w3.org/2001/XInclude">
+<xi:include href="./catwalk_master.html" />
+<xi:include href="./catwalk_header.html" />
+<head></head>
+<body>
+      <div id="model_list">
+            <h2><a href='../${model_root}'>Catwalk</a></h2>
+            <h3>Models</h3>
+            ${XML(tmpl_context.models_widget(controller=model_root+'../'))}
+      </div>
+      <div id="main_view">
+      <h3>${model_name}s</h3>
+      <a href='${model_root}'>listing</a> | <a href='${model_root}new'>add</a> | <a href='${model_root}metadata'>metadata</a>
+      <hr/>
+      ${XML(tmpl_context.widget(value=value, action=action, controller='./'))}
+      </div>
+</body>
+
+</html>

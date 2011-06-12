@@ -1,0 +1,165 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+                      "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml"
+      xmlns:py="http://genshi.edgewall.org/"
+      xmlns:xi="http://www.w3.org/2001/XInclude">
+<xi:include href="./catwalk_master.html" />
+<xi:include href="./catwalk_header.html" />
+<head></head>
+<body>
+    <div id="model_list">
+        <h2><a href='./'>Catwalk</a></h2>
+        <h3>Models</h3>
+         ${XML(tmpl_context.models_view())}
+    </div>
+    <div id="main_view">
+        <h1>Welcome to Catwalk 2.0</h1>
+        Catwalk is a database manipulation application built on top of TurboGears.
+        With it you can easily interact with your application data model and manage your data.
+        Think of it as phpMyAdmin or pgAdmin at the ORM level instead of the RDBMS. It is database
+        agnostic, all it's information is pulled from the SQLAlchemy Session - not from the underlying data
+        store.
+
+        <h2>Using Catwalk</h2>
+        You can use Catwalk for all of your crud operations, as well as to view your database schema.
+        On the left you can see a menu of objects which provide links to data within your application.
+        You can use this application to browse the schema of your mapped database, view, edit, create
+        and delete data from your database.
+
+<py:if test="not secured">
+        <h2 style="color:red">OMG WTF! You are not Secured</h2>
+
+        By default, Catwalk is not secured.  This is because it is up to the developer to provide
+        the method for security, but Catwalk can easily be secured by extending the Catwalk controller
+        object and using the secure controller methods provided by Turbogears.  Here is an example code snippet
+        to showing how you could secure your Catwalk so that only admins can view it:<br/><br/>
+
+        Subclass Catwalk
+<pre class= "code">
+from catwalk.tg2 import Catwalk
+from repoze.what.predicates import in_group
+
+class SecuredCatwalk(Catwalk):
+    allow_only = in_group('managers')
+</pre>
+        Instantiate Catwalk
+<pre class="code">
+
+catwalk = SecuredCatwalk(DBSession, metadata)
+</pre>
+
+Once we have that out of the way, I'll give you some more information about Sprox, the library
+that drives this application.
+</py:if>
+
+<py:if test="secured">
+        <h2 style="color:#4488ff"> Congrats! Your Catwalk is secured!</h2>
+        Now that we have you secured, lets take a look at some of the valuable features that Sprox, the library
+        that drives Catwalk, possesses.
+
+        <h2>Sprox</h2>
+        Catwalk is built on Sprox.  Sprox is a widget generation library that has a slightly different take on the problem of creating
+        custom forms directly from schemas.
+        Sprox provides an easy way to create forms for web content which are: automatically generated, easy to customize,
+        and validated.  Sprox also has powerful tools to help you display your content the way you want to with table
+        and record viewers.  Sprox also provides a way to fill your widgets, be them forms, or otherwise with customizable
+        data.
+        <h3>Form Generation</h3>
+        If this is a quickstarted TG project, you probably have a "User" link over there on the left side of your screen.
+        It's very simple to recreate the ConfigBase that Catwalk uses to create the "add" form.  Here's the whole code for it:
+<pre class="code">
+from sprox.formbase import AddRecordForm
+
+class UserForm(AddRecordForm):
+    __model__ = User
+
+user_form = UserForm(DBSession)
+</pre>
+That form can then be passed into the tmpl_context, just like if it were a regular ToscaWidgets form.  But
+you ask, "Why do you need to pass in the DBSession?"  Well, in fact the session is not required to be passed in,
+but if you want Sprox to pick up the data for the drop-down menus, and multiple select fields, it needs a way
+to connect to the database in order to get the appropriate data.
+
+You might say, "Ok, but that form gives me a lot of junk I don't want, and the password field is going to have to be verified
+if we wanted to say, make a registration form."  Well, remember Sprox is fully customizable.  Here is an example registration
+form based on Sprox, complete with password validation:
+<pre class="code" >
+from sprox.formbase import AddRecordForm
+from formencode import Schema
+from tw.forms import PasswordField, TextField
+
+form_validator =  Schema(chained_validators=(FieldsMatch('password',
+                                                         'verify_password',
+                                                         messages={'invalidNoMatch':
+                                                         'Passwords do not match'}),))
+class RegistrationForm(AddRecordForm):
+    __model__ = User
+    __require_fields__     = ['password', 'user_name', 'email_address']
+    __omit_fields__        = ['_password', 'groups', 'created', 'user_id']
+    __field_order__        = ['user_name', 'email_address', 'display_name', 'password', 'verify_password']
+    __base_validator__     = form_validator
+    email_address          = TextField
+    display_name           = TextField
+    verify_password        = PasswordField('verify_password')
+
+registration_form = RegistrationForm(DBSession)
+</pre>
+Notice first that we have made three fields required set the order, and omitted the fields that
+we do not want in the form.  Also, we overrode the widget type for email_address and display_name (The default
+was a text area).  Lastly we add a verify_password field that is not in the current schema.  Also keep in mind that
+if you were to alter the schema for your database, any fields you added to your User model would also be added to this form.
+If you wanted to avoid this, you would use __limit_fields__ instead of __omit_fields__.
+There are many other __modifiers__ for FormBase in Sprox, you can use them to generate the forms you desire in
+any number of combinations.
+
+<h3>Table Generation</h3>
+Most people look for things that render forms, but fail to realize that generating tabular formed data provides
+almost the same challenge.  After all, in an editable form, you must retrieve the data from the database in order
+to fill in the form entries.  Well, Sprox makes this easy too.  Here is some code to list out the users and their
+email addresses:
+
+<pre class="code" >
+from sprox.tablebase import TableBase
+from sprox.fillerbase import TableFiller
+
+class UserTable(TableBase):
+    __model__ = User
+    __limit_fields__ = ['display_name', 'email_address']
+
+user_table = UserTable(DBSession)
+
+class UserTableFiller(TableFiller):
+    __model__ = User
+    __limit_fields__ = ['display_name', 'email_address']
+
+user_table_value = UserTableFiller(DBSession).get_value()
+
+</pre>
+And your template code would look like this:
+<pre class="code" >
+$${user_table_form(value=user_table_value)}
+</pre>
+
+Keep in mind that since the form generators are declarative, you can use mixins and other class trickery to reduce
+your code further (although it is not advised to use this to fool your fellow developer).  Can you think of a way
+to reduce the 14 lines of python code above to 8?
+
+<h3>Sprox, the big picture</h3>
+In reality, Sprox is not about making your code smaller, but making it _smarter_.  Since you have a declarative
+base to work from, you can subclass a set of widgets that fits your application.  You can provide customized widget
+selectors which tell Sprox which widgets to use for which fields.  Because Sprox gives you the power to customize
+any part of the form at any level of abstraction, you can create your own form generation based on the requirements
+for your project.
+
+</py:if>
+
+        <h2>More info</h2>
+        For more information on Catwalk, please reference the TurboGears <a href="http://turbogears.org/2.0/docs/">documentation</a>
+        , visit the <a href="http://groups.google.com/group/turbogears">mailing list</a>
+        or drop in and ask a question at <a href="irc://irc.freenode.net/#turbogears">#turbogears</a>
+        on irc.freenode.net.
+
+    </div>
+</body>
+
+</html>
