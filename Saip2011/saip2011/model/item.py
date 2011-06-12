@@ -82,6 +82,15 @@ class Item(DeclarativeBase):
         return mayor
 
     @classmethod
+    def get_item_by_id(self, id_item):
+        """
+        Obtiene item
+        """
+        item = DBSession.query(Item).get(int(id_item))
+        return item
+
+
+    @classmethod
     def get_item_proy_fase(self,proy,fase):
         """
         Obtiene la lista de todos los items

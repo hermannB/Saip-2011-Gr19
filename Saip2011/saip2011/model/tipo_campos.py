@@ -23,7 +23,7 @@ __all__ = ['Tipo_Campos']
 
 class Tipo_Campos (DeclarativeBase):
     """
-   Definicion de Equipo de Desarrollo.
+   Definicion de tipos de campos
     
     """
     

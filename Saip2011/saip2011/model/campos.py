@@ -37,7 +37,9 @@ class Campos (DeclarativeBase):
     
     nombre_campo =Column(Unicode(50),  nullable=False)
 
-    valor_campo =Column(Unicode(50),  nullable=False)
+    tipo_campo =Column(Unicode(50),  nullable=False)
+
+    dato =Column(Unicode(200))
    
    
     

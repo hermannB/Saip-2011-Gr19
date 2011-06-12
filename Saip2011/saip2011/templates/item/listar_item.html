@@ -33,6 +33,7 @@
         <th>Proyecto</th>
         <th>Complejidad</th>
         <th>Estado</th>
+        <th>Adjuntos</th>
       </tr>
       <tr align="center" py:for="item in items">
 
@@ -64,6 +65,7 @@
         <td>${item.proyecto}</td>
         <td>${item.complejidad}</td>
         <td>${item.estado}</td>
+        <td><a href="${tg.url('ver_adjuntos?id_item=%d' % item.id_item)}">ver adjuntos</a></td>
 
       </tr>          
     </table>   

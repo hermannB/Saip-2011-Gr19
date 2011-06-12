@@ -55,7 +55,26 @@ class ItemController(BaseController):
         return dict(pagina="listar_fase",fases=fases,nom_proyecto=nom_proyecto
                     ,nom_fase=nom_fase)
 
-################################################################################
+###############################################################################
+
+    @expose('saip2011.templates.item.listar_mis_adjuntos')
+    def ver_adjuntos(self,id_item):
+        """Lista  
+        """
+        nom_proyecto=Variables.get_valor_by_nombre("nombre_proyecto_actual")
+        nom_fase=Variables.get_valor_by_nombre("nombre_fase_actual")
+        item=Item.get_item_by_id(int(id_item))
+        values = dict(id_item=item.id_item, 
+				        nombre_item=item.nombre_item, 
+				        nombre_tipo_item=item.nombre_tipo_item
+				        )
+        adjuntos=Adjunto.get_adjuntos_by_item(int(id_item))
+       
+        return dict(pagina="listar_mis_adjuntos",adjuntos=adjuntos,
+                        nom_proyecto=nom_proyecto,nom_fase=nom_fase,
+                        values=values)
+
+###############################################################################
         
     @expose('saip2011.templates.item.listar_item')
     def listar_item_activos (self):
@@ -324,10 +343,8 @@ class ItemController(BaseController):
         var=binascii.b2a_base64(adj.archivo)
         archivo=base64.b64decode(var)
         
-        filenameDest = "/home/hermann/"+str(adj.nombre_archivo)
-        file = open(filenameDest, 'wb')
-        file.write(archivo) 
-        file.close( )
+        
+        self.descargar(destino,7)
 
         redirect('/item/item')
 
@@ -336,24 +353,58 @@ class ItemController(BaseController):
         redirect('/item/item')
 ################################################################################
 
-    @expose()
-    def upload(self, upload_file, pagename, **keywords):
-        mayor =Item.get_ultimo_id()
-        data = upload_file.file.read()
-        encode=base64.b64encode(data)
-        var=binascii.a2b_base64(encode)
-        adj = Adjunto (id_item=mayor, archivo=var,nombre_archivo=pload_file.filename)
-        DBSession.add(adj)
-        DBSession.flush()
-
-        adj = DBSession.query(Adjunto).get(12)
+    @expose('saip2011.templates.item.listar_mis_adjuntos')
+    def descargar(self, id_adjunto):
+        directorio = "/home/hermann/Descargas"
+        adj = DBSession.query(Adjunto).get(id_adjunto)
         var=binascii.b2a_base64(adj.archivo)
-        archivo=base64.b64decode(var)
-        
-        filenameDest = "/home/hermann/"+str(adj.nombre_archivo)
-        file = open(filenameDest, 'wb')
-        file.write(archivo) 
-        file.close( )
+        archivo=base64.b64decode(var)  
+        filenameDest=directorio +"/"+str(adj.nombre_archivo)
+        dirdescargavalido=self.validardir(directorio)
 
-        redirect('/item/item')
+        # se crea el archivo y se procede a copiar el contendido del archivo
+        
+        if (dirdescargavalido):
+            try:
+             file = open(filenameDest, 'wb')        # crea el archivo destino
+            except:
+                return "No se pudo crear el archivo"   
+            
+            if not archivo: 
+                return                                         
+            file.write(archivo)                                 
+                
+            #se cierra la conexion y el archivo
+                 
+            file.close( )
+            redirect('/item/item')
+
+        else:
+            nom_proyecto=Variables.get_valor_by_nombre("nombre_proyecto_actual")
+            nom_fase=Variables.get_valor_by_nombre("nombre_fase_actual")
+            item=Item.get_item_by_id(int(adj.id_item))
+            values = dict(id_item=item.id_item, 
+				            nombre_item=item.nombre_item, 
+				            nombre_tipo_item=item.nombre_tipo_item
+				            )
+            return dict(pagina="listar_mis_adjuntos",adjuntos=adjuntos,
+                        nom_proyecto=nom_proyecto,nom_fase=nom_fase,
+                        values=values)
+
+
+################################################################################
+
+    @expose()
+    def validardir(self,dirdescarga):
+        if (os.path.isdir(dirdescarga)):
+            return True
+        else:
+            try:
+                os.mkdir(dirdescarga)
+                return True
+            except:
+                print "No se puede crear el directorio"
+                return False  
+    
+################################################################################
 
