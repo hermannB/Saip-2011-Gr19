@@ -88,7 +88,7 @@ class Tipo_Campos (DeclarativeBase):
         """
         Obtiene la lista de todos los campo         
         """
-        campo = DBSession.query(Campo).get(int(id_campo))
+        campo = DBSession.query(Tipo_Campos).get(int(id_campo))
         return campo
 
 #-------------------------------------------------------------------------------
@@ -98,7 +98,7 @@ class Tipo_Campos (DeclarativeBase):
         """
         Obtiene la lista de todos los adjuntos         
         """
-        DBSession.delete(DBSession.query(Campo).get(id_campo))
+        DBSession.delete(DBSession.query(Tipo_Campos).get(id_campo))
         DBSession.flush()	
 
 #-------------------------------------------------------------------------------

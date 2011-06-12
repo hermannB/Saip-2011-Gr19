@@ -65,14 +65,17 @@ class ItemController(BaseController):
         nom_proyecto=Variables.get_valor_by_nombre("nombre_proyecto_actual")
         nom_fase=Variables.get_valor_by_nombre("nombre_fase_actual")
 
-        item=Item.get_item_by_id(int(id_item))
+        if id_item is not None:
+            id_item=int(id_item)
+
+        item=Item.get_item_by_id(id_item)
 
         values = dict(id_item=item.id_item, 
 				        nombre_item=item.nombre_item, 
 				        nombre_tipo_item=item.nombre_tipo_item
 				        )
 
-        adjuntos=Adjunto.get_adjuntos_by_item(int(id_item))
+        adjuntos=Adjunto.get_adjuntos_by_item(id_item)
        
         return dict(pagina="listar_mis_adjuntos",adjuntos=adjuntos,
                         nom_proyecto=nom_proyecto,nom_fase=nom_fase,
@@ -101,6 +104,9 @@ class ItemController(BaseController):
         nom_proyecto=Variables.get_valor_by_nombre("nombre_proyecto_actual")
         nom_fase=Variables.get_valor_by_nombre("nombre_fase_actual")
 
+        if id_item is not None:
+            id_item=int(id_item)
+
         id_fase=int(Variables.get_valor_by_nombre("fase_actual"))
         items = Item.get_historial(id_item)
 
@@ -128,6 +134,9 @@ class ItemController(BaseController):
     def editar_item(self,id_item,*args, **kw):
         nom_proyecto=Variables.get_valor_by_nombre("nombre_proyecto_actual")
         nom_fase=Variables.get_valor_by_nombre("nombre_fase_actual")
+
+        if id_item is not None:
+            id_item=int(id_item)
 
         id_fase=int(Variables.get_valor_by_nombre("fase_actual"))
         item = Item.get_item_by_id(id_item)
@@ -169,7 +178,16 @@ class ItemController(BaseController):
     def put_item(self, id_item, nombre_item, id_tipo_item,complejidad,
                      adjuntos,**data):
 
-        item = Item.get_item_by_id(int(id_item))
+        if id_item is not None:
+            id_item=int(id_item)
+
+        if id_tipo_item is not None:
+            id_tipo_item=int(id_tipo_item)
+
+        if complejidad is not None:
+            complejidad=int(complejidad)
+
+        item = Item.get_item_by_id(id_item)
         items= Item.get_nombres_items()
         items.remove(item.nombre_item)
         
@@ -209,7 +227,7 @@ class ItemController(BaseController):
 
             lista=[]
             lista.append(item.nombre_tipo_item )
-            item = DBSession.query(Item).get(int(id_item))
+            item = DBSession.query(Item).get(id_item)
 
             values = dict(id_item=id_item, 
 				            nombre_item=nombre_item,        
@@ -240,6 +258,9 @@ class ItemController(BaseController):
         nom_proyecto=Variables.get_valor_by_nombre("nombre_proyecto_actual")
         nom_fase=Variables.get_valor_by_nombre("nombre_fase_actual")
 
+        if id_item is not None:
+            id_item=int(id_item)
+
         item = DBSession.query(Item).get(id_item)	
 
         values = dict(id_item=id_item, 
@@ -267,6 +288,10 @@ class ItemController(BaseController):
     @expose()
     def post_delete_item(self, id_item, nombre_item, codigo_item, nombre_tipo_item,
                          estado, complejidad, **kw):
+
+        if id_item is not None:
+            id_item=int(id_item)
+
         item = Item.get_item_by_id(id_item)
         item.estado_oculto="Eliminado"
 
@@ -281,6 +306,9 @@ class ItemController(BaseController):
     def revivir_item(self,id_item, *args, **kw):
         nom_proyecto=Variables.get_valor_by_nombre("nombre_proyecto_actual")
         nom_fase=Variables.get_valor_by_nombre("nombre_fase_actual")
+
+        if id_item is not None:
+            id_item=int(id_item)
 
         item = Item.get_item_by_id(id_item)	
 
@@ -324,6 +352,9 @@ class ItemController(BaseController):
         nom_proyecto=Variables.get_valor_by_nombre("nombre_proyecto_actual")
         nom_fase=Variables.get_valor_by_nombre("nombre_fase_actual")
 
+        if id_item is not None:
+            id_item=int(id_item)
+
         item = Item.get_item_by_id(id_item)	
 
         values = dict(id_item=item.id_item, 
@@ -351,6 +382,13 @@ class ItemController(BaseController):
     @expose()
     def post_recuperar_item(self, id_item, nombre_item, codigo_item, 
                 nombre_tipo_item, estado, complejidad, **kw):
+
+        if id_item is not None:
+            id_item=int(id_item)
+
+        if complejidad is not None:
+            complejidad=int(complejidad)
+
         item = Item.version_actual(id_item)
         item.estado_oculto="Desactivado"
         version= item.version+1  
@@ -406,7 +444,11 @@ class ItemController(BaseController):
             if id_tipo_item is not None:
                 id_tipo_item = int(id_tipo_item)
 
-            tipo_item =Tipo_Item.get_tipo_item_by_id(int(id_tipo_item))
+            if complejidad is not None:
+                complejidad=int(complejidad)
+
+
+            tipo_item =Tipo_Item.get_tipo_item_by_id(id_tipo_item)
             pre_codigo=tipo_item.codigo_tipo_item
 
             proy_act=int (Variables.get_valor_by_nombre("proyecto_actual"))

@@ -83,7 +83,10 @@ class Tipo_ItemController(BaseController):
         nom_proyecto=Variables.get_valor_by_nombre("nombre_proyecto_actual")
         nom_fase=Variables.get_valor_by_nombre("nombre_fase_actual")
 
-        tipo_item=Tipo_Item.get_tipo_item_by_id(int(id_tipo_item))
+        if id_tipo_item is not None:
+            id_tipo_item=int(id_tipo_item)
+
+        tipo_item=Tipo_Item.get_tipo_item_by_id(id_tipo_item)
 
         values = dict(id_tipo_item=tipo_item.id_tipo_item, 
 				        nombre_tipo_item=tipo_item.nombre_tipo_item, 
@@ -107,8 +110,11 @@ class Tipo_ItemController(BaseController):
         nom_proyecto=Variables.get_valor_by_nombre("nombre_proyecto_actual")
         nom_fase=Variables.get_valor_by_nombre("nombre_fase_actual")
 
+        if id_tipo_item is not None:
+            id_tipo_item=int(id_tipo_item)
+
         tipo_item = Tipo_Item.get_tipo_item_by_id(id_tipo_item)
-        campos2=Tipo_Campos.get_campos_by_tipo_item(tipo_item.id_tipo_item)
+        campos2=Tipo_Campos.get_campos_by_tipo_item(id_tipo_item)
         valores_permitidos=["alfanumerico","numerico","fecha"]
 
         if request.method != 'PUT':  
@@ -133,6 +139,10 @@ class Tipo_ItemController(BaseController):
     @expose()
     def put(self, id_tipo_item, nombre_tipo_item, codigo_tipo_item,
                     descripcion, campo,valor,**kw):
+
+        if id_tipo_item is not None:
+            id_tipo_item=int(id_tipo_item)
+
         tipo_item = Tipo_Item.get_tipo_item_by_id(id_tipo_item)
         campos2=Tipo_Campos.get_campos_by_tipo_item(tipo_item.id_tipo_item)
 
@@ -155,11 +165,13 @@ class Tipo_ItemController(BaseController):
         indice=0
              
         for c in campo:
-            camp =Tipo_Campos(id_tipo_item=id_tipo_item,
+            if len(c)>0:
+                camp =Tipo_Campos(id_tipo_item=id_tipo_item,
                                 nombre_campo=c,
                                 valor_campo=valor[indice])
+                DBSession.add(camp)
             indice+=1
-            DBSession.add(camp)
+            
 
         DBSession.flush()
         flash("Tipo de Item modificada!")
@@ -172,6 +184,9 @@ class Tipo_ItemController(BaseController):
     def clonar_tipo_item(self,id_tipo_item,*args, **kw):
         nom_proyecto=Variables.get_valor_by_nombre("nombre_proyecto_actual")
         nom_fase=Variables.get_valor_by_nombre("nombre_fase_actual")
+
+        if id_tipo_item is not None:
+            id_tipo_item=int(id_tipo_item)
 
         tipo_item = Tipo_Item.get_tipo_item_by_id(id_tipo_item)
         valores_permitidos=["alfanumerico","numerico","fecha"]
@@ -215,11 +230,13 @@ class Tipo_ItemController(BaseController):
         indice=0
         id_tipo=Tipo_Item.get_ultimo_id()        
         for c in campo:
-            camp =Tipo_Campos(id_tipo_item=id_tipo,
+            if (len(c)>0):
+                camp =Tipo_Campos(id_tipo_item=id_tipo,
                                 nombre_campo=c,
                                 valor_campo=valor[indice])
+                DBSession.add(camp)
             indice+=1
-            DBSession.add(camp)
+            
 
         DBSession.flush()
         flash("Tipo de Item clonada!")
@@ -231,6 +248,9 @@ class Tipo_ItemController(BaseController):
     def eliminar_tipo_item(self,id_tipo_item, *args, **kw):
         nom_proyecto=Variables.get_valor_by_nombre("nombre_proyecto_actual")
         nom_fase=Variables.get_valor_by_nombre("nombre_fase_actual")
+
+        if id_tipo_item is not None:
+            id_tipo_item=int(id_tipo_item)
 
         tipo_item =Tipo_Item.get_tipo_item_by_id(id_tipo_item)	
 
@@ -255,6 +275,10 @@ class Tipo_ItemController(BaseController):
     @expose()
     def post_delete(self, id_tipo_item, nombre_tipo_item, codigo_tipo_item,
                         descripcion, **kw):
+
+        if id_tipo_item is not None:
+            id_tipo_item=int(id_tipo_item)
+
         campos2=Tipo_Campos.get_campos_by_tipo_item(id_tipo_item)
 
         for cam in campos2:
@@ -304,11 +328,13 @@ class Tipo_ItemController(BaseController):
         indice=0
         id_tipo=Tipo_Item.get_ultimo_id()        
         for c in campo:
-            camp =Tipo_Campos(id_tipo_item=id_tipo,
+            if len(c)>0:
+                camp =Tipo_Campos(id_tipo_item=id_tipo,
                                 nombre_campo=c,
                                 valor_campo=valor[indice])
+                DBSession.add(camp)
             indice+=1
-            DBSession.add(camp)
+            
 
         flash("Tipo Item Agregado!")  
         redirect('/tipo_item/tipo_item')

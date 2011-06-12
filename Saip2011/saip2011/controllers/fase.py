@@ -79,8 +79,11 @@ class FaseController(BaseController):
         nom_proyecto=Variables.get_valor_by_nombre("nombre_proyecto_actual")
         nom_fase=Variables.get_valor_by_nombre("nombre_fase_actual")
 
+        if id_fase is not None:
+            id_fase=int(id_fase)
+
         tipos_fases = Tipo_Fase.get_tipo_fases()
-        fase = Fase.get_fase_by_id(int(id_fase))
+        fase = Fase.get_fase_by_id(id_fase)
         tipos_items = Tipo_Item.get_tipos_items()
         id_tipo_fase=int(fase.id_tipo_fase)
 
@@ -116,8 +119,14 @@ class FaseController(BaseController):
     def put_fase(self, id_fase, nombre_fase, id_tipo_fase, tipos_items,
                     descripcion, asmSelect0,  **kw):
 
-        fase =Fase.get_fase_by_id(int(id_fase))
-        nombres=Fase.get_nombres_by_id(int(fase.proyecto))
+        if id_fase is not None:
+            id_fase=int(id_fase)
+
+        if id_tipo_fase is not None:
+            id_tipo_fase=int(id_tipo_fase)
+
+        fase =Fase.get_fase_by_id(id_fase)
+        nombres=Fase.get_nombres_by_id(fase.proyecto)
         nombres.remove(fase.nombre_fase)
         
         if not isinstance(tipos_items, list):
@@ -172,7 +181,10 @@ class FaseController(BaseController):
         nom_proyecto=Variables.get_valor_by_nombre("nombre_proyecto_actual")
         nom_fase=Variables.get_valor_by_nombre("nombre_fase_actual")
 
-        fase2 = Fase.get_fase_by_id(int(id_fase))
+        if id_fase is not None:
+            id_fase=int(id_fase)
+
+        fase2 = Fase.get_fase_by_id(id_fase)
         values = dict(id_fase=fase2.id_fase, 
                         nombre_fase=fase2.nombre_fase, 
                         nombre_tipo_fase=fase2.nombre_tipo_fase, 
@@ -229,7 +241,7 @@ class FaseController(BaseController):
     def post_fase(self, nombre_fase, id_tipo_fase, tipos_items, descripcion,
                     asmSelect0):
         proyecto=int(Variables.get_valor_by_nombre("proyecto_actual"))
-        nombres=Fase.get_nombres_by_id(int(proyecto))   
+        nombres=Fase.get_nombres_by_id(proyecto)
 
         if not isinstance(nombres, list):
             nombres = [nombres]
@@ -274,7 +286,10 @@ class FaseController(BaseController):
   
     @expose('saip2011.templates.item.menu_item')
     def seleccionar_fase(self,id_fase,*kw,**args):
-        id_fase=int(id_fase)
+
+        if id_fase is not None:
+            id_fase=int(id_fase)
+
         nom_proyecto=Variables.get_valor_by_nombre("nombre_proyecto_actual")
         proy_act=int (Variables.get_valor_by_nombre("proyecto_actual"))
 

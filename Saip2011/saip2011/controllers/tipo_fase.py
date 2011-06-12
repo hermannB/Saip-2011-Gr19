@@ -64,6 +64,9 @@ class Tipo_FaseController(BaseController):
         nom_proyecto=Variables.get_valor_by_nombre("nombre_proyecto_actual")
         nom_fase=Variables.get_valor_by_nombre("nombre_fase_actual")
 
+        if id_tipo_fase is not None:
+            id_tipo_fase=int(id_tipo_fase)
+
         tipo_fase = Tipo_Fase.get_tipo_fase_by_id(id_tipo_fase)
         tipos_items = Tipo_Item.get_tipos_items()
         tipos = tipo_fase.tipos_items
@@ -95,13 +98,16 @@ class Tipo_FaseController(BaseController):
     @expose()
     def put_tipo_fase(self, id_tipo_fase, nombre_tipo_fase, descripcion,
                        tipos_items, **kw):
+
+        if id_tipo_fase is not None:
+            id_tipo_fase=int(id_tipo_fase)
+
         tipo_fase = Tipo_Fase.get_tipo_fase_by_id(id_tipo_fase)
 
         if not isinstance(tipos_items, list):
 			tipos_items = [tipos_items]
         tipos_items = [DBSession.query(Tipo_Item).get(tipo_item) for tipo_item
                                  in tipos_items]
-
 
         tipo_fase.nombre_tipo_fase = nombre_tipo_fase
         tipo_fase.descripcion = descripcion
@@ -134,7 +140,10 @@ class Tipo_FaseController(BaseController):
         nom_proyecto=Variables.get_valor_by_nombre("nombre_proyecto_actual")
         nom_fase=Variables.get_valor_by_nombre("nombre_fase_actual")
 
-        tipo_fase=Tipo_Fase.get_tipo_fase_by_id(int(id_tipo_fase))
+        if id_tipo_fase is not None:
+            id_tipo_fase=int(id_tipo_fase)
+
+        tipo_fase=Tipo_Fase.get_tipo_fase_by_id(id_tipo_fase)
 
         values = dict(id_tipo_fase=tipo_fase.id_tipo_fase, 
 				        nombre_tipo_fase=tipo_fase.nombre_tipo_fase, 
@@ -159,6 +168,9 @@ class Tipo_FaseController(BaseController):
         nom_proyecto=Variables.get_valor_by_nombre("nombre_proyecto_actual")
         nom_fase=Variables.get_valor_by_nombre("nombre_fase_actual")
 
+        if id_tipo_fase is not None:
+            id_tipo_fase=int(id_tipo_fase)
+
         tipo_fase =Tipo_Fase.get_tipo_fase_by_id(id_tipo_fase)	
 
         values = dict(id_tipo_fase=tipo_fase.id_tipo_fase, 
@@ -181,6 +193,9 @@ class Tipo_FaseController(BaseController):
     def post_delete_tipo_fase(self, id_tipo_fase, nombre_tipo_fase, descripcion,
                                      **kw):
 	
+        if id_tipo_fase is not None:
+            id_tipo_fase=int(id_tipo_fase)
+
         Tipo_Fase.borrar_by_id(id_tipo_fase)
         DBSession.flush()
         flash("Tipo de Fase eliminada!")

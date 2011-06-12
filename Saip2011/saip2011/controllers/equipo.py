@@ -79,6 +79,9 @@ class EquipoController(BaseController):
         nom_proyecto=Variables.get_valor_by_nombre("nombre_proyecto_actual")
         nom_fase=Variables.get_valor_by_nombre("nombre_fase_actual")
 
+        if id_equipo is not None:
+            id_equipo=int(id_equipo)
+
         miembro=Equipo_Desarrollo.get_miembro_by_id(int(id_equipo))
         values = dict(id_equipo=miembro.id_equipo, 
 		                nombre_usuario=miembro.nombre_usuario, 
@@ -178,6 +181,9 @@ class EquipoController(BaseController):
     def editar_miembro(self, id_equipo, *args, **kw):
         nom_proyecto=Variables.get_valor_by_nombre("nombre_proyecto_actual")
         nom_fase=Variables.get_valor_by_nombre("nombre_fase_actual")  
+
+        if id_equipo is not None:
+            id_equipo=int(id_equipo)
     
         roles = Rol.get_roles()
         usuarios = Usuario.get_usuarios()
@@ -219,6 +225,9 @@ class EquipoController(BaseController):
 
         equipo = Equipo_Desarrollo.get_miembro_by_id(id_equipo)
 
+        if id_equipo is not None:
+            id_equipo=int(id_equipo)
+
         if idusuario is not None:
             idusuario = int(idusuario)      
         if idrol is not None:
@@ -243,6 +252,9 @@ class EquipoController(BaseController):
         nom_proyecto=Variables.get_valor_by_nombre("nombre_proyecto_actual")
         nom_fase=Variables.get_valor_by_nombre("nombre_fase_actual")
 
+        if id_equipo is not None:
+            id_equipo=int(id_equipo)
+
         equipo = Equipo_Desarrollo.get_miembro_by_id(id_equipo)	
 
         values = dict(id_equipo=equipo.id_equipo, 
@@ -262,6 +274,9 @@ class EquipoController(BaseController):
 
     @expose()
     def post_delete_miembro(self, id_equipo, nombre_usuario, nombre_rol, **kw):
+        if id_equipo is not None:
+            id_equipo=int(id_equipo)
+
         Equipo_Desarrollo.borrar_by_id(id_equipo)
         DBSession.flush()	
         flash("Miembro eliminado!")

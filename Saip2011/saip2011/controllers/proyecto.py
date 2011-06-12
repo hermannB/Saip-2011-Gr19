@@ -95,7 +95,10 @@ class ProyectoController(BaseController):
         nom_proyecto=Variables.get_valor_by_nombre("nombre_proyecto_actual")
         nom_fase=Variables.get_valor_by_nombre("nombre_fase_actual")
 
-        proyecto=Proyecto.get_proyecto_by_id(int(id_proyecto))
+        if id_proyecto is not None:
+            id_proyecto=int(id_proyecto)
+
+        proyecto=Proyecto.get_proyecto_by_id(id_proyecto)
 
         values = dict(id_proyecto=proyecto.id_proyecto, 
 				        nombre_proyecto=proyecto.nombre_proyecto, 
@@ -120,7 +123,10 @@ class ProyectoController(BaseController):
         nom_proyecto=Variables.get_valor_by_nombre("nombre_proyecto_actual")
         nom_fase=Variables.get_valor_by_nombre("nombre_fase_actual")
 
-        fase=Fase.get_fase_by_id(int(id_fase))
+        if id_fase is not None:
+            id_fase=int(id_fase)
+
+        fase=Fase.get_fase_by_id(id_fase)
 
         values = dict(id_fase=fase.id_fase, 
 				        nombre_fase=fase.nombre_fase, 
@@ -145,7 +151,10 @@ class ProyectoController(BaseController):
         nom_proyecto=Variables.get_valor_by_nombre("nombre_proyecto_actual")
         nom_fase=Variables.get_valor_by_nombre("nombre_fase_actual")
 
-        tipo_item=Tipo_Item.get_tipo_item_by_id(int(id_tipo_item))
+        if id_tipo_item is not None:
+            id_tipo_item=int(id_tipo_item)
+
+        tipo_item=Tipo_Item.get_tipo_item_by_id(id_tipo_item)
 
         values = dict(id_tipo_item=tipo_item.id_tipo_item, 
 				        nombre_tipo_item=tipo_item.nombre_tipo_item, 
@@ -191,6 +200,10 @@ class ProyectoController(BaseController):
         nom_proyecto=Variables.get_valor_by_nombre("nombre_proyecto_actual")
 
         usuario=Usuario.get_user_by_alias( request.identity['repoze.who.userid'])
+
+        if id_proyecto is not None:
+            id_proyecto=int(id_proyecto)
+
         proyecto=Proyecto.get_proyecto_by_id(id_proyecto)
 
         Variables.set_valor_by_nombre("fase_actual",0)
@@ -224,8 +237,8 @@ class ProyectoController(BaseController):
         nom_proyecto=Variables.get_valor_by_nombre("nombre_proyecto_actual")
         nom_fase=Variables.get_valor_by_nombre("nombre_fase_actual")
 
-        usuarios = DBSession.query(Usuario).all()
-        tipos_fases = DBSession.query(Tipo_Fase).all()	
+        usuarios = Usuario.get_usuarios()
+        tipos_fases = Tipo_Fase.get_tipo_fases()	
 
         return dict(pagina="agregar_proyecto",values=kw, tipos_fases=tipos_fases,
                          usuarios=usuarios,nom_proyecto=nom_proyecto
@@ -236,7 +249,6 @@ class ProyectoController(BaseController):
     @validate({'nombre_proyecto':NotEmpty, 
 				'idusuario':Int(not_empty=True), 
 				'tipos_fases':NotEmpty,
-				#		'descripcion':NotEmpty
 				}, error_handler=agregar_proyecto)
 
 
@@ -319,6 +331,9 @@ class ProyectoController(BaseController):
         nom_proyecto=Variables.get_valor_by_nombre("nombre_proyecto_actual")
         nom_fase=Variables.get_valor_by_nombre("nombre_fase_actual")
 
+        if id_proyecto is not None:
+            id_proyecto=int(id_proyecto)
+
         usuarios = Usuario.get_usuarios()
         tipos_fases = Tipo_Fase.get_tipo_fases()	
         proyecto = Proyecto.get_proyecto_by_id(id_proyecto)
@@ -359,8 +374,14 @@ class ProyectoController(BaseController):
         nom_proyecto=Variables.get_valor_by_nombre("nombre_proyecto_actual")
         nom_fase=Variables.get_valor_by_nombre("nombre_fase_actual")
 
+        if id_proyecto is not None:
+            id_proyecto=int(id_proyecto)
+
+        if idusuario is not None:
+            idusuario=int(idusuario)
+
         nombres=Proyecto.get_nombres()
-        proyecto = DBSession.query(Proyecto).get(int(id_proyecto))
+        proyecto = DBSession.query(Proyecto).get(id_proyecto)
 
         if not isinstance(nombres, list):
             nombres = [nombres]
@@ -374,8 +395,6 @@ class ProyectoController(BaseController):
             id_miembro=miembro.id_equipo
             Equipo_Desarrollo.borrar_by_id(id_miembro)
             DBSession.flush()
-
-            idusuario = int(idusuario)
 
             fases=Fase.get_fase_by_proyecto(proyecto.id_proyecto)
 
@@ -420,8 +439,6 @@ class ProyectoController(BaseController):
             fases = Fase.get_fase_by_proyecto(proyecto.id_proyecto)
 
             flash("Proyecto Modificado!")  
-            #redirect('/proyecto/proyecto')
-
             return dict(pagina="/fase/listar_fase", fases=fases,
                             nom_proyecto=nom_proyecto,nom_fase=nom_fase)
         else:
@@ -437,6 +454,9 @@ class ProyectoController(BaseController):
     def eliminar_proyecto(self,id_proyecto, *args, **kw):
         nom_proyecto=Variables.get_valor_by_nombre("nombre_proyecto_actual")
         nom_fase=Variables.get_valor_by_nombre("nombre_fase_actual")
+
+        if id_proyecto is not None:
+            id_proyecto=int(id_proyecto)
 
         proyecto = DBSession.query(Proyecto).get(id_proyecto)	
 
@@ -462,6 +482,10 @@ class ProyectoController(BaseController):
     @expose()
     def post_delete_proyecto(self, id_proyecto, nombre_proyecto, descripcion, 
                                 tipos_fases, **kw):
+
+        if id_proyecto is not None:
+            id_proyecto=int(id_proyecto)
+
         proyecto = Proyecto.get_proyecto_by_id(id_proyecto)
         miembros=Equipo_Desarrollo.get_miembros_by_proyecto(proyecto.idusuario)
 
@@ -514,6 +538,9 @@ class ProyectoController(BaseController):
         nom_proyecto=Variables.get_valor_by_nombre("nombre_proyecto_actual")
         nom_fase=Variables.get_valor_by_nombre("nombre_fase_actual")
 
+        if id_fase is not None:
+            id_fase=int(id_fase)
+
         fase = DBSession.query(Fase).get(id_fase)
         tipos_items = DBSession.query(Tipo_Item).all()
         
@@ -539,13 +566,19 @@ class ProyectoController(BaseController):
     @validate({'id_fase':Int(not_empty=True), 
                 'nombre_fase':NotEmpty, 
                 'id_tipo_fase':Int(not_empty=True), 
-                #       'descripcion':NotEmpty
                 }, error_handler=seleccionar_tipo)	
 
     @expose()
     def put_seleccionar_tipo(self, id_fase, nombre_fase, id_tipo_fase, tipos_items,
                     descripcion, asmSelect0, nombre_tipo_fase,**kw):
-        fase = Fase.get_fase_by_id(int(id_fase))
+
+        if id_fase is not None:
+            id_fase=int(id_fase)
+
+        if id_tipo_fase is not None:
+            id_tipo_fase=int(id_tipo_fase)
+
+        fase = Fase.get_fase_by_id(id_fase)
 
         if not isinstance(tipos_items, list):
 			tipos_items = [tipos_items]
@@ -560,7 +593,7 @@ class ProyectoController(BaseController):
         fase.tipos_items=tipos_items
 
         DBSession.flush()
-        #flash("Tipos Item agregados!")
+        flash("Tipos Item agregados!")
         redirect('/proyecto/proyecto')
 
 ################################################################################

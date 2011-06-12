@@ -265,6 +265,9 @@ class RootController(BaseController):
         nom_proyecto=Variables.get_valor_by_nombre("nombre_proyecto_actual")
         nom_fase=Variables.get_valor_by_nombre("nombre_fase_actual")
 
+        if idusuario is not None:
+            idusuario=int(idusuario)
+
         usuario = Usuario.get_user_by_id(idusuario)
 
         if cancel:
@@ -363,6 +366,9 @@ class RootController(BaseController):
         nom_proyecto=Variables.get_valor_by_nombre("nombre_proyecto_actual")
         nom_fase=Variables.get_valor_by_nombre("nombre_fase_actual")	
 
+        if idusuario is not None:
+            idusuario=int(idusuario)
+
         usuario = DBSession.query(Usuario).get(idusuario)	
 
         values = dict(idusuario=usuario.idusuario, 
@@ -393,6 +399,9 @@ class RootController(BaseController):
     def post_delete_usuario(self, idusuario, alias, nombre, apellido, 
                                 nacionalidad, tipodocumento, nrodoc , 
                                 email_address ,  **kw):
+
+        if idusuario is not None:
+            idusuario=int(idusuario)
 	
         Usuario.borrar_by_id(idusuario)
         DBSession.flush()
@@ -487,6 +496,9 @@ class RootController(BaseController):
         nom_proyecto=Variables.get_valor_by_nombre("nombre_proyecto_actual")
         nom_fase=Variables.get_valor_by_nombre("nombre_fase_actual")
 
+        if idrol is not None:
+            idrol=int(idrol)
+
         privilegios = Privilegios.get_privilegios()
         rol = DBSession.query(Rol).get(idrol)
         priv = rol.privilegios
@@ -519,6 +531,10 @@ class RootController(BaseController):
 
     @expose()
     def put_rol(self, idrol, nombrerol, descripcion, privilegios, **kw):
+
+        if idrol is not None:
+            idrol=int(idrol)
+
         rol = DBSession.query(Rol).get(idrol)
         if not isinstance(privilegios, list):
             privilegios = [privilegios]
@@ -555,7 +571,10 @@ class RootController(BaseController):
         nom_proyecto=Variables.get_valor_by_nombre("nombre_proyecto_actual")
         nom_fase=Variables.get_valor_by_nombre("nombre_fase_actual")
 
-        rol=Rol.get_rol_by_id(int(idrol))
+        if idrol is not None:
+            idrol=int(idrol)
+
+        rol=Rol.get_rol_by_id(idrol)
         values = dict(idrol=rol.idrol, 
 				        nombrerol=rol.nombrerol, 
 				        descripcion=rol.descripcion
@@ -576,6 +595,9 @@ class RootController(BaseController):
     def eliminar_rol(self,idrol, *args, **kw):
         nom_proyecto=Variables.get_valor_by_nombre("nombre_proyecto_actual")
         nom_fase=Variables.get_valor_by_nombre("nombre_fase_actual")
+
+        if idrol is not None:
+            idrol=int(idrol)
 
         rol = DBSession.query(Rol).get(idrol)	
 
@@ -598,8 +620,12 @@ class RootController(BaseController):
 
     @expose()
     def post_delete_rol(self, idrol, nombrerol, descripcion, privilegios, **kw):
+        if idrol is not None:
+            idrol=int(idrol)
+
         Rol.borrar_by_id(idrol)
         DBSession.flush()
+
         flash("Rol eliminado!")
         redirect('/rol')
 
@@ -660,7 +686,10 @@ class RootController(BaseController):
         nom_proyecto=Variables.get_valor_by_nombre("nombre_proyecto_actual")
         nom_fase=Variables.get_valor_by_nombre("nombre_fase_actual")
 
-        privilegio = DBSession.query(Privilegios).get(idprivilegio)
+        if idprivilegio is not None:
+            idprivilegio=int(idprivilegio)
+
+        privilegio =Privilegios.get_privilegio_by_id(idprivilegio)
         if request.method != 'PUT':  
 
             values = dict(idprivilegio=privilegio.idprivilegio, 
@@ -681,7 +710,10 @@ class RootController(BaseController):
 
     @expose('saip2011.templates.privilegio.editar_privilegio')
     def put_privilegio(self, idprivilegio, nombreprivilegio, descripcion, **kw):
-        privilegio = Privilegios.get_privilegio_by_id(int(idprivilegio))
+        if idprivilegio is not None:
+            idprivilegio=int(idprivilegio)
+
+        privilegio = Privilegios.get_privilegio_by_id(idprivilegio)
         nombres=Privilegios.get_nombreprivilegio()
 
         if not isinstance(nombres, list):
@@ -734,6 +766,9 @@ class RootController(BaseController):
         nom_proyecto=Variables.get_valor_by_nombre("nombre_proyecto_actual")
         nom_fase=Variables.get_valor_by_nombre("nombre_fase_actual")
 
+        if idprivilegio is not None:
+            idprivilegio=int(idprivilegio)
+
         privilegio = Privilegios.get_privilegio_by_id(idprivilegio)	
 
         values = dict(idprivilegio=privilegio.idprivilegio, 
@@ -755,6 +790,9 @@ class RootController(BaseController):
     @expose()
     def post_delete_privilegio(self, idprivilegio, nombreprivilegio, descripcion,
                                     **kw):
+        if idprivilegio is not None:
+            idprivilegio=int(idprivilegio)
+
         Privilegios.borrar_by_id(idprivilegio)
         DBSession.flush()
 
