@@ -31,8 +31,6 @@
 		<th>Tipo de Fase</th>
         <th>Estado</th>
         <th>Orden</th>
-
-        <th>Linea Base</th>
         <th>Descripcion</th>
       </tr>
       <tr align="center" py:for="fase in fases">
@@ -43,12 +41,16 @@
 	     		<span py:when="perm.var == 'control_total'">
 					<a href="${tg.url('/fase/editar_fase?id_fase=%d' % fase.id_fase)}"><img src="/images/lapiz.png" border="0" height="15"/></a>
 					<a href="${tg.url('/fase/eliminar_fase?id_fase=%d' % fase.id_fase)}"><img src="/images/cross.png" border="0"/></a>
+                    <a href="${tg.url('/proyecto/seleccionar_tipo?id_fase=%d' % fase.id_fase)}"><img src="/images/ok.png" border="0" height="15"/></a>
 				</span>
 				<span py:when="perm.var == 'mod_fase'">
 					<a href="${tg.url('/fase/editar_fase?id_fase=%d' % fase.id_fase)}"><img src="/images/lapiz.png" border="0" height="15"/></a>
 				</span>
 				<span py:when="perm.var == 'elim_fase'">
 					<a href="${tg.url('/fase/eliminar_fase?id_fase=%d' % fase.id_fase)}"><img src="/images/cross.png" border="0"/></a>
+				</span>
+                <span py:when="perm.var == 'selec_tipo'">
+					 <a href="${tg.url('/proyecto/seleccionar_tipo?id_fase=%d' % fase.id_fase)}"><img src="/images/ok.png" border="0" height="15"/></a>
 				</span>
 			</div>
 		</div>
@@ -58,8 +60,7 @@
         <td>${fase.nombre_tipo_fase}</td>
         <td>${fase.estado}</td>
         <td>${fase.orden}</td>
-        <td>${fase.linea_base}</td>
-        <td>${fase.descripcion}</td>
+          <td>${fase.descripcion}</td>
       </tr>          
     </table>   
     

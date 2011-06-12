@@ -33,7 +33,8 @@ function borrar(cual) {
 
     <form action="post_tipo_item" method="POST">
       <table summary=""><tbody><tr>
-	<tr><td>Nombre del Tipo Item </td><td><input class="required" maxlength="50" type="textfield" name="nombre_tipo_item" value="${values.get('nombre_tipo_item', '')}"/>${tmpl_context.form_errors.get('nombre_tipo_item')}</td></tr>
+	    <tr><td>Nombre del Tipo Item </td><td><input class="required" maxlength="50" type="textfield" name="nombre_tipo_item" value="${values.get('nombre_tipo_item', '')}"/>${tmpl_context.form_errors.get('nombre_tipo_item')}</td></tr>
+        <tr><td>Codigo del Tipo Item </td><td><input class="required" maxlength="50" type="textfield" name="codigo_tipo_item" value="${values.get('codigo_tipo_item', '')}"/>${tmpl_context.form_errors.get('codigo_tipo_item')}</td></tr>
 	
         <tr><td>descripcion</td><td> <textarea rows="10" cols="40" name="descripcion">${values.get('descripcion')}</textarea>${tmpl_context.form_errors.get('descripcion')}</td></tr>
         <tr><td>Campos</td>

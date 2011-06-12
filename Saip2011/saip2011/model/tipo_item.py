@@ -19,6 +19,24 @@ from saip2011.model.tipo_campos import Tipo_Campos
 __all__ = ['Tipo_Item']
 
 
+# This is the association table for the many-to-many relationship between
+# groups and permissions. This is required by repoze.what.
+fase_tipo_item_tabla = Table('Tabla_Fase_Tipo_Item', metadata,
+    Column('id_fase', Integer, ForeignKey('Tabla_Fase.id_fase',
+        onupdate="CASCADE", ondelete="CASCADE")),
+    Column('id_tipo_item', Integer, ForeignKey('Tabla_Tipo_Item.id_tipo_item',
+        onupdate="CASCADE", ondelete="CASCADE"))
+)
+
+# This is the association table for the many-to-many relationship between
+# groups and permissions. This is required by repoze.what.
+tipo_fase_tipo_item_tabla = Table('Tabla_Tipo_Fase_Tipo_Item', metadata,
+    Column('id_tipo_fase', Integer, ForeignKey('Tabla_Tipo_Fase.id_tipo_fase',
+        onupdate="CASCADE", ondelete="CASCADE")),
+    Column('id_tipo_item', Integer, ForeignKey('Tabla_Tipo_Item.id_tipo_item',
+        onupdate="CASCADE", ondelete="CASCADE"))
+)
+
 class Tipo_Item(DeclarativeBase):
 	"""
 	Definicion Tipo de Item
@@ -32,6 +50,8 @@ class Tipo_Item(DeclarativeBase):
 	id_tipo_item = Column(Integer, autoincrement=True, primary_key=True)
 
 	nombre_tipo_item = Column(Unicode(50), unique=True, nullable=False)
+
+	codigo_tipo_item = Column(Unicode(50), nullable=False)
 
 	descripcion = Column (Text)
 	

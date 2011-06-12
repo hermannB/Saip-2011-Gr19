@@ -38,17 +38,7 @@
 	      </select>
          </td></tr>
 
-	<tr><td>Estado</td>
-     	     <td>
-     	     <select name="estado">
-		       <option value="Nuevo" selected="selected">Nuevo</option>
-		       <option value="En_Desarrollo" >En Desarrollo</option>
-		       <option value="Listo" >Listo</option>
-		       <option value="Revisar" >Revisar</option>
-		       <option value="Aprobado" >Aprobado</option>
-	     </select>
-         </td></tr>	
-
+	
  	<tr><td>complejidad </td><td><input type="textfield" class="required integer"  name="complejidad" value="${values.get('complejidad', '')}"/>${tmpl_context.form_errors.get('complejidad')}</td></tr>
 	 <tr><td>adjunto </td><td><input type="file" class="multi" name="adjunto" value="${values.get('adjunto', '')}"/>${tmpl_context.form_errors.get('adjunto')}</td></tr>
          

@@ -217,6 +217,13 @@ def setup_app(command, conf, vars):
     priv.descripcion = u'Brinda la funcion con la cual el Lider de un Proyecto define que una fase esta finalizadad y se puede pasar a la siguiente'
     priv.roles.append(rolLP)
     model.DBSession.add(priv)
+
+    priv = model.Privilegios()
+    priv.nombreprivilegio = u'Seleecionar Tipos de Item'
+    priv.var = u'selec_tipo'
+    priv.descripcion = u'Brinda las funciones necesarias para modificar los tipos de item de una Fase de un determinado Proyecto'
+    priv.roles.append(rolLP)
+    model.DBSession.add(priv)
     
     
     ## Item
@@ -449,6 +456,12 @@ def setup_app(command, conf, vars):
     var.nombre = u'rol_actual'
     var.valor = u'0'
     model.DBSession.add(var)
+
+    var = model.Variables()
+    var.nombre = u'rol_anterior'
+    var.valor = u'0'
+    model.DBSession.add(var)
+  
     
     var = model.Variables()
     var.nombre = u'rol_por_defecto'

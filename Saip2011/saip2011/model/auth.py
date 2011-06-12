@@ -107,7 +107,6 @@ class Rol(DeclarativeBase):
 			if rol.nombrerol == nombre: 
 				return rol
 
-    #{ Relations
     @classmethod
     def get_roles_by_id(self,id_rol):
         """
@@ -117,8 +116,10 @@ class Rol(DeclarativeBase):
         """roles = session.query(cls).all()"""
         roles = DBSession.query(Rol).all()
         for rol in roles:
-            if rol.idrol == id_rol:
-                return rol
+			if rol.idrol == id_rol: 
+				return rol
+
+    #{ Relations
     
     usuarios = relation('Usuario', secondary=usuario_rol_tabla, backref='roles')
     
@@ -163,7 +164,7 @@ class Usuario(DeclarativeBase):
     #{ Special methods
 
     def __repr__(self):
-	return '<User: email="%s", Alias="%s">' % (self.email_address, self.alias)
+        return '<User: email="%s", Alias="%s">' % (self.email_address, self.alias)
 
     def __unicode__(self):
         return self.alias

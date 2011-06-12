@@ -7,8 +7,26 @@
 
 <head>
 	<meta content="text/html; charset=UTF-8" http-equiv="content-type" py:replace="''"/>
-<script type="text/javascript" src="js/jquery-1.4.2.min.js"></script>
-	<script src="js/vanadium-min.js" type="text/javascript"></script>
+	<script src="/js/vanadium-min.js" type="text/javascript"></script>
+	<script type="text/javascript" src="/js/js/jquery.js"></script>
+	<script type="text/javascript" src="/js/jquery.ui.js"></script>
+	<script type="text/javascript" src="/js/jquery.asmselect.js"></script>
+	<link rel="stylesheet" type="text/css" href="/css/jquery.asmselect.css" />
+	<link rel="stylesheet" type="text/css" href="/css/example.css" />
+
+	<script type="text/javascript">
+
+		$(document).ready(function() {
+			$("#tipos_items").asmSelect({
+				addItemTarget: 'bottom',
+				animate: true,
+				highlight: true,
+				sortable: true
+			});
+			
+		}); 
+
+	</script>
 
 
 
@@ -31,21 +49,34 @@
 					<td>
 					  <select name="id_tipo_fase">
 					      <py:for each="tipo_fase in tipos_fases">
-						  <option value="$tipo_fase.id_tipo_fase" >$tipo_fase.nombre_tipo_fase</option>
+                            <div py:choose="">
+									<span py:when="tipo_fase.id_tipo_fase in id_tipo_fase" >
+						   				<option value="$tipo_fase.id_tipo_fase" selected="selected" >$tipo_fase.nombre_tipo_fase</option>
+			       					</span>
+			       					<span py:otherwise="">
+									  <option value="$tipo_fase.id_tipo_fase" >$tipo_fase.nombre_tipo_fase</option>
+				   			        </span>
+							</div>
+						  
 					      </py:for>
 					  </select>
 					</td></tr>
+	        	<tr><td>Lista de Tipos de item</td>
+					<td>
+					<select id="tipos_items" multiple="multiple" name="tipos_items" title="Seleccionar los Item Necesarios">
+				   	       <py:for each="tipo_item in tipos_items">
+								<div py:choose="">
+									<span py:when="tipo_item.id_tipo_item in tipos_items2" >
+						   				<option value="$tipo_item.id_tipo_item" selected="selected" >$tipo_item.nombre_tipo_item</option>
+			       					</span>
+			       					<span py:otherwise="">
+									   <option value="$tipo_item.id_tipo_item"  >$tipo_item.nombre_tipo_item</option>
+				   			        </span>
+								</div>
 
-				 <tr><td>Estado</td>
-				     <td>
-				     <select name="estado">
-					       <option value="Nueva" selected="selected">Nueva</option>
-					       <option value="Activa" >Activa</option>
-					       <option value="Finalizada" >Finalizada</option>
-				     </select>
-				</td></tr>
-				
-				<tr><td>linea_base </td><td><input class="required" maxlength="50" type="textfield" name="linea_base" value="${values['linea_base']}"/>${tmpl_context.form_errors.get('linea_base')}</td></tr>				        	
+					       </py:for>
+					  </select>
+					</td></tr>		        
 				<tr><td>descripcion</td><td> <textarea rows="10" cols="40" name="descripcion">${values.get('descripcion')}</textarea>${tmpl_context.form_errors.get('descripcion')}</td></tr>		
      		                <tr><td><input type="hidden" name="_method" value="PUT"/>
 					<input type="submit" value="Actualizar"/>

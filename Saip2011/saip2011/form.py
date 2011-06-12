@@ -32,6 +32,7 @@ class FaseForm(Schema):
 class TipoFaseForm(Schema):
     nombre_tipo_fase = validators.UnicodeString(not_empty=True)
     descripcion = validators.UnicodeString(not_empty=True)
+    tipos_items = validators.UnicodeString(not_empty=True)
 
 class ItemForm(Schema):
     nombre_item = validators.UnicodeString(not_empty=True)

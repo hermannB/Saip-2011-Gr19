@@ -89,9 +89,24 @@ class Proyecto(DeclarativeBase):
 		proyectos = DBSession.query(Proyecto).all()
 		for proy in proyectos:
 			if (proy.id_proyecto > mayor):
-				mayor =proy.id_proyecto
+				mayor = proy.id_proyecto
 
 		return mayor
+
+	@classmethod
+	def activar(self, id_proyecto):
+		proyecto = DBSession.query(Proyecto).get(id_proyecto)
+		if proyecto.estado =="nuevo":
+			proyecto.estado="en_desarrollo"
+			DBSession.flush()
+
+	@classmethod
+	def finalizar(self, id_proyecto):
+		proyecto = DBSession.query(Proyecto).get(id_proyecto)
+		if proyecto.estado =="en_desarrollo":
+			proyecto.estado="finalizado"
+			DBSession.flush()
+
 
 	#}
 

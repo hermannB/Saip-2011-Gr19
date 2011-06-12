@@ -30,16 +30,7 @@
             <tr><td>nombre_item </td><td><input class="required" maxlength="50" type="textfield" name="nombre_item" value="${values['nombre_item']}"/>          ${tmpl_context.form_errors.get('nombre_fase')}</td></tr>	
 		      	<tr><td>codigo_item </td><td><input readonly="readonly" class="required" maxlength="50" type="textfield" name="codigo_item" value="${values['codigo_item']}"/>${tmpl_context.form_errors.get('codigo_fase')}</td></tr>	
 				<tr><td>nombre_tipo_item </td><td><input readonly="readonly" class="required" maxlength="50" type="textfield" name="nombre_tipo_item" value="${values['nombre_tipo_item']}"/>${tmpl_context.form_errors.get('nombre_tipo_item')}</td></tr>
-				<tr><td>Estado</td>
-			     	     <td>
-			     	     <select name="estado">
-					       <option value="Nuevo" selected="selected">Nuevo</option>
-					       <option value="En_Desarrollo" >En Desarrollo</option>
-					       <option value="Listo" >Listo</option>
-					       <option value="Revisar" >Revisar</option>
-					       <option value="Aprobado" >Aprobardo</option>
-				     </select>
-				 </td></tr>	
+				
 				<tr><td>complejidad </td><td><input type="textfield" name="complejidad" value="${values['complejidad']}"/>${tmpl_context.form_errors.get('complejidad')}</td></tr>				        	
 				         <tr><td>Adjuntos Actuales</td> 
 			            <td><py:for each="adj in adjuntos2">

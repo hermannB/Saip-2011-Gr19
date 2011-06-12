@@ -17,6 +17,7 @@ from sqlalchemy.orm import relation, synonym
 
 from saip2011.model import DeclarativeBase, metadata, DBSession
 from saip2011.model.equipo_desarrollo import Equipo_Desarrollo , equipo_fases_tabla
+from saip2011.model.tipo_item import Tipo_Item , fase_tipo_item_tabla
 
 __all__ = ['Fase']
 
@@ -33,7 +34,7 @@ class Fase(DeclarativeBase):
 
 	id_fase = Column(Integer, autoincrement=True, primary_key=True)
 
-	nombre_fase = Column(Unicode(50), unique=True, nullable=False)
+	nombre_fase = Column(Unicode(50), nullable=False)
 
 	id_tipo_fase = Column(Integer, ForeignKey('Tabla_Tipo_Fase.id_tipo_fase'))
 
@@ -49,8 +50,10 @@ class Fase(DeclarativeBase):
 
 	descripcion = Column(Text)
 
-
 	equipo = relation(Equipo_Desarrollo, secondary=equipo_fases_tabla,
+		              backref='fases')
+
+	tipos_items = relation(Tipo_Item, secondary=fase_tipo_item_tabla,
 		              backref='fases')
 
 	#{ Special methods
@@ -80,7 +83,7 @@ class Fase(DeclarativeBase):
 		"""
 		fases = DBSession.query(Fase).all()
 		lista=[]
-		for fase in fases:
+		for	fase in fases:
 			if fase.proyecto == id_proyecto:
 				lista.append(fase)
 

@@ -7,9 +7,26 @@
 
   <head>
   <meta content="text/html; charset=UTF-8" http-equiv="content-type" py:replace="''"/>
-    <script type="text/javascript" src="js/jquery-1.4.2.min.js"></script>
-	<script src="js/vanadium-min.js" type="text/javascript"></script>
+ 	<script src="/js/vanadium-min.js" type="text/javascript"></script>
+	<script type="text/javascript" src="/js/js/jquery.js"></script>
+	<script type="text/javascript" src="/js/jquery.ui.js"></script>
+	<script type="text/javascript" src="/js/jquery.asmselect.js"></script>
+	<link rel="stylesheet" type="text/css" href="/css/jquery.asmselect.css" />
+	<link rel="stylesheet" type="text/css" href="/css/example.css" />
 
+	<script type="text/javascript">
+
+		$(document).ready(function() {
+			$("#tipos_items").asmSelect({
+				addItemTarget: 'bottom',
+				animate: true,
+				highlight: true,
+				sortable: true
+			});
+			
+		}); 
+
+	</script>
   <title>Sistema de Administracion de Item</title>
 </head>
   <body class="submit">
@@ -17,31 +34,28 @@
       <h2>Agregar nuevo Tipo de Fase</h2>
     </div>
 
-    <form action="/agregar_tipo_fase" method="post">
+    <form action="post_tipo_fase" method="post">
       <table summary=""><tbody><tr>
-        <th><label for="nombre_tipo_fase">Nombre del Tipo de Fase:</label></th>
+      	<tr><td>Nombre de la Fase </td><td><input class="required" maxlength="50" type="textfield" name="nombre_tipo_fase" value="${values.get('nombre_tipo_fase', '')}"/>${tmpl_context.form_errors.get('nombre_tipo_fase')}</td></tr>
+	    <tr><td>Lista de Tipos de item</td> 
         <td>
-           <input class="required" maxlength="50" type="text" id="nombre_tipo_fase" name="nombre_tipo_fase" />
-           <span py:if="'nombre_tipo_fase' in errors" class="fielderror">${errors.nombre_tipo_fase}</span>   
-        </td>
-	</tr><tr>
-	
-        <th><label for="descripcion">Descripcion:</label></th>
-        <td>
-           <input type="text" id="descripcion" rows="10" cols="40" name="descripcion" />
-           <span py:if="'descripcion' in errors" class="fielderror">${errors.descripcion}</span>
-        </td>
-      </tr><tr>
-        <td></td>
+		<select id="tipos_items" multiple="multiple" name="tipos_items" title="Seleccionar los Tipos Necesarios">
+   	       <py:for each="tipo_item in tipos_items">
+                   <option value="$tipo_item.id_tipo_item" >$tipo_item.nombre_tipo_item</option>
+	       </py:for>
+          </select>
+        </td></tr>
+
+         <tr><td>descripcion</td><td> <textarea name="descripcion" rows="10" cols="40" >${values.get('descripcion')}</textarea>${tmpl_context.form_errors.get('descripcion')}</td></tr>
+      </tr>
+         <tr>
         <td>
           <input type="submit" value="Guardar" />
         </td>
       </tr></tbody></table>
     </form>
 
-    <div id="footer">
-    <p py:replace="data"></p>  
-    </div>
+   
   </body>
 </html>
 

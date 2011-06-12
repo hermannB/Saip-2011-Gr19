@@ -1,0 +1,60 @@
+<!DOCTYPE html>
+<html xmlns="http://www.w3.org/1999/xhtml"
+      xmlns:py="http://genshi.edgewall.org/"
+      xmlns:xi="http://www.w3.org/2001/XInclude">
+
+  <xi:include href="master.html" />
+
+  <head>
+  <meta content="text/html; charset=UTF-8" http-equiv="content-type" py:replace="''"/>
+   <link type="text/css" rel="stylesheet" href="css/selectMultiple.css" />
+   <script type="text/javascript" src="/js/selectMultiple.js"></script>
+	<script type="text/javascript" src="/js/jquery-1.4.2.min.js"></script>
+	<script src="/js/vanadium-min.js" type="text/javascript"></script>
+	
+
+  <title>Sistema de Administracion de Item</title>
+</head>
+  <body class="submit">
+    <div>
+      <h2>Mis tipos de items</h2>
+    </div>
+
+    <form action="../index" method="POST">
+   
+      <table summary=""><tbody>
+         <tr><td><input class="required" maxlength="50" type="hidden" name="id_fase" value="${values['id_fase']}"/>${tmpl_context.form_errors.get('id_fase')}</td></tr>
+
+         <tr><td>Nombre</td><td><input  readonly="readonly" class="required" maxlength="50" type="textfield" name="nombre_fase" value="${values['nombre_fase']}"/>${tmpl_context.form_errors.get('nombre_fase')}</td>
+        <td>Descripcion</td><td> <textarea readonly="readonly" rows="2" cols="40" name="descripcion">"${values['descripcion']}"</textarea>${tmpl_context.form_errors.get('descripcion')}</td></tr>
+	
+        <tr>
+          
+            <table border="1" cellspacing="1" cellpadding="2" class="tipos_items">    
+            <h2>Lista de Tipos de Items</h2>
+            <tr align="center">
+            <th>Nombre</th>
+            <th>Descripcion</th>
+            <th>Campos</th>
+     
+        </tr>
+          <tr align="center" py:for="tipos_item in tipos_items">
+                <td>${tipos_item.nombre_tipo_item}</td>
+                <td>${tipos_item.descripcion}</td>
+        		<td><a href="${tg.url('ver_campos?id_tipo_item=%d' % tipos_item.id_tipo_item)}">ver campos</a></td>
+          </tr>          
+          </table>
+
+        </tr>
+        
+	  <tr><td><input type="hidden" name="_method" value="post"/>
+	  <input type="submit" value="retornar"/>
+        </td></tr>
+      </tbody></table>
+    </form>
+
+    <div id="footer">
+       </div>
+  </body>
+</html>
+
