@@ -48,11 +48,12 @@ class EquipoController(BaseController):
         """
         nom_proyecto=Variables.get_valor_by_nombre("nombre_proyecto_actual")
         nom_fase=Variables.get_valor_by_nombre("nombre_fase_actual")
-        valor=int( Variables.get_valor_by_nombre("proyecto_actual"))
+
+        valor=int(Variables.get_valor_by_nombre("proyecto_actual"))
         equipos =  Equipo_Desarrollo.get_miembros_by_proyecto(valor)
+
         return dict(pagina="listar_miembro",equipos=equipos,
                         nom_proyecto=nom_proyecto,nom_fase=nom_fase)
-        #return dict(pagina="equipo",nom_proyecto=nom_proyecto)
 
 ################################################################################
     
@@ -62,8 +63,10 @@ class EquipoController(BaseController):
         """
         nom_proyecto=Variables.get_valor_by_nombre("nombre_proyecto_actual")
         nom_fase=Variables.get_valor_by_nombre("nombre_fase_actual")
+
         valor=int( Variables.get_valor_by_nombre("proyecto_actual"))
         equipos =  Equipo_Desarrollo.get_miembros_by_proyecto(valor)
+
         return dict(pagina="listar_miembro",equipos=equipos,
                         nom_proyecto=nom_proyecto,nom_fase=nom_fase)
 
@@ -75,6 +78,7 @@ class EquipoController(BaseController):
         """
         nom_proyecto=Variables.get_valor_by_nombre("nombre_proyecto_actual")
         nom_fase=Variables.get_valor_by_nombre("nombre_fase_actual")
+
         miembro=Equipo_Desarrollo.get_miembro_by_id(int(id_equipo))
         values = dict(id_equipo=miembro.id_equipo, 
 		                nombre_usuario=miembro.nombre_usuario, 
@@ -85,6 +89,7 @@ class EquipoController(BaseController):
         fases = []
         for f in fas:
             fases.append(f)
+
         return dict(pagina="listar_mis_fases",fases=fases,
                         nom_proyecto=nom_proyecto,nom_fase=nom_fase,
                         values=values)
@@ -95,9 +100,11 @@ class EquipoController(BaseController):
     def agregar_miembro(self, *args, **kw):
         nom_proyecto=Variables.get_valor_by_nombre("nombre_proyecto_actual")
         nom_fase=Variables.get_valor_by_nombre("nombre_fase_actual")
+
         proy=int(Variables.get_valor_by_nombre("proyecto_actual") )
-        roles = DBSession.query(Rol).all()
-        usuarios = DBSession.query(Usuario).all()
+        roles = Rol.get_roles()
+        usuarios = Usuario.get_usuarios()
+
         miembros=Equipo_Desarrollo.get_miembros_by_proyecto(proy)
         fases = Fase.get_fase_by_proyecto(proy)
         lider=Rol.get_rol_by_nombre("Lider Proyecto")
@@ -128,13 +135,18 @@ class EquipoController(BaseController):
         return dict(pagina="agregar_miembro",values=kw, roles=roles,
                      usuarios=usuarios, fases=fases,nom_proyecto=nom_proyecto
                      ,nom_fase=nom_fase)
-    
+
+#-------------------------------------------------------------------------------    
+
     @validate({'idusuario':Int(not_empty=True),
 				'fases':NotEmpty,
 				'idrol':Int(not_empty=True)}, error_handler=agregar_miembro)
 
+#-------------------------------------------------------------------------------
+
     @expose()
     def post_miembro(self, idusuario, idrol, asmSelect0, fases):
+
         if idusuario is not None:
             idusuario = int(idusuario)      
         if idrol is not None:
@@ -149,10 +161,11 @@ class EquipoController(BaseController):
         equipo =  Equipo_Desarrollo(proyecto=valor, idusuario=idusuario, 
 							        idrol=idrol, fases=fases)
 
-        usuario = DBSession.query(Usuario).get(idusuario)
-        rol = DBSession.query(Rol).get(idrol)
+        usuario =  Usuario.get_user_by_id(idusuario)
+        rol = Rol.get_rol_by_id(idrol)
         usuario.roles=[]
         usuario.roles.append(rol)
+        
         DBSession.add(equipo)
         DBSession.flush()
 
@@ -164,11 +177,13 @@ class EquipoController(BaseController):
     @expose('saip2011.templates.miembro.editar_miembro')
     def editar_miembro(self, id_equipo, *args, **kw):
         nom_proyecto=Variables.get_valor_by_nombre("nombre_proyecto_actual")
-        nom_fase=Variables.get_valor_by_nombre("nombre_fase_actual")      
-        usuarios = DBSession.query(Usuario).all()
-        roles = DBSession.query(Rol).all()
-        equipo = DBSession.query(Equipo_Desarrollo).get(id_equipo)
-        proy=int(Variables.get_valor_by_nombre("proyecto_actual") )
+        nom_fase=Variables.get_valor_by_nombre("nombre_fase_actual")  
+    
+        roles = Rol.get_roles()
+        usuarios = Usuario.get_usuarios()
+
+        equipo = Equipo_Desarrollo.get_miembro_by_id(id_equipo)
+        proy=int(Variables.get_valor_by_nombre("proyecto_actual"))
         fases = Fase.get_fase_by_proyecto(proy)
 
         fasess = equipo.fases
@@ -178,6 +193,7 @@ class EquipoController(BaseController):
 
         usuario2=equipo.nombre_usuario
         rol2=equipo.nombre_rol
+
         values = dict(id_equipo=equipo.id_equipo, 
 				  nombre_usuario=equipo.nombre_usuario, 
 				  nombre_rol=equipo.nombre_rol
@@ -189,15 +205,19 @@ class EquipoController(BaseController):
                         usuario2=usuario2, rol2=rol2,fases2=fases2, fases=fases,
                         nom_proyecto=nom_proyecto,nom_fase=nom_fase)
 
+#-------------------------------------------------------------------------------
+
     @validate({'idusuario':Int(not_empty=True),
 				'fases':NotEmpty,
 				'idrol':Int(not_empty=True)}, error_handler=editar_miembro)
+
+#-------------------------------------------------------------------------------
 
     @expose()
     def put_miembro(self, id_equipo, idusuario, idrol, asmSelect0, fases,
                      **kw):
 
-        equipo = DBSession.query(Equipo_Desarrollo).get(id_equipo)
+        equipo = Equipo_Desarrollo.get_miembro_by_id(id_equipo)
 
         if idusuario is not None:
             idusuario = int(idusuario)      
@@ -205,6 +225,7 @@ class EquipoController(BaseController):
             idrol = int(idrol)   
         if not isinstance(fases, list):
             fases = [fases]
+
         fases = [DBSession.query(Fase).get(fase) for fase in fases]
            
         equipo.idusuario = idusuario
@@ -221,22 +242,27 @@ class EquipoController(BaseController):
     def eliminar_miembro(self,id_equipo, *args, **kw):
         nom_proyecto=Variables.get_valor_by_nombre("nombre_proyecto_actual")
         nom_fase=Variables.get_valor_by_nombre("nombre_fase_actual")
-        equipo = DBSession.query(Equipo_Desarrollo).get(id_equipo)	
+
+        equipo = Equipo_Desarrollo.get_miembro_by_id(id_equipo)	
 
         values = dict(id_equipo=equipo.id_equipo, 
-		      nombre_usuario=equipo.nombre_usuario, 
-		      nombre_rol=equipo.nombre_rol
+		                nombre_usuario=equipo.nombre_usuario, 
+		                nombre_rol=equipo.nombre_rol
                       )
 
         return dict(pagina="eliminar_miembro",values=values,
                         nom_proyecto=nom_proyecto,nom_fase=nom_fase)
 
+#-------------------------------------------------------------------------------
+
     @validate({'nombre_usuario':NotEmpty,
 		'nombre_rol':NotEmpty}, error_handler=eliminar_miembro)
 
+#-------------------------------------------------------------------------------
+
     @expose()
     def post_delete_miembro(self, id_equipo, nombre_usuario, nombre_rol, **kw):
-        DBSession.delete(DBSession.query(Equipo_Desarrollo).get(id_equipo))
+        Equipo_Desarrollo.borrar_by_id(id_equipo)
         DBSession.flush()	
         flash("Miembro eliminado!")
         redirect('/equipo/equipo')

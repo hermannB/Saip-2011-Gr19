@@ -87,48 +87,84 @@ class RootController(BaseController):
         """
         nom_proyecto=Variables.get_valor_by_nombre("nombre_proyecto_actual")
         nom_fase=Variables.get_valor_by_nombre("nombre_fase_actual")
+
         if not request.identity:
             redirect(url('/login', came_from=url('/')))
         return dict(pagina='index',nom_proyecto=nom_proyecto,nom_fase=nom_fase)
+
+#-------------------------------------------------------------------------------
 
     @expose('saip2011.templates.about')
     def nosotros(self):
         """Maneja la pagina nosotros"""
         nom_proyecto=Variables.get_valor_by_nombre("nombre_proyecto_actual")
-        return dict(pagina='about',nom_proyecto=nom_proyecto)
+        nom_fase=Variables.get_valor_by_nombre("nombre_fase_actual")
+
+        return dict(pagina='about',nom_proyecto=nom_proyecto,nom_fase=nom_fase)
+
+#-------------------------------------------------------------------------------
  
     @expose('saip2011.templates.contact')
     def contactos(self):
         """Maneja la pagina contactos"""
         nom_proyecto=Variables.get_valor_by_nombre("nombre_proyecto_actual")
-        return dict(pagina='contact',nom_proyecto=nom_proyecto)
+        nom_fase=Variables.get_valor_by_nombre("nombre_fase_actual")
+
+        return dict(pagina='contact',nom_proyecto=nom_proyecto,
+                        nom_fase=nom_fase)
+
+#-------------------------------------------------------------------------------
 
     @expose('saip2011.templates.authentication')
     def autenticacion(self):
         """Display some information about auth* on this application."""
-        return dict(pagina='auth')
+        nom_proyecto=Variables.get_valor_by_nombre("nombre_proyecto_actual")
+        nom_fase=Variables.get_valor_by_nombre("nombre_fase_actual")
+
+        return dict(pagina='auth',nom_proyecto=nom_proyecto,
+                        nom_fase=nom_fase)
+
+#-------------------------------------------------------------------------------
 
     @expose('saip2011.templates.index')
     @require(predicates.has_permission('control_total', 
                 msg=l_('Solo para administradores')))
     def solo_permiso_solo(self, **kw):
         """Illustrate how a page for managers only works."""
-        return dict(pagina='managers stuff')
+        nom_proyecto=Variables.get_valor_by_nombre("nombre_proyecto_actual")
+        nom_fase=Variables.get_valor_by_nombre("nombre_fase_actual")
+
+        return dict(pagina='managers stuff',nom_proyecto=nom_proyecto,
+                        nom_fase=nom_fase)
+
+#-------------------------------------------------------------------------------
 
     @expose('saip2011.templates.index')
     @require(predicates.is_user('editor', msg=l_('Only for the editor')))
     def editor_user_only(self, **kw):
         """Illustrate how a page exclusive for the editor works."""
-        return dict(pagina='editor stuff')
+        nom_proyecto=Variables.get_valor_by_nombre("nombre_proyecto_actual")
+        nom_fase=Variables.get_valor_by_nombre("nombre_fase_actual")
+
+        return dict(pagina='editor stuff',nom_proyecto=nom_proyecto,
+                        nom_fase=nom_fase)
+
+#-------------------------------------------------------------------------------
 
     @expose('saip2011.templates.login')
     def login(self, came_from=url('/')):
         """Start the user login."""
+        nom_proyecto=Variables.get_valor_by_nombre("nombre_proyecto_actual")
+        nom_fase=Variables.get_valor_by_nombre("nombre_fase_actual")
+
         login_counter = request.environ['repoze.who.logins']
         if login_counter > 0:
             flash(_('datos incorrectos..'), 'warning')
         return dict(pagina='login', login_counter=str(login_counter),
-					came_from=came_from)
+					came_from=came_from,nom_proyecto=nom_proyecto,
+                        nom_fase=nom_fase)
+
+#-------------------------------------------------------------------------------
     
     @expose()
     def post_login(self, came_from=url('/')):
@@ -141,10 +177,13 @@ class RootController(BaseController):
             login_counter = request.environ['repoze.who.logins'] + 1
             redirect(url('/login', came_from=came_from, __logins=login_counter))
         userid = request.identity['repoze.who.userid']
+        
         Variables.set_valor_by_nombre("usuario_actual",userid)
 
         flash(_('Bienvenido, %s!') % userid)
         redirect(came_from)
+
+#-------------------------------------------------------------------------------
 
     @expose()
     def post_logout(self, came_from=url('/')):
@@ -163,9 +202,11 @@ class RootController(BaseController):
             Variables.set_valor_by_nombre("nombre_proyecto_actual","")
             Variables.set_valor_by_nombre("nombre_fase_actual","")
             Variables.set_valor_by_nombre("usuario_actual","")
+
             rol=int (Variables.get_valor_by_nombre("rol_anterior") )
             Variables.set_valor_by_nombre("rol_actual",0)
             Variables.set_valor_by_nombre("rol_anterior",0)
+
             rol2=Rol.get_rol_by_id(rol)
             usuario.roles=[]
             usuario.roles.append(rol2)
@@ -183,6 +224,7 @@ class RootController(BaseController):
         """
         nom_proyecto=Variables.get_valor_by_nombre("nombre_proyecto_actual")
         nom_fase=Variables.get_valor_by_nombre("nombre_fase_actual")
+
         return dict(pagina="usuario",nom_proyecto=nom_proyecto,nom_fase=nom_fase)
 
  ################################################################################
@@ -195,8 +237,11 @@ class RootController(BaseController):
         """
         nom_proyecto=Variables.get_valor_by_nombre("nombre_proyecto_actual")
         nom_fase=Variables.get_valor_by_nombre("nombre_fase_actual")
+
         return dict(pagina="cambiar_password",nom_proyecto=nom_proyecto
                     ,nom_fase=nom_fase)
+
+#-------------------------------------------------------------------------------
 
     @expose()
     def post_cambiar_password(self,clave,clave2,cancel=False):
@@ -219,7 +264,8 @@ class RootController(BaseController):
     def editar_usuario(self,idusuario,cancel=False,*args, **kw):
         nom_proyecto=Variables.get_valor_by_nombre("nombre_proyecto_actual")
         nom_fase=Variables.get_valor_by_nombre("nombre_fase_actual")
-        usuario = DBSession.query(Usuario).get(idusuario)
+
+        usuario = Usuario.get_user_by_id(idusuario)
 
         if cancel:
             redirect('/usuario')
@@ -235,8 +281,11 @@ class RootController(BaseController):
 					nrodoc=usuario.nrodoc,
 					email_address=usuario.email_address,
 					)
+
         return dict(pagina="editar_usuario",values=values,
                         nom_proyecto=nom_proyecto,nom_fase=nom_fase)
+
+#-------------------------------------------------------------------------------
 
     @validate({'idusuario':NotEmpty, 
 				'alias':NotEmpty, 
@@ -244,6 +293,8 @@ class RootController(BaseController):
 				'apellido':NotEmpty, 
 				'nrodoc':Int(not_empty=True),
 				'email_address':NotEmpty}, error_handler=editar_usuario)	
+
+#-------------------------------------------------------------------------------
   
     @expose('saip2011.templates.usuario.editar_usuario')
     def put_usuario(self, idusuario, alias, nombre,  apellido, nacionalidad,
@@ -253,7 +304,7 @@ class RootController(BaseController):
         if cancel:
             redirect('/usuario')
 
-        usuario = DBSession.query(Usuario).get(int(idusuario))
+        usuario = Usuario.get_user_by_id(int(idusuario))
         usuarios= Usuario.get_alias()
         usuarios.remove(usuario.alias)
 
@@ -271,9 +322,12 @@ class RootController(BaseController):
             DBSession.flush()
             flash("Usuario modificado!")
             redirect('/usuario')
+
         else:
+
             nom_proyecto=Variables.get_valor_by_nombre("nombre_proyecto_actual")
             nom_fase=Variables.get_valor_by_nombre("nombre_fase_actual")
+
             values = dict(idusuario=idusuario, 
 			                alias=alias, 
 			                nombre=nombre, 
@@ -283,6 +337,7 @@ class RootController(BaseController):
 			                nrodoc=nrodoc,
 			                email_address=email_address,
 			                )
+
             flash("El alias solicitado ya existe!")
             return dict(pagina="editar_usuario",values=values,
                         nom_proyecto=nom_proyecto,nom_fase=nom_fase)
@@ -295,7 +350,9 @@ class RootController(BaseController):
         """
         nom_proyecto=Variables.get_valor_by_nombre("nombre_proyecto_actual")
         nom_fase=Variables.get_valor_by_nombre("nombre_fase_actual")
+
         usuarios = Usuario.get_usuarios()
+
         return dict(pagina="listar_usuario",usuarios=usuarios,
                         nom_proyecto=nom_proyecto,nom_fase=nom_fase)
 
@@ -305,6 +362,7 @@ class RootController(BaseController):
     def eliminar_usuario(self,idusuario, *args, **kw):
         nom_proyecto=Variables.get_valor_by_nombre("nombre_proyecto_actual")
         nom_fase=Variables.get_valor_by_nombre("nombre_fase_actual")	
+
         usuario = DBSession.query(Usuario).get(idusuario)	
 
         values = dict(idusuario=usuario.idusuario, 
@@ -320,19 +378,23 @@ class RootController(BaseController):
         return dict(pagina="eliminar_usuario",values=values,
                         nom_proyecto=nom_proyecto,nom_fase=nom_fase)
 
+#-------------------------------------------------------------------------------
+
     @validate({'idusuario':NotEmpty, 
 				'alias':NotEmpty, 
 				'nombre':NotEmpty, 
 				'apellido':NotEmpty, 
 				'nrodoc':Int(not_empty=True),
 				'email_address':NotEmpty}, error_handler=eliminar_usuario)	
+
+#-------------------------------------------------------------------------------
     
     @expose()
     def post_delete_usuario(self, idusuario, alias, nombre, apellido, 
                                 nacionalidad, tipodocumento, nrodoc , 
                                 email_address ,  **kw):
 	
-        DBSession.delete(DBSession.query(Usuario).get(idusuario))
+        Usuario.borrar_by_id(idusuario)
         DBSession.flush()
         flash("Usuario eliminado!")
         redirect('/usuario')
@@ -343,6 +405,7 @@ class RootController(BaseController):
     def agregar_usuario(self,cancel=False,**data):
         nom_proyecto=Variables.get_valor_by_nombre("nombre_proyecto_actual")
         nom_fase=Variables.get_valor_by_nombre("nombre_fase_actual")
+
         usuarios=Usuario.get_alias()
         
         errors = {}
@@ -369,12 +432,14 @@ class RootController(BaseController):
                     xdef=int (Variables.get_valor_by_nombre("rol_por_defecto") )
                     rol = DBSession.query(Rol).get(xdef)
                     usuario.roles.append(rol)
+
                     DBSession.add(usuario)
                     DBSession.flush()
                     print usuario
                     flash("Usuario agregado!")
                     redirect('/usuario')
                 else:
+
                     flash(_("Favor cambie el alias es repetido"),'warning')
                     return dict(pagina='usuarios',usuario=usuario,
                                 errors=errors,data=data.get('alias'),
@@ -386,12 +451,15 @@ class RootController(BaseController):
                 usuario = None
                 errors = e.unpack_errors()
                 flash(_("Favor complete los datos requeridos"),'warning')
+
             except IntegrityError:
                 flash("LLave duplicada")
                 DBSession.rollback()
                 redirect('/agregar_usuario')
+
         else:
             errors = {}        
+
             return dict(pagina='usuarios',data=data.get('alias'),errors=errors,
                                 nom_proyecto=nom_proyecto,nom_fase=nom_fase,
                                 usuario=usuario)
@@ -406,10 +474,11 @@ class RootController(BaseController):
         """
         nom_proyecto=Variables.get_valor_by_nombre("nombre_proyecto_actual")
         nom_fase=Variables.get_valor_by_nombre("nombre_fase_actual")
+
         roles = Rol.get_roles()
+
         return dict(pagina="listar_rol",roles=roles,nom_proyecto=nom_proyecto
                         ,nom_fase=nom_fase)
-        #return dict(pagina="rol",nom_proyecto=nom_proyecto)
 
  ################################################################################
     
@@ -417,9 +486,11 @@ class RootController(BaseController):
     def editar_rol(self, idrol, *args, **kw):
         nom_proyecto=Variables.get_valor_by_nombre("nombre_proyecto_actual")
         nom_fase=Variables.get_valor_by_nombre("nombre_fase_actual")
-        privilegios = DBSession.query(Privilegios).all()
+
+        privilegios = Privilegios.get_privilegios()
         rol = DBSession.query(Rol).get(idrol)
         priv = rol.privilegios
+
         privilegios2 = []
         for p in priv:
             privilegios2.append(p.idprivilegio)
@@ -433,14 +504,18 @@ class RootController(BaseController):
             kw['privilegios'] = [kw['privilegios']]
 
         values.update(kw)
+
         return dict(pagina="editar_rol",values=values,  privilegios=privilegios ,
                          privilegios2=privilegios2,nom_proyecto=nom_proyecto
                         ,nom_fase=nom_fase)
 
+#-------------------------------------------------------------------------------
+
     @validate({'idrol':Int(not_empty=True), 
 				'nombrerol':NotEmpty, 
-				#       'descripcion':NotEmpty
 				}, error_handler=editar_rol)
+
+#-------------------------------------------------------------------------------
 
     @expose()
     def put_rol(self, idrol, nombrerol, descripcion, privilegios, **kw):
@@ -465,7 +540,9 @@ class RootController(BaseController):
         """
         nom_proyecto=Variables.get_valor_by_nombre("nombre_proyecto_actual")
         nom_fase=Variables.get_valor_by_nombre("nombre_fase_actual")
+
         roles = Rol.get_roles()
+
         return dict(pagina="listar_rol",roles=roles,nom_proyecto=nom_proyecto
                     ,nom_fase=nom_fase)
 
@@ -477,6 +554,7 @@ class RootController(BaseController):
         """
         nom_proyecto=Variables.get_valor_by_nombre("nombre_proyecto_actual")
         nom_fase=Variables.get_valor_by_nombre("nombre_fase_actual")
+
         rol=Rol.get_rol_by_id(int(idrol))
         values = dict(idrol=rol.idrol, 
 				        nombrerol=rol.nombrerol, 
@@ -487,6 +565,7 @@ class RootController(BaseController):
         privilegios = []
         for p in priv:
             privilegios.append(p)
+
         return dict(pagina="listar_mis_privilegios",privilegios=privilegios,
                         nom_proyecto=nom_proyecto,nom_fase=nom_fase,
                         values=values)
@@ -497,7 +576,9 @@ class RootController(BaseController):
     def eliminar_rol(self,idrol, *args, **kw):
         nom_proyecto=Variables.get_valor_by_nombre("nombre_proyecto_actual")
         nom_fase=Variables.get_valor_by_nombre("nombre_fase_actual")
+
         rol = DBSession.query(Rol).get(idrol)	
+
         values = dict(idrol=rol.idrol, 
 						nombrerol=rol.nombrerol, 
 						descripcion=rol.descripcion,
@@ -507,14 +588,17 @@ class RootController(BaseController):
         return dict(pagina="eliminar_rol",values=values,
                         nom_proyecto=nom_proyecto,nom_fase=nom_fase)
 
+#-------------------------------------------------------------------------------
+
     @validate({'idrol':NotEmpty, 
 				'nombrerol':NotEmpty, 
-				#         'descripcion':NotEmpty
 				}, error_handler=eliminar_rol)	
+
+#-------------------------------------------------------------------------------
 
     @expose()
     def post_delete_rol(self, idrol, nombrerol, descripcion, privilegios, **kw):
-        DBSession.delete(DBSession.query(Rol).get(idrol))
+        Rol.borrar_by_id(idrol)
         DBSession.flush()
         flash("Rol eliminado!")
         redirect('/rol')
@@ -525,14 +609,18 @@ class RootController(BaseController):
     def agregar_rol(self, *args, **kw):
         nom_proyecto=Variables.get_valor_by_nombre("nombre_proyecto_actual")
         nom_fase=Variables.get_valor_by_nombre("nombre_fase_actual")
+
         privilegios = DBSession.query(Privilegios).all()
 
         return dict(pagina="agregar_rol",values=kw, privilegios=privilegios,
                         nom_proyecto=nom_proyecto,nom_fase=nom_fase)
 
+#-------------------------------------------------------------------------------
+
     @validate({'nombrerol':NotEmpty, 
-			#'descripcion':NotEmpty
 			},error_handler=agregar_rol)
+
+#-------------------------------------------------------------------------------
 
     @expose()
     def post_rol(self, nombrerol, descripcion, privilegios=None):
@@ -559,11 +647,11 @@ class RootController(BaseController):
         """
         nom_proyecto=Variables.get_valor_by_nombre("nombre_proyecto_actual")
         nom_fase=Variables.get_valor_by_nombre("nombre_fase_actual")
+
         privilegios = Privilegios.get_privilegios()
+
         return dict(pagina="listar_privilegio",privilegios=privilegios,
                         nom_proyecto=nom_proyecto,nom_fase=nom_fase)
-        #return dict(pagina="privilegenres = DBSession.query(Genre).all()gio",
-         #               nom_proyecto=nom_proyecto)
 
  ################################################################################
     
@@ -571,8 +659,10 @@ class RootController(BaseController):
     def editar_privilegio(self,idprivilegio,*args, **kw):
         nom_proyecto=Variables.get_valor_by_nombre("nombre_proyecto_actual")
         nom_fase=Variables.get_valor_by_nombre("nombre_fase_actual")
+
         privilegio = DBSession.query(Privilegios).get(idprivilegio)
         if request.method != 'PUT':  
+
             values = dict(idprivilegio=privilegio.idprivilegio, 
 					        nombreprivilegio=privilegio.nombreprivilegio, 
 					        descripcion=privilegio.descripcion,
@@ -581,13 +671,17 @@ class RootController(BaseController):
         return dict(pagina="editar_privilegio",values=values,
                 nom_proyecto=nom_proyecto,nom_fase=nom_fase)
 
+#-------------------------------------------------------------------------------
+
     @validate({'idprivilegio':Int(not_empty=True), 
 				'nombreprivilegio':NotEmpty, 
 				'descripcion':NotEmpty}, error_handler=editar_privilegio)	
 
+#-------------------------------------------------------------------------------
+
     @expose('saip2011.templates.privilegio.editar_privilegio')
     def put_privilegio(self, idprivilegio, nombreprivilegio, descripcion, **kw):
-        privilegio = DBSession.query(Privilegios).get(int(idprivilegio))
+        privilegio = Privilegios.get_privilegio_by_id(int(idprivilegio))
         nombres=Privilegios.get_nombreprivilegio()
 
         if not isinstance(nombres, list):
@@ -595,15 +689,18 @@ class RootController(BaseController):
 
         if privilegio.nombreprivilegio in nombres:
             nombres.remove(privilegio.nombreprivilegio)
+
         if nombreprivilegio not in nombres:
 
             privilegio.nombreprivilegio = nombreprivilegio
             privilegio.descripcion = descripcion
+
             DBSession.flush()
             flash("Privilegio modificado!")
             redirect('/privilegio') 
 
         else:
+
             nom_proyecto=Variables.get_valor_by_nombre("nombre_proyecto_actual")
             nom_fase=Variables.get_valor_by_nombre("nombre_fase_actual")
 
@@ -611,9 +708,10 @@ class RootController(BaseController):
 					        nombreprivilegio=nombreprivilegio, 
 					        descripcion=descripcion,
 					        )
+
             flash("Nombre del Privilegio ya existe!")
             return dict(pagina="editar_privilegio",values=values,
-                nom_proyecto=nom_proyecto,nom_fase=nom_fase)
+                        nom_proyecto=nom_proyecto,nom_fase=nom_fase)
 
 ################################################################################
 
@@ -623,7 +721,9 @@ class RootController(BaseController):
         """
         nom_proyecto=Variables.get_valor_by_nombre("nombre_proyecto_actual")
         nom_fase=Variables.get_valor_by_nombre("nombre_fase_actual")
+
         privilegios = Privilegios.get_privilegio()
+
         return dict(pagina="listar_privilegio",privilegios=privilegios,
                         nom_proyecto=nom_proyecto,nom_fase=nom_fase)
 
@@ -633,7 +733,9 @@ class RootController(BaseController):
     def eliminar_privilegio(self,idprivilegio, *args, **kw):
         nom_proyecto=Variables.get_valor_by_nombre("nombre_proyecto_actual")
         nom_fase=Variables.get_valor_by_nombre("nombre_fase_actual")
-        privilegio = DBSession.query(Privilegios).get(idprivilegio)	
+
+        privilegio = Privilegios.get_privilegio_by_id(idprivilegio)	
+
         values = dict(idprivilegio=privilegio.idprivilegio, 
 					nombreprivilegio=privilegio.nombreprivilegio, 
 					descripcion=privilegio.descripcion,
@@ -642,16 +744,20 @@ class RootController(BaseController):
         return dict(pagina="eliminar_privilegio",values=values,
                         nom_proyecto=nom_proyecto,nom_fase=nom_fase)
 
+#-------------------------------------------------------------------------------
+
     @validate({'idprivilegio':Int(not_empty=True), 
 				'nombreprivilegio':NotEmpty, 
-				#       'descripcion':NotEmpty
 				}, error_handler=eliminar_privilegio)	
+
+#-------------------------------------------------------------------------------
 
     @expose()
     def post_delete_privilegio(self, idprivilegio, nombreprivilegio, descripcion,
                                     **kw):
-        DBSession.delete(DBSession.query(Privilegios).get(idprivilegio))
+        Privilegios.borrar_by_id(idprivilegio)
         DBSession.flush()
+
         flash("Privilegio eliminado!")
         redirect('/privilegio')
 
@@ -661,8 +767,10 @@ class RootController(BaseController):
     def agregar_privilegio(self,cancel=False,**data):
         nom_proyecto=Variables.get_valor_by_nombre("nombre_proyecto_actual")
         nom_fase=Variables.get_valor_by_nombre("nombre_fase_actual")
+
         errors = {}
         privilegio = None
+
         if request.method == 'POST':
             if cancel:
                 redirect('/privilegio')
@@ -678,17 +786,21 @@ class RootController(BaseController):
                 print privilegio
                 flash("Privilegio agregado!")
                 redirect('/privilegio')
+
             except Invalid, e:
                 print e
                 privilegio = None
                 errors = e.unpack_errors()
                 flash(_("Favor complete los datos requeridos"),'warning')
+
             except IntegrityError:
                 flash("LLave duplicada")
                 DBSession.rollback()
                 redirect('/agregar_privilegio')
+
         else:
             errors = {}        
+
             return dict(pagina='/privilegio',
                             data=data.get('nombreprivilegio'),errors=errors,
                             nom_proyecto=nom_proyecto,nom_fase=nom_fase)

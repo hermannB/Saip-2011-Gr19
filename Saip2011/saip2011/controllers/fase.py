@@ -49,11 +49,12 @@ class FaseController(BaseController):
         """
         nom_proyecto=Variables.get_valor_by_nombre("nombre_proyecto_actual")
         nom_fase=Variables.get_valor_by_nombre("nombre_fase_actual")
+
         fases=Fase.get_fase_by_proyecto(int (Variables.get_valor_by_nombre
                                                 ("proyecto_actual")) )
+
         return dict(pagina="listar_fase",fases=fases,nom_proyecto=nom_proyecto
                         ,nom_fase=nom_fase)
-        #return dict(pagina="fase",nom_proyecto=nom_proyecto)
 
 ################################################################################
     
@@ -63,9 +64,10 @@ class FaseController(BaseController):
         """
         nom_proyecto=Variables.get_valor_by_nombre("nombre_proyecto_actual")
         nom_fase=Variables.get_valor_by_nombre("nombre_fase_actual")
-        #fases = Fase.get_fase()
+
         fases=Fase.get_fase_by_proyecto(int (Variables.get_valor_by_nombre
                                                 ("proyecto_actual")) )
+
         return dict(pagina="listar_fase",fases=fases,nom_proyecto=nom_proyecto
                         ,nom_fase=nom_fase)
 
@@ -76,13 +78,16 @@ class FaseController(BaseController):
     def editar_fase(self,id_fase,*args, **kw):
         nom_proyecto=Variables.get_valor_by_nombre("nombre_proyecto_actual")
         nom_fase=Variables.get_valor_by_nombre("nombre_fase_actual")
-        tipos_fases = DBSession.query(Tipo_Fase).all()
-        fase = DBSession.query(Fase).get(id_fase)
-        tipos_items = DBSession.query(Tipo_Item).all()
+
+        tipos_fases = Tipo_Fase.get_tipo_fases()
+        fase = Fase.get_fase_by_id(int(id_fase))
+        tipos_items = Tipo_Item.get_tipos_items()
         id_tipo_fase=int(fase.id_tipo_fase)
+
         lista=[]
         lista.append(id_tipo_fase)
         tipos = fase.tipos_items
+
         tipos_items2 = []
         for tip in tipos:
             tipos_items2.append(tip.id_tipo_item)
@@ -98,17 +103,20 @@ class FaseController(BaseController):
                         lista=lista,nom_fase=nom_fase,
                         nom_proyecto= nom_proyecto )
 
+#-------------------------------------------------------------------------------
+
     @validate({'id_fase':Int(not_empty=True), 
                 'nombre_fase':NotEmpty, 
                 'id_tipo_fase':Int(not_empty=True), 
-                #       'descripcion':NotEmpty
                 }, error_handler=editar_fase)	
+
+#-------------------------------------------------------------------------------
 
     @expose('saip2011.templates.fase.editar_fase')
     def put_fase(self, id_fase, nombre_fase, id_tipo_fase, tipos_items,
                     descripcion, asmSelect0,  **kw):
 
-        fase = DBSession.query(Fase).get(int(id_fase))
+        fase =Fase.get_fase_by_id(int(id_fase))
         nombres=Fase.get_nombres_by_id(int(fase.proyecto))
         nombres.remove(fase.nombre_fase)
         
@@ -132,9 +140,15 @@ class FaseController(BaseController):
         else:
             nom_proyecto=Variables.get_valor_by_nombre("nombre_proyecto_actual")
             nom_fase=Variables.get_valor_by_nombre("nombre_fase_actual")
+
             id_tipo_fase=fase.id_tipo_fase
-            tipos_fases = DBSession.query(Tipo_Fase).all()
+            tipos_fases = Tipo_Fase.get_tipo_fases()
             tipos = fase.tipos_items
+
+            lista=[]
+            lista.append(id_tipo_fase)
+            tipos = fase.tipos_items
+
             tipos_items2 = []
             for tip in tipos:
                 tipos_items2.append(tip.id_tipo_item)
@@ -144,10 +158,12 @@ class FaseController(BaseController):
                             descripcion=descripcion,
                             )
             flash("El nombre de fase solicitado ya existe!")
-            return dict(pagina="editar_fase",values=values,tipos_fases=tipos_fases,
-                          tipos_items=tipos_items,tipos_items2=tipos_items2,
-                          id_tipo_fase=id_tipo_fase,nom_fase=nom_fase,
-                          nom_proyecto= nom_proyecto )
+
+            return dict(pagina="editar_fase",values=values,
+                                tipos_fases=tipos_fases,tipos_items=tipos_items,
+                                tipos_items2=tipos_items2,lista=lista, 
+                                id_tipo_fase=id_tipo_fase,nom_fase=nom_fase,
+                                nom_proyecto= nom_proyecto )
 
 ################################################################################
 
@@ -155,7 +171,8 @@ class FaseController(BaseController):
     def eliminar_fase(self,id_fase, *args, **kw):
         nom_proyecto=Variables.get_valor_by_nombre("nombre_proyecto_actual")
         nom_fase=Variables.get_valor_by_nombre("nombre_fase_actual")
-        fase2 = DBSession.query(Fase).get(id_fase)	
+
+        fase2 = Fase.get_fase_by_id(int(id_fase))
         values = dict(id_fase=fase2.id_fase, 
                         nombre_fase=fase2.nombre_fase, 
                         nombre_tipo_fase=fase2.nombre_tipo_fase, 
@@ -166,18 +183,23 @@ class FaseController(BaseController):
         return dict(pagina="eliminar_fase",values=values,
                         nom_proyecto=nom_proyecto,nom_fase=nom_fase)
 
+#-------------------------------------------------------------------------------
+
     @validate({'id_fase':Int(not_empty=True), 
                 'nombre_fase':NotEmpty, 
                 'nombre_tipo_fase':NotEmpty, 
                 #     'descripcion':NotEmpty
                 }, error_handler=eliminar_fase)	
 
+#-------------------------------------------------------------------------------
+
     @expose()
     def post_delete_fase(self, id_fase, nombre_fase,  nombre_tipo_fase, estado,
                                 descripcion, **kw):
 
-        DBSession.delete(DBSession.query(Fase).get(id_fase))
+        Fase.borrar_by_id(id_fase)
         DBSession.flush()
+
         flash("Fase eliminada!")
         redirect('/fase/fase')
 
@@ -187,23 +209,27 @@ class FaseController(BaseController):
     def agregar_fase(self, *args, **kw):
         nom_proyecto=Variables.get_valor_by_nombre("nombre_proyecto_actual")
         nom_fase=Variables.get_valor_by_nombre("nombre_fase_actual")
-        tipos_fases = DBSession.query(Tipo_Fase).all()
-        tipos_items = DBSession.query(Tipo_Item).all()
+
+        tipos_fases = Tipo_Fase.get_tipo_fases()
+        tipos_items = Tipo_Item.get_tipos_items()
+
         return dict(pagina="agregar_fase",values=kw, tipos_fases=tipos_fases,
                         tipos_items=tipos_items,nom_proyecto=nom_proyecto
                         ,nom_fase=nom_fase)
 
+#-------------------------------------------------------------------------------
+
     @validate({'nombre_fase':NotEmpty, 
                 'id_tipo_fase':Int(not_empty=True), 
-                #		'descripcion':NotEmpty
                 }, error_handler=agregar_fase)
+
+#-------------------------------------------------------------------------------
 
     @expose('saip2011.templates.fase.agregar_fase')
     def post_fase(self, nombre_fase, id_tipo_fase, tipos_items, descripcion,
                     asmSelect0):
         proyecto=int(Variables.get_valor_by_nombre("proyecto_actual"))
         nombres=Fase.get_nombres_by_id(int(proyecto))   
-
 
         if not isinstance(nombres, list):
             nombres = [nombres]
@@ -212,11 +238,13 @@ class FaseController(BaseController):
 
             if id_tipo_fase is not None:
                 id_tipo_fase = int(id_tipo_fase)
+
             if tipos_items is not None:
                 if not isinstance(tipos_items, list):
                     tipos_items = [tipos_items]
             tipos_items = [DBSession.query(Tipo_Item).get(tipo_item) for tipo_item 
                                                     in tipos_items]
+
             fase = Fase (nombre_fase=nombre_fase, id_tipo_fase=id_tipo_fase, 
                         estado="nuevo", linea_base="abierta", 
                         descripcion=descripcion,tipos_items=tipos_items,
@@ -226,9 +254,21 @@ class FaseController(BaseController):
             DBSession.flush()
             flash("Fase agregada!")  
             redirect('/fase/fase')
+
         else:
-            flash("Fase repetidas!")  
-            redirect('/fase/fase')
+            nom_proyecto=Variables.get_valor_by_nombre("nombre_proyecto_actual")
+            nom_fase=Variables.get_valor_by_nombre("nombre_fase_actual")
+
+            tipos_fases = Tipo_Fase.get_tipo_fases()
+            tipos_items = Tipo_Item.get_tipos_items()
+
+            values = dict(nombre_fase=nombre_fase, 
+                            descripcion=descripcion,
+                            )
+            flash("Nombre de Fase es repetidos!")
+            return dict(pagina="agregar_fase",values=values, tipos_fases=tipos_fases,
+                            tipos_items=tipos_items,nom_proyecto=nom_proyecto
+                            ,nom_fase=nom_fase)
 
 ################################################################################
   
@@ -244,9 +284,11 @@ class FaseController(BaseController):
         nom_fase=Variables.get_valor_by_nombre("nombre_fase_actual")
 
         items = Item.get_item_proy_fase( proy_act, id_fase)
+
         return dict(pagina="listar_item",items=items,nom_proyecto=nom_proyecto
                         ,nom_fase=nom_fase)
 
+################################################################################
         
   
 

@@ -50,12 +50,13 @@ class Tipo_ItemController(BaseController):
         """
         nom_proyecto=Variables.get_valor_by_nombre("nombre_proyecto_actual")
         nom_fase=Variables.get_valor_by_nombre("nombre_fase_actual")
+
         tipos_items = Tipo_Item.get_tipos_items()
         tipos_campos = Tipo_Campos.get_tipo_campos()
+
         return dict(pagina="listar_tipo_item",tipos_items=tipos_items, 
-                    tipos_campos=tipos_campos,nom_proyecto=nom_proyecto
-                    ,nom_fase=nom_fase)
-        #return dict(pagina="tipo_item",nom_proyecto=nom_proyecto)
+                    tipos_campos=tipos_campos,nom_proyecto=nom_proyecto,
+                    nom_fase=nom_fase)
 
 ################################################################################
        
@@ -65,11 +66,13 @@ class Tipo_ItemController(BaseController):
         """
         nom_proyecto=Variables.get_valor_by_nombre("nombre_proyecto_actual")
         nom_fase=Variables.get_valor_by_nombre("nombre_fase_actual")
+
         tipos_items = Tipo_Item.get_tipo_item()
         tipos_campos = Tipo_Campos.get_tipo_campos()
+
         return dict(pagina="listar_tipo_item",tipos_items=tipos_items, 
-                    tipos_campos=tipos_campos,nom_proyecto=nom_proyecto
-                    ,nom_fase=nom_fase)
+                    tipos_campos=tipos_campos,nom_proyecto=nom_proyecto,
+                    nom_fase=nom_fase)
 
 ###############################################################################
 
@@ -79,7 +82,9 @@ class Tipo_ItemController(BaseController):
         """
         nom_proyecto=Variables.get_valor_by_nombre("nombre_proyecto_actual")
         nom_fase=Variables.get_valor_by_nombre("nombre_fase_actual")
+
         tipo_item=Tipo_Item.get_tipo_item_by_id(int(id_tipo_item))
+
         values = dict(id_tipo_item=tipo_item.id_tipo_item, 
 				        nombre_tipo_item=tipo_item.nombre_tipo_item, 
 				        descripcion=tipo_item.descripcion
@@ -89,20 +94,23 @@ class Tipo_ItemController(BaseController):
         campos = []
         for c in camp:
             campos.append(c)
+
         return dict(pagina="listar_mis_campos",campos=campos,
                         nom_proyecto=nom_proyecto,nom_fase=nom_fase,
                         values=values)
 
- ################################################################################
+################################################################################
 
 
     @expose('saip2011.templates.tipo_item.editar_tipo_item')
     def editar_tipo_item(self,id_tipo_item,*args, **kw):
         nom_proyecto=Variables.get_valor_by_nombre("nombre_proyecto_actual")
         nom_fase=Variables.get_valor_by_nombre("nombre_fase_actual")
-        tipo_item = DBSession.query(Tipo_Item).get(id_tipo_item)
+
+        tipo_item = Tipo_Item.get_tipo_item_by_id(id_tipo_item)
         campos2=Tipo_Campos.get_campos_by_tipo_item(tipo_item.id_tipo_item)
         valores_permitidos=["alfanumerico","numerico","fecha"]
+
         if request.method != 'PUT':  
             values = dict(id_tipo_item=tipo_item.id_tipo_item, 
 							nombre_tipo_item=tipo_item.nombre_tipo_item, 
@@ -114,20 +122,22 @@ class Tipo_ItemController(BaseController):
                         nom_proyecto=nom_proyecto,nom_fase=nom_fase,
                         valores_permitidos=valores_permitidos)
 
+#-------------------------------------------------------------------------------
+
     @validate({'id_tipo_item':Int(not_empty=True),
 				'nombre_tipo_item':NotEmpty, 
-				#               'descripcion':NotEmpty
 				}, error_handler=editar_tipo_item)	
+
+#-------------------------------------------------------------------------------
 
     @expose()
     def put(self, id_tipo_item, nombre_tipo_item, codigo_tipo_item,
                     descripcion, campo,valor,**kw):
-        tipo_item = DBSession.query(Tipo_Item).get(id_tipo_item)
+        tipo_item = Tipo_Item.get_tipo_item_by_id(id_tipo_item)
         campos2=Tipo_Campos.get_campos_by_tipo_item(tipo_item.id_tipo_item)
 
         for cam in campos2:
-            DBSession.delete(DBSession.query(Tipo_Campos).get
-                                (cam.id_tipo_campos))
+            Tipo_Campos.borrar_by_id(cam.id_tipo_campos)
             DBSession.flush()
 
         tipo_item.nombre_tipo_item = nombre_tipo_item
@@ -150,6 +160,7 @@ class Tipo_ItemController(BaseController):
                                 valor_campo=valor[indice])
             indice+=1
             DBSession.add(camp)
+
         DBSession.flush()
         flash("Tipo de Item modificada!")
         redirect('/tipo_item/tipo_item')
@@ -161,7 +172,8 @@ class Tipo_ItemController(BaseController):
     def clonar_tipo_item(self,id_tipo_item,*args, **kw):
         nom_proyecto=Variables.get_valor_by_nombre("nombre_proyecto_actual")
         nom_fase=Variables.get_valor_by_nombre("nombre_fase_actual")
-        tipo_item = DBSession.query(Tipo_Item).get(id_tipo_item)
+
+        tipo_item = Tipo_Item.get_tipo_item_by_id(id_tipo_item)
         valores_permitidos=["alfanumerico","numerico","fecha"]
         campos = Tipo_Campos.get_campos_by_tipo_item(tipo_item.id_tipo_item)
 
@@ -176,9 +188,12 @@ class Tipo_ItemController(BaseController):
                         nom_proyecto=nom_proyecto,nom_fase=nom_fase,
                         valores_permitidos=valores_permitidos)
 
+#-------------------------------------------------------------------------------
+
     @validate({'nombre_tipo_item':NotEmpty, 
-				#'descripcion':NotEmpty
 				}, error_handler=clonar_tipo_item)	
+
+#-------------------------------------------------------------------------------
 
     @expose()
     def put_item(self, nombre_tipo_item,codigo_tipo_item,
@@ -186,6 +201,7 @@ class Tipo_ItemController(BaseController):
         tipo_item = Tipo_Item (nombre_tipo_item=nombre_tipo_item,
                                     descripcion=descripcion,
                                     codigo_tipo_item=codigo_tipo_item)
+
         DBSession.add(tipo_item)
 
         if campo is not None:
@@ -204,6 +220,7 @@ class Tipo_ItemController(BaseController):
                                 valor_campo=valor[indice])
             indice+=1
             DBSession.add(camp)
+
         DBSession.flush()
         flash("Tipo de Item clonada!")
         redirect('/tipo_item/tipo_item')
@@ -214,20 +231,26 @@ class Tipo_ItemController(BaseController):
     def eliminar_tipo_item(self,id_tipo_item, *args, **kw):
         nom_proyecto=Variables.get_valor_by_nombre("nombre_proyecto_actual")
         nom_fase=Variables.get_valor_by_nombre("nombre_fase_actual")
-        tipo_item = DBSession.query(Tipo_Item).get(id_tipo_item)	
+
+        tipo_item =Tipo_Item.get_tipo_item_by_id(id_tipo_item)	
+
         values = dict(id_tipo_item=tipo_item.id_tipo_item, 
 						nombre_tipo_item=tipo_item.nombre_tipo_item, 
                         codigo_tipo_item=tipo_item.codigo_tipo_item,
 						descripcion=tipo_item.descripcion,
 						)
+
         return dict(pagina="eliminar_tipo_item",values=values,
                         nom_proyecto=nom_proyecto,nom_fase=nom_fase)
+
+#-------------------------------------------------------------------------------
 
     @validate({'id_tipo_item':Int(not_empty=True), 
 				'nombre_tipo_item':NotEmpty, 
                 'codigo_tipo_item':NotEmpty, 
-				#               'descripcion':NotEmpty
 				}, error_handler=eliminar_tipo_item)	
+
+#-------------------------------------------------------------------------------
 
     @expose()
     def post_delete(self, id_tipo_item, nombre_tipo_item, codigo_tipo_item,
@@ -235,11 +258,10 @@ class Tipo_ItemController(BaseController):
         campos2=Tipo_Campos.get_campos_by_tipo_item(id_tipo_item)
 
         for cam in campos2:
-            DBSession.delete(DBSession.query(Tipo_Campos).get
-                                (cam.id_tipo_campos))
+            Tipo_Campos.borrar_by_id(cam.id_tipo_campos)
             DBSession.flush()
 
-        DBSession.delete(DBSession.query(Tipo_Item).get(id_tipo_item))
+        Tipo_Item.borrar_by_id(id_tipo_item)
         DBSession.flush()
         flash("Tipo de Item eliminado!")
         redirect('/tipo_item/tipo_item')
@@ -250,13 +272,17 @@ class Tipo_ItemController(BaseController):
     def agregar_tipo_item(self, *args, **kw):
         nom_proyecto=Variables.get_valor_by_nombre("nombre_proyecto_actual")
         nom_fase=Variables.get_valor_by_nombre("nombre_fase_actual")
+
         return dict(pagina="agregar_tipo_item",values=kw,
                         nom_proyecto=nom_proyecto,nom_fase=nom_fase)
+
+#-------------------------------------------------------------------------------
     
     @validate({'nombre_tipo_item':NotEmpty, 
                 'codigo_tipo_item':NotEmpty, 
-				#'descripcion':NotEmpty
 				}, error_handler=agregar_tipo_item)
+
+#-------------------------------------------------------------------------------
 
     @expose()
     def post_tipo_item(self, nombre_tipo_item, codigo_tipo_item, descripcion,
@@ -264,6 +290,7 @@ class Tipo_ItemController(BaseController):
         tipo_item = Tipo_Item (nombre_tipo_item=nombre_tipo_item,
                                 codigo_tipo_item=codigo_tipo_item,
                                 descripcion=descripcion)
+
         DBSession.add(tipo_item)
 
         if campo is not None:
@@ -285,4 +312,4 @@ class Tipo_ItemController(BaseController):
 
         flash("Tipo Item Agregado!")  
         redirect('/tipo_item/tipo_item')
-
+#-------------------------------------------------------------------------------
