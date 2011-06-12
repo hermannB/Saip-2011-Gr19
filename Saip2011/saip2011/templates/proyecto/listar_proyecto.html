@@ -58,7 +58,7 @@
 		</td>
 		<td>${proyecto.nombre_proyecto}</td>
 		<td>${proyecto.lider_equipo}</td>
-		<td>${proyecto.tipos_fases}</td>
+		<td><a href="${tg.url('ver_fases?id_proyecto=%d' % proyecto.id_proyecto)}">ver fases</a></td>
 		<td>${proyecto.descripcion}</td>
       </tr>          
     </table>   

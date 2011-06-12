@@ -48,9 +48,11 @@ class FaseController(BaseController):
         Menu para Fases
         """
         nom_proyecto=Variables.get_valor_by_nombre("nombre_proyecto_actual")
+        nom_fase=Variables.get_valor_by_nombre("nombre_fase_actual")
         fases=Fase.get_fase_by_proyecto(int (Variables.get_valor_by_nombre
                                                 ("proyecto_actual")) )
-        return dict(pagina="listar_fase",fases=fases,nom_proyecto=nom_proyecto)
+        return dict(pagina="listar_fase",fases=fases,nom_proyecto=nom_proyecto
+                        ,nom_fase=nom_fase)
         #return dict(pagina="fase",nom_proyecto=nom_proyecto)
 
 ################################################################################
@@ -60,16 +62,20 @@ class FaseController(BaseController):
         """Lista fases 
         """
         nom_proyecto=Variables.get_valor_by_nombre("nombre_proyecto_actual")
+        nom_fase=Variables.get_valor_by_nombre("nombre_fase_actual")
         #fases = Fase.get_fase()
         fases=Fase.get_fase_by_proyecto(int (Variables.get_valor_by_nombre
                                                 ("proyecto_actual")) )
-        return dict(pagina="listar_fase",fases=fases,nom_proyecto=nom_proyecto)
+        return dict(pagina="listar_fase",fases=fases,nom_proyecto=nom_proyecto
+                        ,nom_fase=nom_fase)
 
-################################################################################
+
+ ################################################################################
 
     @expose('saip2011.templates.fase.editar_fase')
     def editar_fase(self,id_fase,*args, **kw):
         nom_proyecto=Variables.get_valor_by_nombre("nombre_proyecto_actual")
+        nom_fase=Variables.get_valor_by_nombre("nombre_fase_actual")
         tipos_fases = DBSession.query(Tipo_Fase).all()
         fase = DBSession.query(Fase).get(id_fase)
         tipos_items = DBSession.query(Tipo_Item).all()
@@ -89,7 +95,8 @@ class FaseController(BaseController):
 
         return dict(pagina="editar_fase",values=values,tipos_fases=tipos_fases,
                         tipos_items=tipos_items,tipos_items2=tipos_items2,
-                        id_tipo_fase=id_tipo_fase)
+                        id_tipo_fase=id_tipo_fase,nom_fase=nom_fase,
+                            nom_proyecto= nom_proyecto )
 
     @validate({'id_fase':Int(not_empty=True), 
                 'nombre_fase':NotEmpty, 
@@ -122,6 +129,7 @@ class FaseController(BaseController):
     @expose('saip2011.templates.fase.eliminar_fase')
     def eliminar_fase(self,id_fase, *args, **kw):
         nom_proyecto=Variables.get_valor_by_nombre("nombre_proyecto_actual")
+        nom_fase=Variables.get_valor_by_nombre("nombre_fase_actual")
         fase2 = DBSession.query(Fase).get(id_fase)	
         values = dict(id_fase=fase2.id_fase, 
                         nombre_fase=fase2.nombre_fase, 
@@ -131,7 +139,7 @@ class FaseController(BaseController):
                         )
 
         return dict(pagina="eliminar_fase",values=values,
-                        nom_proyecto=nom_proyecto)
+                        nom_proyecto=nom_proyecto,nom_fase=nom_fase)
 
     @validate({'id_fase':Int(not_empty=True), 
                 'nombre_fase':NotEmpty, 
@@ -153,10 +161,12 @@ class FaseController(BaseController):
     @expose('saip2011.templates.fase.agregar_fase')
     def agregar_fase(self, *args, **kw):
         nom_proyecto=Variables.get_valor_by_nombre("nombre_proyecto_actual")
+        nom_fase=Variables.get_valor_by_nombre("nombre_fase_actual")
         tipos_fases = DBSession.query(Tipo_Fase).all()
         tipos_items = DBSession.query(Tipo_Item).all()
         return dict(pagina="agregar_fase",values=kw, tipos_fases=tipos_fases,
-                        tipos_items=tipos_items,nom_proyecto=nom_proyecto)
+                        tipos_items=tipos_items,nom_proyecto=nom_proyecto
+                        ,nom_fase=nom_fase)
 
     @validate({'nombre_fase':NotEmpty, 
                 'id_tipo_fase':Int(not_empty=True), 
@@ -180,6 +190,7 @@ class FaseController(BaseController):
                     proyecto=0,orden=0)
   
         DBSession.add(fase)
+        DBSession.flush()
         flash("Fase agregada!")  
         redirect('/fase/fase')
 
@@ -187,11 +198,18 @@ class FaseController(BaseController):
   
     @expose('saip2011.templates.item.menu_item')
     def seleccionar_fase(self,id_fase,*kw,**args):
+        id_fase=int(id_fase)
         nom_proyecto=Variables.get_valor_by_nombre("nombre_proyecto_actual")
         proy_act=int (Variables.get_valor_by_nombre("proyecto_actual"))
+
         Variables.set_valor_by_nombre("fase_actual",id_fase)
+        fase=Fase.get_fase_by_id(id_fase)
+        Variables.set_valor_by_nombre("nombre_fase_actual",fase.nombre_fase)
+        nom_fase=Variables.get_valor_by_nombre("nombre_fase_actual")
+
         items = Item.get_item_proy_fase( proy_act, id_fase)
-        return dict(pagina="listar_item",items=items,nom_proyecto=nom_proyecto)
+        return dict(pagina="listar_item",items=items,nom_proyecto=nom_proyecto
+                        ,nom_fase=nom_fase)
 
         
   

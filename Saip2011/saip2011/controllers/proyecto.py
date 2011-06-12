@@ -50,6 +50,7 @@ class ProyectoController(BaseController):
         proyectos=""
 
         nom_proyecto=Variables.get_valor_by_nombre("nombre_proyecto_actual")
+        nom_fase=Variables.get_valor_by_nombre("nombre_fase_actual")
 
         usuario=Usuario.get_user_by_alias(request.identity['repoze.who.userid'])
         rol=usuario.roles[0]
@@ -68,7 +69,7 @@ class ProyectoController(BaseController):
                     proyectos.append(p)
 
         return dict(pagina="listar_proyecto",proyectos=proyectos,
-                        nom_proyecto=nom_proyecto)
+                        nom_proyecto=nom_proyecto,nom_fase=nom_fase)
 
 
 ################################################################################
@@ -77,18 +78,87 @@ class ProyectoController(BaseController):
     def listar_proyecto(self):
         """Lista proyectos 
         """
-        nom_proyecto=Variables.get_valor_by_nombre("nombre_proyecto_actual")		
+        nom_proyecto=Variables.get_valor_by_nombre("nombre_proyecto_actual")
+        nom_fase=Variables.get_valor_by_nombre("nombre_fase_actual")		
         proyectos = Proyecto.get_proyecto()
         return dict(pagina="listar_proyecto",proyectos=proyectos,
-                        nom_proyecto=nom_proyecto)
+                        nom_proyecto=nom_proyecto,nom_fase=nom_fase)
 
 ################################################################################
+
+    @expose('saip2011.templates.proyecto.listar_mis_fases')
+    def ver_fases(self,id_proyecto):
+        """Lista privilegios 
+        """
+        nom_proyecto=Variables.get_valor_by_nombre("nombre_proyecto_actual")
+        nom_fase=Variables.get_valor_by_nombre("nombre_fase_actual")
+        proyecto=Proyecto.get_proyecto_by_id(int(id_proyecto))
+        values = dict(id_proyecto=proyecto.id_proyecto, 
+				        nombre_proyecto=proyecto.nombre_proyecto, 
+				        descripcion=proyecto.descripcion
+				        )
+
+        fas = Fase.get_fase_by_proyecto(int (id_proyecto) )
+        fases = []
+        for f in fas:
+            fases.append(f)
+        return dict(pagina="listar_mis_fases",fases=fases,
+                        nom_proyecto=nom_proyecto,nom_fase=nom_fase,
+                        values=values)
+
+###############################################################################
+
+    @expose('saip2011.templates.proyecto.listar_mis_tipos_items')
+    def ver_tipos_items(self,id_fase):
+        """Lista privilegios 
+        """
+        nom_proyecto=Variables.get_valor_by_nombre("nombre_proyecto_actual")
+        nom_fase=Variables.get_valor_by_nombre("nombre_fase_actual")
+        fase=Fase.get_fase_by_id(int(id_fase))
+        values = dict(id_fase=fase.id_fase, 
+				        nombre_fase=fase.nombre_fase, 
+				        descripcion=fase.descripcion
+				        )
+
+        tipos =fase.tipos_items
+        tipos_items = []
+        for t in tipos:
+            tipos_items.append(t)
+        return dict(pagina="listar_mis_tipos_items",tipos_items=tipos_items,
+                        nom_proyecto=nom_proyecto,nom_fase=nom_fase,
+                        values=values)
+
+###############################################################################
+
+    @expose('saip2011.templates.proyecto.listar_mis_campos')
+    def ver_campos(self,id_tipo_item):
+        """Lista  
+        """
+        nom_proyecto=Variables.get_valor_by_nombre("nombre_proyecto_actual")
+        nom_fase=Variables.get_valor_by_nombre("nombre_fase_actual")
+        tipo_item=Tipo_Item.get_tipo_item_by_id(int(id_tipo_item))
+        values = dict(id_tipo_item=tipo_item.id_tipo_item, 
+				        nombre_tipo_item=tipo_item.nombre_tipo_item, 
+				        descripcion=tipo_item.descripcion
+				        )
+
+        camp =Tipo_Campos.get_campos_by_tipo_item(tipo_item.id_tipo_item)
+        campos = []
+        for c in camp:
+            campos.append(c)
+        return dict(pagina="listar_mis_campos",campos=campos,
+                        nom_proyecto=nom_proyecto,nom_fase=nom_fase,
+                        values=values)
+
+ ################################################################################
+
 
     @expose('saip2011.templates.proyecto.ingresar_proyecto')
     def ingresar_proyecto(self):
         """lista de los  proyectos del usuario
         """
-        nom_proyecto=Variables.get_valor_by_nombre("nombre_proyecto_actual")		
+        nom_proyecto=Variables.get_valor_by_nombre("nombre_proyecto_actual")	
+        nom_fase=Variables.get_valor_by_nombre("nombre_fase_actual")	
         usuario=Usuario.get_user_by_alias(request.identity['repoze.who.userid'])
         proy = Proyecto.get_proyecto()
         proyectos = []
@@ -100,7 +170,7 @@ class ProyectoController(BaseController):
                     proyectos.append(p)
 
         return dict(pagina="ingresar_proyecto",proyectos=proyectos,
-                    nom_proyecto=nom_proyecto)
+                    nom_proyecto=nom_proyecto,nom_fase=nom_fase)
 
     @expose()
     def ingresar(self,id_proyecto):
@@ -135,11 +205,13 @@ class ProyectoController(BaseController):
     @expose('saip2011.templates.proyecto.agregar_proyecto')
     def agregar_proyecto(self, *args, **kw):
         nom_proyecto=Variables.get_valor_by_nombre("nombre_proyecto_actual")
+        nom_fase=Variables.get_valor_by_nombre("nombre_fase_actual")
         usuarios = DBSession.query(Usuario).all()
         tipos_fases = DBSession.query(Tipo_Fase).all()	
 
         return dict(pagina="agregar_proyecto",values=kw, tipos_fases=tipos_fases,
-                         usuarios=usuarios,nom_proyecto=nom_proyecto)
+                         usuarios=usuarios,nom_proyecto=nom_proyecto
+                        ,nom_fase=nom_fase)
     
     @validate({'nombre_proyecto':NotEmpty, 
 				'idusuario':Int(not_empty=True), 
@@ -190,7 +262,7 @@ class ProyectoController(BaseController):
         DBSession.add(equipo)
         DBSession.flush()
         return dict(pagina="/fase/listar_fase", fases=fases,
-                            nom_proyecto=nom_proyecto)
+                            nom_proyecto=nom_proyecto,nom_fase=nom_fase)
         #flash("Proyecto Agregado!")  
         #redirect('/proyecto/proyecto')
 
@@ -199,6 +271,7 @@ class ProyectoController(BaseController):
     @expose('saip2011.templates.proyecto.editar_proyecto')
     def editar_proyecto(self, id_proyecto, *args, **kw):
         nom_proyecto=Variables.get_valor_by_nombre("nombre_proyecto_actual")
+        nom_fase=Variables.get_valor_by_nombre("nombre_fase_actual")
         usuarios = DBSession.query(Usuario).all()
         tipos_fases = DBSession.query(Tipo_Fase).all()
         proyecto = DBSession.query(Proyecto).get(id_proyecto)
@@ -218,7 +291,8 @@ class ProyectoController(BaseController):
         values.update(kw)
         return dict(pagina="editar_proyecto",values=values, usuarios=usuarios,
                      tipos_fases=tipos_fases, tipos_fases2=tipos_fases2,
-                    usuario2=usuario2, nom_proyecto=nom_proyecto)
+                    usuario2=usuario2, nom_proyecto=nom_proyecto,
+                    nom_fase=nom_fase)
 
     @validate({'id_proyecto':Int(not_empty=True), 
 				'nombre_proyecto':NotEmpty, 
@@ -278,13 +352,14 @@ class ProyectoController(BaseController):
         #redirect('/proyecto/proyecto')
         fases = Fase.get_fase_by_proyecto(proyecto.id_proyecto)
         return dict(pagina="/fase/listar_fase", fases=fases,
-                        nom_proyecto=nom_proyecto)
+                        nom_proyecto=nom_proyecto,nom_fase=nom_fase)
 
 ################################################################################
  
     @expose('saip2011.templates.proyecto.eliminar_proyecto')
     def eliminar_proyecto(self,id_proyecto, *args, **kw):
         nom_proyecto=Variables.get_valor_by_nombre("nombre_proyecto_actual")
+        nom_fase=Variables.get_valor_by_nombre("nombre_fase_actual")
         proyecto = DBSession.query(Proyecto).get(id_proyecto)	
 
         values = dict(id_proyecto=proyecto.id_proyecto, 
@@ -295,7 +370,7 @@ class ProyectoController(BaseController):
 						)
 
         return dict(pagina="eliminar_proyecto",values=values,
-                        nom_proyecto=nom_proyecto)
+                        nom_proyecto=nom_proyecto,nom_fase=nom_fase)
 
     @validate({'id_proyecto':Int(not_empty=True), 
 				'nombre_proyecto':NotEmpty, 
@@ -330,20 +405,22 @@ class ProyectoController(BaseController):
     @expose()
     def salir_proyecto(self):
         nom_proyecto=Variables.get_valor_by_nombre("nombre_proyecto_actual")
+        condicion=int (Variables.get_valor_by_nombre("rol_anterior"))
+        if condicion > 0:
+            usuario=Usuario.get_user_by_alias(request.identity['repoze.who.userid'])
 
-        usuario=Usuario.get_user_by_alias(request.identity['repoze.who.userid'])
-
-        Variables.set_valor_by_nombre("fase_actual",0)
-        Variables.set_valor_by_nombre("proyecto_actual",0)
-        Variables.set_valor_by_nombre("nombre_proyecto_actual","")
-        Variables.set_valor_by_nombre("usuario_actual","")
-        rol=int (Variables.get_valor_by_nombre("rol_anterior") )
-        Variables.set_valor_by_nombre("rol_actual",rol)
-        Variables.set_valor_by_nombre("rol_anterior",0)
-        rol2=Rol.get_roles_by_id(rol)
-        usuario.roles=[]
-        usuario.roles.append(rol2)
-        DBSession.flush()
+            Variables.set_valor_by_nombre("fase_actual",0)
+            Variables.set_valor_by_nombre("proyecto_actual",0)
+            Variables.set_valor_by_nombre("nombre_proyecto_actual","")
+            Variables.set_valor_by_nombre("nombre_fase_actual","")
+            Variables.set_valor_by_nombre("usuario_actual","")
+            rol=int (Variables.get_valor_by_nombre("rol_anterior") )
+            Variables.set_valor_by_nombre("rol_actual",rol)
+            Variables.set_valor_by_nombre("rol_anterior",0)
+            rol2=Rol.get_roles_by_id(rol)
+            usuario.roles=[]
+            usuario.roles.append(rol2)
+            DBSession.flush()
 
         redirect('/index')
 
@@ -352,6 +429,7 @@ class ProyectoController(BaseController):
     @expose('saip2011.templates.fase.seleccionar_tipo')
     def seleccionar_tipo(self,id_fase,*args, **kw):
         nom_proyecto=Variables.get_valor_by_nombre("nombre_proyecto_actual")
+        nom_fase=Variables.get_valor_by_nombre("nombre_fase_actual")
         fase = DBSession.query(Fase).get(id_fase)
         tipos_items = DBSession.query(Tipo_Item).all()
         
@@ -372,7 +450,7 @@ class ProyectoController(BaseController):
 
         return dict(pagina="seleccionar_tipo",values=values,
                         tipos_items=tipos_items,tipos_items2=tipos_items2,
-                        )
+                         nom_proyecto=nom_proyecto,nom_fase=nom_fase)
 
     @validate({'id_fase':Int(not_empty=True), 
                 'nombre_fase':NotEmpty, 

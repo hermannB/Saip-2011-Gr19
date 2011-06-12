@@ -441,6 +441,12 @@ def setup_app(command, conf, vars):
     var.nombre = u'fase_actual'
     var.valor = u'0'
     model.DBSession.add(var)
+
+    var = model.Variables()
+    var.nombre = u'nombre_fase_actual'
+    var.valor = u''
+    model.DBSession.add(var)
+
     
     var = model.Variables()
     var.nombre = u'proyecto_actual'

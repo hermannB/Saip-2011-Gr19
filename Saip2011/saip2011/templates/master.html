@@ -28,7 +28,7 @@
     	<td>Proyecto Actual </td>
     	<input type="textfield" readonly="readonly" name="user" value="" size="10"/>
     	<td>Fase Actual </td>
-    	<input type="textfield" readonly="readonly" name="user" value="" size="10"/>	
+    	<input type="textfield" readonly="readonly" name="user" value="" size="20"/>	
     </td>
     <td py:otherwise="">
     	<input type="textfield" readonly="readonly" name="user" value="${request.identity['repoze.who.userid']}" size="10"/>	
@@ -46,10 +46,10 @@
     	<td>Fase Actual </td>
     	<td py:choose="defined('nom_fase')">
     		<td py:when="True">
-    			<input type="textfield" readonly="readonly" name="proyuser" value="${nom_fase}" size="10"/>
+    			<input type="textfield" readonly="readonly" name="proyuser" value="${nom_fase}" size="20"/>
     		</td>
     		<td py:otherwise="">
-    			<input type="textfield" readonly="readonly" name="user" value="" size="10"/>
+    			<input type="textfield" readonly="readonly" name="user" value="" size="20"/>
     		</td>
     	</td>
     	
@@ -101,7 +101,14 @@
     <span py:if="tg.auth_stack_enabled" py:strip="True">
         <li py:if="not request.identity" id="login" class="loginlogout"><a href="${tg.url('/login')}">Entrar</a></li>
         <li py:if="request.identity" id="login" class="loginlogout"><a href="${tg.url('/logout_handler')}">Salir</a></li>
-        <li py:if="defined('nom_proyecto')" id="login" class="loginlogout"><a href="${tg.url('/proyecto/salir_proyecto')}">Salir_Proyecto</a></li>
+         <li py:if="defined('nom_proyecto')" id="login" class="loginlogout">
+            <div py:choose="len(nom_proyecto)" py:strip="True" id="salir_proyecto">
+                 <div class="salir_proyecto" py:when="0"></div>
+                 <div class="salir_proyecto" py:otherwise="">   
+                     <a href="${tg.url('/proyecto/salir_proyecto')}">Salir_Proyecto</a>
+                </div>
+            </div>
+        </li>
         	
         		
         

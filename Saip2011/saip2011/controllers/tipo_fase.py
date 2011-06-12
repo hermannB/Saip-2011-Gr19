@@ -48,9 +48,10 @@ class Tipo_FaseController(BaseController):
            Menu para Tipos de Fase
         """
         nom_proyecto=Variables.get_valor_by_nombre("nombre_proyecto_actual")
+        nom_fase=Variables.get_valor_by_nombre("nombre_fase_actual")
         tipos_fases = Tipo_Fase.get_tipo_fase()
         return dict(pagina="listar_tipo_fase",tipos_fases=tipos_fases,
-                        nom_proyecto=nom_proyecto)
+                        nom_proyecto=nom_proyecto,nom_fase=nom_fase)
         #return dict(pagina="tipo_fase")
 
  ################################################################################
@@ -59,6 +60,7 @@ class Tipo_FaseController(BaseController):
     @expose('saip2011.templates.tipo_fase.editar_tipo_fase')
     def editar_tipo_fase(self,id_tipo_fase,*args, **kw):
         nom_proyecto=Variables.get_valor_by_nombre("nombre_proyecto_actual")
+        nom_fase=Variables.get_valor_by_nombre("nombre_fase_actual")
         tipo_fase = DBSession.query(Tipo_Fase).get(id_tipo_fase)
         tipos_items = DBSession.query(Tipo_Item).all()
         tipos = tipo_fase.tipos_items
@@ -75,7 +77,7 @@ class Tipo_FaseController(BaseController):
         
         return dict(pagina="editar_tipo_fase",values=values,
                         tipos_items=tipos_items, nom_proyecto=nom_proyecto,
-                         tipos_items2=tipos_items2)
+                         tipos_items2=tipos_items2,nom_fase=nom_fase)
 
 
     @validate({'id_tipo_fase':Int(not_empty=True), 
@@ -108,9 +110,10 @@ class Tipo_FaseController(BaseController):
         """Lista tipos de fases 
         """
         nom_proyecto=Variables.get_valor_by_nombre("nombre_proyecto_actual")
+        nom_fase=Variables.get_valor_by_nombre("nombre_fase_actual")
         tipos_fases = Tipo_Fase.get_tipo_fase()
         return dict(pagina="listar_tipo_fase",tipos_fases=tipos_fases,
-                        nom_proyecto=nom_proyecto)
+                        nom_proyecto=nom_proyecto,nom_fase=nom_fase)
 
  ################################################################################
 
@@ -118,6 +121,7 @@ class Tipo_FaseController(BaseController):
     @expose('saip2011.templates.tipo_fase.eliminar_tipo_fase')
     def eliminar_tipo_fase(self,id_tipo_fase, *args, **kw):
         nom_proyecto=Variables.get_valor_by_nombre("nombre_proyecto_actual")
+        nom_fase=Variables.get_valor_by_nombre("nombre_fase_actual")
         tipo_fase = DBSession.query(Tipo_Fase).get(id_tipo_fase)	
         values = dict(id_tipo_fase=tipo_fase.id_tipo_fase, 
 						nombre_tipo_fase=tipo_fase.nombre_tipo_fase, 
@@ -125,7 +129,7 @@ class Tipo_FaseController(BaseController):
 						)
 
         return dict(pagina="eliminar_tipo_fase",values=values,
-                        nom_proyecto=nom_proyecto)
+                        nom_proyecto=nom_proyecto,nom_fase=nom_fase)
 
     @validate({'id_tipo_fase':Int(not_empty=True), 
 				'nombre_tipo_fase':NotEmpty, 
@@ -146,9 +150,11 @@ class Tipo_FaseController(BaseController):
     @expose('saip2011.templates.tipo_fase.agregar_tipo_fase')
     def agregar_tipo_fase(self,*args, **kw):
         nom_proyecto=Variables.get_valor_by_nombre("nombre_proyecto_actual")
+        nom_fase=Variables.get_valor_by_nombre("nombre_fase_actual")
         tipos_items = DBSession.query(Tipo_Item).all()
         return dict(pagina='agregar_tipo_fase',nom_proyecto=nom_proyecto,       
-                            values=kw,tipos_items = tipos_items)
+                            values=kw,tipos_items = tipos_items,
+                            nom_fase=nom_fase)
 
     @validate({'nombre_tipo_fase':NotEmpty, 
                  #		'descripcion':NotEmpty

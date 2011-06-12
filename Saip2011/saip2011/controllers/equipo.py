@@ -47,10 +47,11 @@ class EquipoController(BaseController):
         Menu para Equipo de Desarrollo
         """
         nom_proyecto=Variables.get_valor_by_nombre("nombre_proyecto_actual")
+        nom_fase=Variables.get_valor_by_nombre("nombre_fase_actual")
         valor=int( Variables.get_valor_by_nombre("proyecto_actual"))
         equipos =  Equipo_Desarrollo.get_miembros_by_proyecto(valor)
         return dict(pagina="listar_miembro",equipos=equipos,
-                        nom_proyecto=nom_proyecto)
+                        nom_proyecto=nom_proyecto,nom_fase=nom_fase)
         #return dict(pagina="equipo",nom_proyecto=nom_proyecto)
 
 ################################################################################
@@ -60,23 +61,26 @@ class EquipoController(BaseController):
         """Lista equipos 
         """
         nom_proyecto=Variables.get_valor_by_nombre("nombre_proyecto_actual")
+        nom_fase=Variables.get_valor_by_nombre("nombre_fase_actual")
         valor=int( Variables.get_valor_by_nombre("proyecto_actual"))
         equipos =  Equipo_Desarrollo.get_miembros_by_proyecto(valor)
         return dict(pagina="listar_miembro",equipos=equipos,
-                        nom_proyecto=nom_proyecto)
+                        nom_proyecto=nom_proyecto,nom_fase=nom_fase)
 
 ################################################################################
 
     @expose('saip2011.templates.miembro.agregar_miembro')
     def agregar_miembro(self, *args, **kw):
         nom_proyecto=Variables.get_valor_by_nombre("nombre_proyecto_actual")
+        nom_fase=Variables.get_valor_by_nombre("nombre_fase_actual")
         roles = DBSession.query(Rol).all()
         usuarios = DBSession.query(Usuario).all()	
         proy=int(Variables.get_valor_by_nombre("proyecto_actual") )
         fases = Fase.get_fase_by_proyecto(proy)
 
         return dict(pagina="agregar_miembro",values=kw, roles=roles,
-                     usuarios=usuarios, fases=fases,nom_proyecto=nom_proyecto)
+                     usuarios=usuarios, fases=fases,nom_proyecto=nom_proyecto
+                     ,nom_fase=nom_fase)
     
     @validate({'idusuario':Int(not_empty=True),
 				'fases':NotEmpty,
@@ -112,7 +116,8 @@ class EquipoController(BaseController):
 
     @expose('saip2011.templates.miembro.editar_miembro')
     def editar_miembro(self, id_equipo, *args, **kw):
-        nom_proyecto=Variables.get_valor_by_nombre("nombre_proyecto_actual")      
+        nom_proyecto=Variables.get_valor_by_nombre("nombre_proyecto_actual")
+        nom_fase=Variables.get_valor_by_nombre("nombre_fase_actual")      
         usuarios = DBSession.query(Usuario).all()
         roles = DBSession.query(Rol).all()
         equipo = DBSession.query(Equipo_Desarrollo).get(id_equipo)
@@ -135,7 +140,7 @@ class EquipoController(BaseController):
 
         return dict(values=values, usuarios=usuarios, roles=roles , 
                         usuario2=usuario2, rol2=rol2,fases2=fases2, fases=fases,
-                        nom_proyecto=nom_proyecto)
+                        nom_proyecto=nom_proyecto,nom_fase=nom_fase)
 
     @validate({'idusuario':Int(not_empty=True),
 				'fases':NotEmpty,
@@ -168,6 +173,7 @@ class EquipoController(BaseController):
     @expose('saip2011.templates.miembro.eliminar_miembro')
     def eliminar_miembro(self,id_equipo, *args, **kw):
         nom_proyecto=Variables.get_valor_by_nombre("nombre_proyecto_actual")
+        nom_fase=Variables.get_valor_by_nombre("nombre_fase_actual")
         equipo = DBSession.query(Equipo_Desarrollo).get(id_equipo)	
 
         values = dict(id_equipo=equipo.id_equipo, 
@@ -176,7 +182,7 @@ class EquipoController(BaseController):
                       )
 
         return dict(pagina="eliminar_miembro",values=values,
-                        nom_proyecto=nom_proyecto)
+                        nom_proyecto=nom_proyecto,nom_fase=nom_fase)
 
     @validate({'nombre_usuario':NotEmpty,
 		'nombre_rol':NotEmpty}, error_handler=eliminar_miembro)

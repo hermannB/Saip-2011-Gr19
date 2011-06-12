@@ -14,7 +14,7 @@
 emails=0;
 function agregar() {
 	emails=emails+1;
-	$("#campos").append('<li class="campo'+emails+'"><input type="text" name="campo" size="25" />&nbsp;&nbsp;<a href="#" onclick="javascript:borrar('+emails+');">Borrar</a></li>');
+	$("#campos").append('<li class="campo'+emails+'"><input type="text" name="campo" size="25" /><select name="valor"><option value="numerico" >Numerico</option><option value="alfanumerico" >Alfanumerico</option><option value="fecha" >Fecha</option></select>&nbsp;&nbsp;<a href="#" onclick="javascript:borrar('+emails+');">Borrar</a></li>');
 }
 function borrar(cual) {
 	$("li.campo"+cual).remove();
@@ -40,7 +40,7 @@ function borrar(cual) {
         <tr><td>Campos</td>
             <td><div id="campo">
         	<div id="campos"> 
-			    <li><input type="text" name="campo" size="25" />&nbsp;&nbsp;<a href="javascript:agregar();">Agregar</a></li> 
+			    <li><input type="text" name="campo" size="25" /><select name="valor"><option value="numerico" >Numerico</option><option value="alfanumerico" >Alfanumerico</option><option value="fecha" >Fecha</option></select>&nbsp;&nbsp;<a href="javascript:agregar();">Agregar</a></li> 
 		    </div></div>
             </td></tr>
 	<td></td>

@@ -36,6 +36,8 @@ class Tipo_Campos (DeclarativeBase):
     id_tipo_item = Column(Integer)
     
     nombre_campo =Column(Unicode(50),  nullable=False)
+
+    valor_campo =Column(Unicode(50),  nullable=False)
    
    
     

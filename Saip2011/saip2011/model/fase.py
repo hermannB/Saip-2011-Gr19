@@ -23,71 +23,82 @@ __all__ = ['Fase']
 
 
 class Fase(DeclarativeBase):
-	"""
-	Definicion de Fase.
+    """
+    Definicion de Fase.
 
-	"""
+    """
 
-	__tablename__ = 'Tabla_Fase'
+    __tablename__ = 'Tabla_Fase'
 
-	#{ Columns
+    #{ Columns
 
-	id_fase = Column(Integer, autoincrement=True, primary_key=True)
+    id_fase = Column(Integer, autoincrement=True, primary_key=True)
 
-	nombre_fase = Column(Unicode(50), nullable=False)
+    nombre_fase = Column(Unicode(50), nullable=False)
 
-	id_tipo_fase = Column(Integer, ForeignKey('Tabla_Tipo_Fase.id_tipo_fase'))
+    id_tipo_fase = Column(Integer, ForeignKey('Tabla_Tipo_Fase.id_tipo_fase'))
 
-	nombre_tipo_fase = relation('Tipo_Fase', backref='Fase')
+    nombre_tipo_fase = relation('Tipo_Fase', backref='Fase')
 
-	estado = Column(Unicode(50), nullable=False)
+    estado = Column(Unicode(50), nullable=False)
 
-	proyecto = Column(Integer, nullable=False)
+    proyecto = Column(Integer, nullable=False)
 
-	orden = Column(Integer)
+    orden = Column(Integer)
 
-	linea_base =Column (Unicode(50), nullable=False)
+    linea_base =Column (Unicode(50), nullable=False)
 
-	descripcion = Column(Text)
+    descripcion = Column(Text)
 
-	equipo = relation(Equipo_Desarrollo, secondary=equipo_fases_tabla,
-		              backref='fases')
+    equipo = relation(Equipo_Desarrollo, secondary=equipo_fases_tabla,
+	                  backref='fases')
 
-	tipos_items = relation(Tipo_Item, secondary=fase_tipo_item_tabla,
-		              backref='fases')
+    tipos_items = relation(Tipo_Item, secondary=fase_tipo_item_tabla,
+	                  backref='fases')
 
-	#{ Special methods
+    #{ Special methods
 
-	def __repr__(self):
-		return '<Fase: Nombre=%s>' % self.nombre_fase
-	
-	def __unicode__(self):
-		return self.nombre_fase
+    def __repr__(self):
+	    return '<Fase: Nombre=%s>' % self.nombre_fase
+
+    def __unicode__(self):
+	    return self.nombre_fase
        
-	@classmethod
-	def get_fase(self):
-		"""
-		Obtiene la lista de todos los usuarios
-		registrados en el sistema
-		"""
+    @classmethod
+    def get_fase(self):
+        """
+        Obtiene la lista de todos los usuarios
+        registrados en el sistema
+        """
 
-		fases = DBSession.query(Fase).all()
-		    
-		return fases
+        fases = DBSession.query(Fase).all()
+            
+        return fases
 
-	@classmethod
-	def get_fase_by_proyecto(self,id_proyecto):
-		"""
-		Obtiene la lista de todos los usuarios
-		registrados en el sistema
-		"""
-		fases = DBSession.query(Fase).all()
-		lista=[]
-		for	fase in fases:
-			if fase.proyecto == id_proyecto:
-				lista.append(fase)
+    @classmethod
+    def get_fase_by_id(self,fase_id):
+        """
+        Obtiene la lista de todos los usuarios
+        registrados en el sistema
+        """
+        fases = DBSession.query(Fase).all()
+        for fase in fases:
+            if fase.id_fase == fase_id:
+	            return fase
 
-		return lista
+    @classmethod
+    def get_fase_by_proyecto(self,id_proyecto):
+        """
+        Obtiene la lista de todos los usuarios
+        registrados en el sistema
+        """
+        fases = DBSession.query(Fase).all()
+        lista=[]
+        for	fase in fases:
+	        if fase.proyecto == id_proyecto:
+		        lista.append(fase)
+
+        return lista
 	
 
 	#}

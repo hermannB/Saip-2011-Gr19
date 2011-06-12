@@ -92,9 +92,10 @@ class RootController(BaseController):
         redirije a la pagina de login   
         """
         nom_proyecto=Variables.get_valor_by_nombre("nombre_proyecto_actual")
+        nom_fase=Variables.get_valor_by_nombre("nombre_fase_actual")
         if not request.identity:
             redirect(url('/login', came_from=url('/')))
-        return dict(pagina='index',nom_proyecto=nom_proyecto)
+        return dict(pagina='index',nom_proyecto=nom_proyecto,nom_fase=nom_fase)
 
     @expose('saip2011.templates.about')
     def nosotros(self):
@@ -158,6 +159,24 @@ class RootController(BaseController):
         goodbye as well.
 
         """
+        condicion=int (Variables.get_valor_by_nombre("rol_anterior"))
+        if condicion > 0:
+            usuario=Usuario.get_user_by_alias(
+                     Variables.get_valor_by_nombre("usuario_actual"))
+
+            Variables.set_valor_by_nombre("fase_actual",0)
+            Variables.set_valor_by_nombre("proyecto_actual",0)
+            Variables.set_valor_by_nombre("nombre_proyecto_actual","")
+            Variables.set_valor_by_nombre("nombre_fase_actual","")
+            Variables.set_valor_by_nombre("usuario_actual","")
+            rol=int (Variables.get_valor_by_nombre("rol_anterior") )
+            Variables.set_valor_by_nombre("rol_actual",0)
+            Variables.set_valor_by_nombre("rol_anterior",0)
+            rol2=Rol.get_roles_by_id(rol)
+            usuario.roles=[]
+            usuario.roles.append(rol2)
+            DBSession.flush()
+
         flash(_('Hasta luego!') )
         redirect('/')
 
@@ -169,7 +188,8 @@ class RootController(BaseController):
         Menu para USUARIO
         """
         nom_proyecto=Variables.get_valor_by_nombre("nombre_proyecto_actual")
-        return dict(pagina="usuario",nom_proyecto=nom_proyecto)
+        nom_fase=Variables.get_valor_by_nombre("nombre_fase_actual")
+        return dict(pagina="usuario",nom_proyecto=nom_proyecto,nom_fase=nom_fase)
 
  ################################################################################
 
@@ -180,7 +200,9 @@ class RootController(BaseController):
            modificar el pass
         """
         nom_proyecto=Variables.get_valor_by_nombre("nombre_proyecto_actual")
-        return dict(pagina="cambiar_password",nom_proyecto=nom_proyecto)
+        nom_fase=Variables.get_valor_by_nombre("nombre_fase_actual")
+        return dict(pagina="cambiar_password",nom_proyecto=nom_proyecto
+                    ,nom_fase=nom_fase)
 
     @expose()
     def post_cambiar_password(self,clave,clave2,cancel=False):
@@ -202,6 +224,7 @@ class RootController(BaseController):
     @expose('saip2011.templates.usuario.editar_usuario')
     def editar_usuario(self,idusuario,cancel=False,*args, **kw):
         nom_proyecto=Variables.get_valor_by_nombre("nombre_proyecto_actual")
+        nom_fase=Variables.get_valor_by_nombre("nombre_fase_actual")
         usuario = DBSession.query(Usuario).get(idusuario)
 
         if cancel:
@@ -219,7 +242,7 @@ class RootController(BaseController):
 					email_address=usuario.email_address,
 					)
         return dict(pagina="editar_usuario",values=values,
-                        nom_proyecto=nom_proyecto)
+                        nom_proyecto=nom_proyecto,nom_fase=nom_fase)
 
     @validate({'idusuario':NotEmpty, 
 				'alias':NotEmpty, 
@@ -257,15 +280,17 @@ class RootController(BaseController):
         """Lista usuarios 
         """
         nom_proyecto=Variables.get_valor_by_nombre("nombre_proyecto_actual")
+        nom_fase=Variables.get_valor_by_nombre("nombre_fase_actual")
         usuarios = Usuario.get_usuarios()
         return dict(pagina="listar_usuario",usuarios=usuarios,
-                        nom_proyecto=nom_proyecto)
+                        nom_proyecto=nom_proyecto,nom_fase=nom_fase)
 
  ################################################################################
 
     @expose('saip2011.templates.usuario.eliminar_usuario')
     def eliminar_usuario(self,idusuario, *args, **kw):
-        nom_proyecto=Variables.get_valor_by_nombre("nombre_proyecto_actual")	
+        nom_proyecto=Variables.get_valor_by_nombre("nombre_proyecto_actual")
+        nom_fase=Variables.get_valor_by_nombre("nombre_fase_actual")	
         usuario = DBSession.query(Usuario).get(idusuario)	
 
         values = dict(idusuario=usuario.idusuario, 
@@ -279,7 +304,7 @@ class RootController(BaseController):
 						)
 
         return dict(pagina="eliminar_usuario",values=values,
-                        nom_proyecto=nom_proyecto)
+                        nom_proyecto=nom_proyecto,nom_fase=nom_fase)
 
     @validate({'idusuario':NotEmpty, 
 				'alias':NotEmpty, 
@@ -303,6 +328,7 @@ class RootController(BaseController):
     @expose('saip2011.templates.usuario.agregar_usuario')
     def agregar_usuario(self,cancel=False,**data):
         nom_proyecto=Variables.get_valor_by_nombre("nombre_proyecto_actual")
+        nom_fase=Variables.get_valor_by_nombre("nombre_fase_actual")
         errors = {}
         usuario = None
         if request.method == 'POST':
@@ -342,7 +368,7 @@ class RootController(BaseController):
         else:
             errors = {}        
             return dict(pagina='usuarios',data=data.get('alias'),errors=errors,
-                                nom_proyecto=nom_proyecto)
+                                nom_proyecto=nom_proyecto,nom_fase=nom_fase)
 
  ################################################################################
  ################################################################################
@@ -353,8 +379,10 @@ class RootController(BaseController):
         Menu para Rol
         """
         nom_proyecto=Variables.get_valor_by_nombre("nombre_proyecto_actual")
+        nom_fase=Variables.get_valor_by_nombre("nombre_fase_actual")
         roles = Rol.get_roles()
-        return dict(pagina="listar_rol",roles=roles,nom_proyecto=nom_proyecto)
+        return dict(pagina="listar_rol",roles=roles,nom_proyecto=nom_proyecto
+                        ,nom_fase=nom_fase)
         #return dict(pagina="rol",nom_proyecto=nom_proyecto)
 
  ################################################################################
@@ -362,6 +390,7 @@ class RootController(BaseController):
     @expose('saip2011.templates.rol.editar_rol')
     def editar_rol(self, idrol, *args, **kw):
         nom_proyecto=Variables.get_valor_by_nombre("nombre_proyecto_actual")
+        nom_fase=Variables.get_valor_by_nombre("nombre_fase_actual")
         privilegios = DBSession.query(Privilegios).all()
         rol = DBSession.query(Rol).get(idrol)
         priv = rol.privilegios
@@ -379,7 +408,8 @@ class RootController(BaseController):
 
         values.update(kw)
         return dict(pagina="editar_rol",values=values,  privilegios=privilegios ,
-                         privilegios2=privilegios2,nom_proyecto=nom_proyecto)
+                         privilegios2=privilegios2,nom_proyecto=nom_proyecto
+                        ,nom_fase=nom_fase)
 
     @validate({'idrol':Int(not_empty=True), 
 				'nombrerol':NotEmpty, 
@@ -391,8 +421,8 @@ class RootController(BaseController):
         rol = DBSession.query(Rol).get(idrol)
         if not isinstance(privilegios, list):
             privilegios = [privilegios]
-        privilegios = [DBSession.query(Privilegios).get(privilegio) for privilegio
-                         in privilegios]
+        privilegios = [DBSession.query(Privilegios).get(privilegio) for 
+                            privilegio in privilegios]
         rol.nombrerol=nombrerol
         rol.descripcion = descripcion
         rol.privilegios = privilegios
@@ -408,14 +438,39 @@ class RootController(BaseController):
         """Lista Roles 
         """
         nom_proyecto=Variables.get_valor_by_nombre("nombre_proyecto_actual")
+        nom_fase=Variables.get_valor_by_nombre("nombre_fase_actual")
         roles = Rol.get_roles()
-        return dict(pagina="listar_rol",roles=roles,nom_proyecto=nom_proyecto)
+        return dict(pagina="listar_rol",roles=roles,nom_proyecto=nom_proyecto
+                    ,nom_fase=nom_fase)
+
+################################################################################
+
+    @expose('saip2011.templates.rol.listar_mis_privilegios')
+    def ver_privilegios(self,idrol):
+        """Lista privilegios 
+        """
+        nom_proyecto=Variables.get_valor_by_nombre("nombre_proyecto_actual")
+        nom_fase=Variables.get_valor_by_nombre("nombre_fase_actual")
+        rol=Rol.get_roles_by_id(int(idrol))
+        values = dict(idrol=rol.idrol, 
+				        nombrerol=rol.nombrerol, 
+				        descripcion=rol.descripcion
+				        )
+
+        priv = rol.privilegios
+        privilegios = []
+        for p in priv:
+            privilegios.append(p)
+        return dict(pagina="listar_mis_privilegios",privilegios=privilegios,
+                        nom_proyecto=nom_proyecto,nom_fase=nom_fase,
+                        values=values)
 
  ################################################################################
 
     @expose('saip2011.templates.rol.eliminar_rol')
     def eliminar_rol(self,idrol, *args, **kw):
         nom_proyecto=Variables.get_valor_by_nombre("nombre_proyecto_actual")
+        nom_fase=Variables.get_valor_by_nombre("nombre_fase_actual")
         rol = DBSession.query(Rol).get(idrol)	
         values = dict(idrol=rol.idrol, 
 						nombrerol=rol.nombrerol, 
@@ -424,7 +479,7 @@ class RootController(BaseController):
 						)
 
         return dict(pagina="eliminar_rol",values=values,
-                        nom_proyecto=nom_proyecto)
+                        nom_proyecto=nom_proyecto,nom_fase=nom_fase)
 
     @validate({'idrol':NotEmpty, 
 				'nombrerol':NotEmpty, 
@@ -438,13 +493,16 @@ class RootController(BaseController):
         flash("Rol eliminado!")
         redirect('/rol')
 
+ ################################################################################
+
     @expose('saip2011.templates.rol.agregar_rol')
     def agregar_rol(self, *args, **kw):
         nom_proyecto=Variables.get_valor_by_nombre("nombre_proyecto_actual")
+        nom_fase=Variables.get_valor_by_nombre("nombre_fase_actual")
         privilegios = DBSession.query(Privilegios).all()
 
         return dict(pagina="agregar_rol",values=kw, privilegios=privilegios,
-                        nom_proyecto=nom_proyecto)
+                        nom_proyecto=nom_proyecto,nom_fase=nom_fase)
 
     @validate({'nombrerol':NotEmpty, 
 			#'descripcion':NotEmpty
@@ -474,9 +532,10 @@ class RootController(BaseController):
         Menu para Privilegio
         """
         nom_proyecto=Variables.get_valor_by_nombre("nombre_proyecto_actual")
+        nom_fase=Variables.get_valor_by_nombre("nombre_fase_actual")
         privilegios = Privilegios.get_privilegio()
         return dict(pagina="listar_privilegio",privilegios=privilegios,
-                        nom_proyecto=nom_proyecto)
+                        nom_proyecto=nom_proyecto,nom_fase=nom_fase)
         #return dict(pagina="privilegenres = DBSession.query(Genre).all()gio",
          #               nom_proyecto=nom_proyecto)
 
@@ -485,6 +544,7 @@ class RootController(BaseController):
     @expose('saip2011.templates.privilegio.editar_privilegio')
     def editar_privilegio(self,idprivilegio,*args, **kw):
         nom_proyecto=Variables.get_valor_by_nombre("nombre_proyecto_actual")
+        nom_fase=Variables.get_valor_by_nombre("nombre_fase_actual")
         privilegio = DBSession.query(Privilegios).get(idprivilegio)
         if request.method != 'PUT':  
             values = dict(idprivilegio=privilegio.idprivilegio, 
@@ -493,7 +553,7 @@ class RootController(BaseController):
 					        )
 
         return dict(pagina="editar_privilegio",values=values,
-                nom_proyecto=nom_proyecto)
+                nom_proyecto=nom_proyecto,nom_fase=nom_fase)
 
     @validate({'idprivilegio':Int(not_empty=True), 
 				'nombreprivilegio':NotEmpty, 
@@ -515,15 +575,17 @@ class RootController(BaseController):
         """Lista privilegios 
         """
         nom_proyecto=Variables.get_valor_by_nombre("nombre_proyecto_actual")
+        nom_fase=Variables.get_valor_by_nombre("nombre_fase_actual")
         privilegios = Privilegios.get_privilegio()
         return dict(pagina="listar_privilegio",privilegios=privilegios,
-                        nom_proyecto=nom_proyecto)
+                        nom_proyecto=nom_proyecto,nom_fase=nom_fase)
 
  ################################################################################
 
     @expose('saip2011.templates.privilegio.eliminar_privilegio')
     def eliminar_privilegio(self,idprivilegio, *args, **kw):
         nom_proyecto=Variables.get_valor_by_nombre("nombre_proyecto_actual")
+        nom_fase=Variables.get_valor_by_nombre("nombre_fase_actual")
         privilegio = DBSession.query(Privilegios).get(idprivilegio)	
         values = dict(idprivilegio=privilegio.idprivilegio, 
 					nombreprivilegio=privilegio.nombreprivilegio, 
@@ -531,7 +593,7 @@ class RootController(BaseController):
 					)
 
         return dict(pagina="eliminar_privilegio",values=values,
-                        nom_proyecto=nom_proyecto)
+                        nom_proyecto=nom_proyecto,nom_fase=nom_fase)
 
     @validate({'idprivilegio':Int(not_empty=True), 
 				'nombreprivilegio':NotEmpty, 
@@ -551,6 +613,7 @@ class RootController(BaseController):
     @expose('saip2011.templates.privilegio.agregar_privilegio')
     def agregar_privilegio(self,cancel=False,**data):
         nom_proyecto=Variables.get_valor_by_nombre("nombre_proyecto_actual")
+        nom_fase=Variables.get_valor_by_nombre("nombre_fase_actual")
         errors = {}
         privilegio = None
         if request.method == 'POST':
@@ -580,7 +643,7 @@ class RootController(BaseController):
             errors = {}        
             return dict(pagina='agregar_privilegio',
                             data=data.get('nombreprivilegio'),errors=errors,
-                            nom_proyecto=nom_proyecto)
+                            nom_proyecto=nom_proyecto,nom_fase=nom_fase)
 
  ################################################################################
 

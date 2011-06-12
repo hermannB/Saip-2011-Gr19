@@ -48,28 +48,34 @@ class ItemController(BaseController):
         Menu para Item
         """
         nom_proyecto=Variables.get_valor_by_nombre("nombre_proyecto_actual")
+        nom_fase=Variables.get_valor_by_nombre("nombre_fase_actual")
         fases=Fase.get_fase_by_proyecto(int (Variables.get_valor_by_nombre
                                                 ("proyecto_actual")) )
         
-        return dict(pagina="listar_fase",fases=fases,nom_proyecto=nom_proyecto)
+        return dict(pagina="listar_fase",fases=fases,nom_proyecto=nom_proyecto
+                    ,nom_fase=nom_fase)
 
 ################################################################################
         
     @expose('saip2011.templates.item.listar_item')
     def listar_item_activos (self):
         nom_proyecto=Variables.get_valor_by_nombre("nombre_proyecto_actual")
+        nom_fase=Variables.get_valor_by_nombre("nombre_fase_actual")
         id_fase=int(Variables.get_valor_by_nombre("fase_actual"))
         items = Item.get_item_activados_by_fase(id_fase)
-        return dict(pagina="listar_item",items=items,nom_proyecto=nom_proyecto)
+        return dict(pagina="listar_item",items=items,nom_proyecto=nom_proyecto
+                    ,nom_fase=nom_fase)
 
 ################################################################################
 
     @expose('saip2011.templates.item.historial')
     def historial (self, id_item):
         nom_proyecto=Variables.get_valor_by_nombre("nombre_proyecto_actual")
+        nom_fase=Variables.get_valor_by_nombre("nombre_fase_actual")
         id_fase=int(Variables.get_valor_by_nombre("fase_actual"))
         items = Item.get_historial(id_item)
-        return dict(pagina="historial",items=items,nom_proyecto=nom_proyecto)
+        return dict(pagina="historial",items=items,nom_proyecto=nom_proyecto
+                    ,nom_fase=nom_fase)
 
 ################################################################################
 
@@ -78,16 +84,18 @@ class ItemController(BaseController):
         """Lista de item 
         """
         nom_proyecto=Variables.get_valor_by_nombre("nombre_proyecto_actual")
+        nom_fase=Variables.get_valor_by_nombre("nombre_fase_actual")
         id_fase=int(Variables.get_valor_by_nombre("fase_actual"))
         items = Item.get_item_eliminados_by_fase(id_fase)
         return dict(pagina="listar_item eliminados",items=items,
-                        nom_proyecto=nom_proyecto)
+                        nom_proyecto=nom_proyecto,nom_fase=nom_fase)
 
 ################################################################################
 
     @expose('saip2011.templates.item.editar_item')
     def editar_item(self,id_item,*args, **kw):
         nom_proyecto=Variables.get_valor_by_nombre("nombre_proyecto_actual")
+        nom_fase=Variables.get_valor_by_nombre("nombre_fase_actual")
         item = DBSession.query(Item).get(id_item)
         if request.method != 'PUT':  
             values = dict(id_item=item.id_item, 
@@ -106,7 +114,7 @@ class ItemController(BaseController):
             adjuntos2.append(archivo)
 
         return dict(pagina="editar_item",values=values,adjuntos2=adjuntos2,
-                        nom_proyecto=nom_proyecto)
+                        nom_proyecto=nom_proyecto,nom_fase=nom_fase)
 
     @validate({'id_item':Int(not_empty=True),
 				'nombre_item':NotEmpty,
@@ -142,6 +150,7 @@ class ItemController(BaseController):
     @expose('saip2011.templates.item.eliminar_item')
     def eliminar_item(self,id_item, *args, **kw):
         nom_proyecto=Variables.get_valor_by_nombre("nombre_proyecto_actual")
+        nom_fase=Variables.get_valor_by_nombre("nombre_fase_actual")
         item = DBSession.query(Item).get(id_item)	
         values = dict(id_item=item.id_item, 
 						nombre_item=item.nombre_item,
@@ -152,7 +161,7 @@ class ItemController(BaseController):
 						)
 
         return dict(pagina="eliminar_item",values=values,
-                        nom_proyecto=nom_proyecto)
+                        nom_proyecto=nom_proyecto,nom_fase=nom_fase)
 
     @validate({'id_item':Int(not_empty=True),
 				'nombre_item':NotEmpty, 
@@ -176,6 +185,7 @@ class ItemController(BaseController):
     @expose('saip2011.templates.item.revivir_item')
     def revivir_item(self,id_item, *args, **kw):
         nom_proyecto=Variables.get_valor_by_nombre("nombre_proyecto_actual")
+        nom_fase=Variables.get_valor_by_nombre("nombre_fase_actual")
         item = DBSession.query(Item).get(id_item)	
         values = dict(id_item=item.id_item, 
 						nombre_item=item.nombre_item,
@@ -186,7 +196,7 @@ class ItemController(BaseController):
 						)
 
         return dict(pagina="revivir_item",values=values,
-                        nom_proyecto=nom_proyecto)
+                        nom_proyecto=nom_proyecto,nom_fase=nom_fase)
 
     @validate({'id_item':Int(not_empty=True),
 				'nombre_item':NotEmpty,
@@ -209,6 +219,7 @@ class ItemController(BaseController):
     @expose('saip2011.templates.item.recuperar_item')
     def recuperar_item(self,id_item, *args, **kw):
         nom_proyecto=Variables.get_valor_by_nombre("nombre_proyecto_actual")
+        nom_fase=Variables.get_valor_by_nombre("nombre_fase_actual")
         item = DBSession.query(Item).get(id_item)	
         values = dict(id_item=item.id_item, 
 						nombre_item=item.nombre_item,
@@ -219,7 +230,7 @@ class ItemController(BaseController):
 						)
 
         return dict(pagina="recuperar_item",values=values,
-                        nom_proyecto=nom_proyecto)
+                        nom_proyecto=nom_proyecto,nom_fase=nom_fase)
 
     @validate({'id_item':Int(not_empty=True),
 				'nombre_item':NotEmpty,
@@ -255,11 +266,14 @@ class ItemController(BaseController):
 
     @expose('saip2011.templates.item.agregar_item')
     def agregar_item(self, *args, **kw):
+        nom_fase=Variables.get_valor_by_nombre("nombre_fase_actual")
+        nom_proyecto=Variables.get_valor_by_nombre("nombre_proyecto_actual")
         id_fase=int(Variables.get_valor_by_nombre("fase_actual"))
     
         fase = DBSession.query(Fase).get(id_fase)	
         tipos_items=fase.tipos_items
-        return dict(pagina="agregar_item",values=kw, tipos_items=tipos_items)
+        return dict(pagina="agregar_item",values=kw, tipos_items=tipos_items
+                    ,nom_proyecto=nom_proyecto,nom_fase=nom_fase)
     
     @validate({'nombre_item':NotEmpty, 
 			    'complejidad':Int(not_empty=True), 
