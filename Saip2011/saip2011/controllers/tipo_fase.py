@@ -115,7 +115,29 @@ class Tipo_FaseController(BaseController):
         return dict(pagina="listar_tipo_fase",tipos_fases=tipos_fases,
                         nom_proyecto=nom_proyecto,nom_fase=nom_fase)
 
- ################################################################################
+###############################################################################
+
+    @expose('saip2011.templates.tipo_fase.listar_mis_tipos_items')
+    def ver_tipos_items(self,id_tipo_fase):
+        """Lista privilegios 
+        """
+        nom_proyecto=Variables.get_valor_by_nombre("nombre_proyecto_actual")
+        nom_fase=Variables.get_valor_by_nombre("nombre_fase_actual")
+        tipo_fase=Tipo_Fase.get_tipo_fase_by_id(int(id_tipo_fase))
+        values = dict(id_tipo_fase=tipo_fase.id_tipo_fase, 
+				        nombre_tipo_fase=tipo_fase.nombre_tipo_fase, 
+				        descripcion=tipo_fase.descripcion
+				        )
+
+        tipos =tipo_fase.tipos_items
+        tipos_items = []
+        for t in tipos:
+            tipos_items.append(t)
+        return dict(pagina="listar_mis_tipos_items",tipos_items=tipos_items,
+                        nom_proyecto=nom_proyecto,nom_fase=nom_fase,
+                        values=values)
+
+###############################################################################
 
 
     @expose('saip2011.templates.tipo_fase.eliminar_tipo_fase')

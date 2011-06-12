@@ -69,6 +69,28 @@ class EquipoController(BaseController):
 
 ################################################################################
 
+    @expose('saip2011.templates.miembro.listar_mis_fases')
+    def ver_fases(self,id_equipo):
+        """Lista  
+        """
+        nom_proyecto=Variables.get_valor_by_nombre("nombre_proyecto_actual")
+        nom_fase=Variables.get_valor_by_nombre("nombre_fase_actual")
+        miembro=Equipo_Desarrollo.get_miembro_by_id(int(id_equipo))
+        values = dict(id_equipo=miembro.id_equipo, 
+		                nombre_usuario=miembro.nombre_usuario, 
+		                nombre_rol=miembro.nombre_rol
+		                )
+
+        fas = miembro.fases
+        fases = []
+        for f in fas:
+            fases.append(f)
+        return dict(pagina="listar_mis_fases",fases=fases,
+                        nom_proyecto=nom_proyecto,nom_fase=nom_fase,
+                        values=values)
+
+###############################################################################
+
     @expose('saip2011.templates.miembro.agregar_miembro')
     def agregar_miembro(self, *args, **kw):
         nom_proyecto=Variables.get_valor_by_nombre("nombre_proyecto_actual")

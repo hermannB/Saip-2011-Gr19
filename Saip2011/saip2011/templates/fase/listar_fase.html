@@ -38,9 +38,9 @@
 		<th>Tipo de Fase</th>
         <th>Estado</th>
         <th>Orden</th>
-
         <th>Linea Base</th>
         <th>Descripcion</th>
+        <th>Tipos de Item</th>
       </tr>
       <tr align="center" py:for="fase in fases">
 
@@ -67,6 +67,7 @@
         <td>${fase.orden}</td>
         <td>${fase.linea_base}</td>
         <td>${fase.descripcion}</td>
+        <td><a href="${tg.url('../proyecto/ver_tipos_items?id_fase=%d' % fase.id_fase)}">ver tipos Items</a></td>
       </tr>          
     </table>   
     

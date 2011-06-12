@@ -63,7 +63,8 @@
         <td>${tipo_item.nombre_tipo_item}</td>
         <td>${tipo_item.codigo_tipo_item}</td> 
         <td>${tipo_item.descripcion}</td>
-        <td>${tipo_item.get_campos(tipo_item.id_tipo_item)}</td>
+        <td><a href="${tg.url('/tipo_item/ver_campos?id_tipo_item=%d' % tipo_item.id_tipo_item)}">ver campos</a></td>
+
       </tr>          
     </table>   
     
