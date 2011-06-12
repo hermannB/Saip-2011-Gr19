@@ -27,85 +27,98 @@ proyecto_tipo_fase_tabla = Table('Tabla_Proyecto_Tipo_Fase', metadata,
 
 
 class Proyecto(DeclarativeBase):
-	"""
-
-	Definicion del ṕroyecto
-
-	"""
-
-	__tablename__ = 'Tabla_Proyecto'
-
-	#{ Columns
-
-	id_proyecto = Column(Integer, autoincrement=True, primary_key=True)
-
-	nombre_proyecto = Column(Unicode(50), unique=True, nullable=False)
-
-	descripcion = Column(Text)	
-
-	idusuario = Column(Integer, ForeignKey('Tabla_Usuario.idusuario'))
-
-  	lider_equipo = relation('Usuario', backref='Proyecto')
-
-	estado = Column(Unicode(50),  nullable=False)
+    """
+    
+    Definicion del ṕroyecto
+    
+    """
+    
+    __tablename__ = 'Tabla_Proyecto'
+    
+    #{ Columns
+    
+    id_proyecto = Column(Integer, autoincrement=True, primary_key=True)
+    
+    nombre_proyecto = Column(Unicode(50), unique=True, nullable=False)
+    
+    descripcion = Column(Text)	
+    
+    idusuario = Column(Integer, ForeignKey('Tabla_Usuario.idusuario'))
+    
+    lider_equipo = relation('Usuario', backref='Proyecto')
+    
+    estado = Column(Unicode(50),  nullable=False)
 
 
 	#{ Special methods
 
-	def __repr__(self):
-		return '<Proyecto: nombre=%s>' % self.nombre_proyecto
+    def __repr__(self):
+        return '<Proyecto: nombre=%s>' % self.nombre_proyecto
+    
+    def __unicode__(self):
+        return self.nombre_proyecto
 
-	def __unicode__(self):
-		return self.nombre_proyecto
-
-	@classmethod
-	def get_proyecto(self):
-		"""
-		Obtiene la lista de todos los roles
-		registrados en el sistema
-		"""
-
-		proyectos = DBSession.query(Proyecto).all()
-		    
-		return proyectos
-
-	@classmethod
-	def get_proyecto_by_id(self,id_proyecto):
-		"""
-		Obtiene la lista de todos los roles
-		registrados en el sistema
-		"""
-
-		proyecto = DBSession.query(Proyecto).get(id_proyecto)
-		    
-		return proyecto
-
-	@classmethod
-	def get_ultimo_id(self):
-		"""
-		Obtiene el ultimo id de la tabla
-		"""
-		mayor =0
-		proyectos = DBSession.query(Proyecto).all()
-		for proy in proyectos:
-			if (proy.id_proyecto > mayor):
-				mayor = proy.id_proyecto
-
-		return mayor
-
-	@classmethod
-	def activar(self, id_proyecto):
-		proyecto = DBSession.query(Proyecto).get(id_proyecto)
-		if proyecto.estado =="nuevo":
-			proyecto.estado="en_desarrollo"
-			DBSession.flush()
-
-	@classmethod
-	def finalizar(self, id_proyecto):
-		proyecto = DBSession.query(Proyecto).get(id_proyecto)
-		if proyecto.estado =="en_desarrollo":
-			proyecto.estado="finalizado"
-			DBSession.flush()
+    @classmethod
+    def get_proyecto(self):
+        """
+        Obtiene la lista de todos los roles
+        registrados en el sistema
+        """
+        
+        proyectos = DBSession.query(Proyecto).all()
+            
+        return proyectos
+    
+    @classmethod
+    def get_proyecto_por_pagina(self,start=0,end=5):
+        """
+        Obtiene la lista de todos los roles
+        registrados en el sistema
+        """
+    
+        proyectos = DBSession.query(Proyecto).slice(start,end).all()
+            
+        return proyectos
+    
+        
+    
+    @classmethod
+    def get_proyecto_by_id(self,id_proyecto):
+    	"""
+    	Obtiene la lista de todos los roles
+    	registrados en el sistema
+    	"""
+    
+    	proyecto = DBSession.query(Proyecto).get(id_proyecto)
+    	    
+    	return proyecto
+    
+    @classmethod
+    def get_ultimo_id(self):
+    	"""
+    	Obtiene el ultimo id de la tabla
+    	"""
+    	mayor =0
+    	proyectos = DBSession.query(Proyecto).all()
+    	for proy in proyectos:
+    		if (proy.id_proyecto > mayor):
+    			mayor = proy.id_proyecto
+    
+    	return mayor
+    
+    @classmethod
+    def activar(self, id_proyecto):
+    	proyecto = DBSession.query(Proyecto).get(id_proyecto)
+    	if proyecto.estado =="nuevo":
+    		proyecto.estado="en_desarrollo"
+    		DBSession.flush()
+    
+    @classmethod
+    def finalizar(self, id_proyecto):
+    	proyecto = DBSession.query(Proyecto).get(id_proyecto)
+    	if proyecto.estado =="en_desarrollo":
+    		proyecto.estado="finalizado"
+    		DBSession.flush()
 
 
 	#}

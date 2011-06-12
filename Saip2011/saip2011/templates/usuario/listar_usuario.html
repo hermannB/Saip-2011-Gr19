@@ -61,7 +61,20 @@
         <td>${usuario.email_address}</td>
 
       </tr>
-             
+      <tr py:if="total/paginado > 0">
+        <td><b>Pagina</b></td><td align="center"><b>${pagina_actual}/${total/paginado}</b></td>
+      	<td align="center">
+      		<span py:if="inicio > 0">
+      			<a href="listar_usuario?start=${0}%26end=${paginado}">Inicio</a> | 
+      			<a href="listar_usuario?start=${inicio-paginado}%26end=${fin-paginado}">Atras</a> 
+      		</span>
+      		<span py:if="total+1 > fin">
+      			| <a href="listar_usuario?start=${inicio + paginado}%26end=${fin + paginado}" >Siguiente</a> |
+      			<a href="listar_usuario?start=${total - paginado}%26end=${total}" py:if="total-paginado > paginado">Fin</a>
+      		</span>
+      	</td>
+      	
+      </tr>     
     </table>   
    </form> 
   </div>

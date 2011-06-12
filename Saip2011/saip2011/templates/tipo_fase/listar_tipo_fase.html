@@ -57,7 +57,21 @@
         <td>${tipo_fase.nombre_tipo_fase}</td>
         <td>${tipo_fase.descripcion}</td>
         <td><a href="${tg.url('/tipo_fase/ver_tipos_items?id_tipo_fase=%d' % tipo_fase.id_tipo_fase)}">ver tipos Items</a></td>
-      </tr>          
+      </tr>
+      <tr py:if="total/paginado > 0">
+        <td><b>Pagina</b></td><td align="center"><b>${pagina_actual}/${total/paginado}</b></td>
+      	<td align="center">
+      		<span py:if="inicio > 0">
+      			<a href="/tipo_fase/tipo_fase?start=${0}%26end=${paginado}">Inicio</a> | 
+      			<a href="/tipo_fase/tipo_fase?start=${inicio-paginado}%26end=${fin-paginado}">Atras</a> 
+      		</span>
+      		<span py:if="total+1 > fin">
+      			| <a href="/tipo_fase/tipo_fase?start=${inicio + paginado}%26end=${fin + paginado}" >Siguiente</a> |
+      			<a href="/tipo_fase/tipo_fase?start=${total - paginado}%26end=${total}" py:if="total-paginado > paginado">Fin</a>
+      		</span>
+      	</td>
+      	
+      </tr>              
     </table>   
     
   </div>

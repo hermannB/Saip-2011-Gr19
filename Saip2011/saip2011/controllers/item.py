@@ -43,17 +43,29 @@ class ItemController(BaseController):
 
 ################################################################################
     @expose('saip2011.templates.item.item')
-    def item(self):
+    def item(self,start=0,end=5):
         """
         Menu para Item
         """
         nom_proyecto=Variables.get_valor_by_nombre("nombre_proyecto_actual")
         nom_fase=Variables.get_valor_by_nombre("nombre_fase_actual")
-        fases=Fase.get_fase_by_proyecto(int (Variables.get_valor_by_nombre
-                                                ("proyecto_actual")) )
+        #fases=Fase.get_fase_by_proyecto(int (Variables.get_valor_by_nombre
+       #                                         ("proyecto_actual")) )
+        
+        paginado = 5
+        if start <> 0:
+            end=int(start.split('=')[1]) #obtiene el fin de pagina
+            start=int(start.split('&')[0]) #obtiene el inicio de pagina
+        #print start,end
+        total = len(Fase.get_fase_by_proyecto(int (Variables.get_valor_by_nombre
+                                                ("proyecto_actual")) ))
+        pagina_actual = ((start % end) / paginado) + 1
+         
+        fases=Fase.get_fase_by_proyecto_por_pagina(int (Variables.get_valor_by_nombre
+                                                ("proyecto_actual")), start,end )
         
         return dict(pagina="listar_fase",fases=fases,nom_proyecto=nom_proyecto
-                    ,nom_fase=nom_fase)
+                    ,nom_fase=nom_fase,inicio=start,fin=end,pagina_actual=pagina_actual,paginado=paginado,total=total)
 
 ###############################################################################
 

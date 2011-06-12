@@ -8,7 +8,7 @@ from datetime import datetime
 import sys
 
 from sqlalchemy import Table, ForeignKey, Column
-from sqlalchemy.types import Unicode, Integer, DateTime, Text , LargeBinary
+from sqlalchemy.types import Unicode, Integer, DateTime, Text #, LargeBinary
 from sqlalchemy.orm import relation, synonym
 
 from saip2011.model import DeclarativeBase, metadata, DBSession
@@ -31,7 +31,7 @@ class Adjunto(DeclarativeBase):
 
     id_item = Column(Integer)
 
-    archivo = Column(LargeBinary, nullable=False)
+    #archivo = Column(LargeBinary, nullable=False)
 
 
     #{ Special methods
