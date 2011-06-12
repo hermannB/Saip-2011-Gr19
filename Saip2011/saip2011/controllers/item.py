@@ -63,6 +63,10 @@ class ItemController(BaseController):
         nom_fase=Variables.get_valor_by_nombre("nombre_fase_actual")
         id_fase=int(Variables.get_valor_by_nombre("fase_actual"))
         items = Item.get_item_activados_by_fase(id_fase)
+        ids=0
+        for i in items:
+            ids=i.id_item
+        flash(_('Bienvenido, %d!') % ids)
         return dict(pagina="listar_item",items=items,nom_proyecto=nom_proyecto
                     ,nom_fase=nom_fase)
 
@@ -276,42 +280,80 @@ class ItemController(BaseController):
                     ,nom_proyecto=nom_proyecto,nom_fase=nom_fase)
     
     @validate({'nombre_item':NotEmpty, 
-			    'complejidad':Int(not_empty=True), 
-			    'estado':NotEmpty}, error_handler=agregar_item
+			    'complejidad':Int(not_empty=True)}, error_handler=agregar_item
 			    )
 
     @expose()
-    def post_item(self, nombre_item, adjunto, complejidad, id_tipo_item):
+    def post_item(self, nombre_item, complejidad, adjunto, id_tipo_item):
+        
         if id_tipo_item is not None:
             id_tipo_item = int(id_tipo_item)
-        tipo_item = DBSession.query(Tipo_Item).get(id_tipo_item)
+        tipo_item = DBSession.query(Tipo_Item).get(int(id_tipo_item))
         pre_codigo=tipo_item.codigo_tipo_item
         proy_act=int (Variables.get_valor_by_nombre("proyecto_actual"))
         fas_act=int (Variables.get_valor_by_nombre("fase_actual"))
-        codigo_item=Item.crear_codigo(id_tipo_item,pre_codigo,proy_actual,fas_act)
+        codigo_item=Item.crear_codigo(id_tipo_item,pre_codigo,proy_act,fas_act)
 
         item = Item (nombre_item=nombre_item, codigo_item=codigo_item,
                         id_tipo_item=id_tipo_item, 
-						complejidad=complejidad, estado = "nuevo", 
-                        fase=int(Variables.get_valor_by_nombre("fase_actual")),
-						proyecto=int( Variables.get_valor_by_nombre
-                                        ("proyecto_actual") ),
-						creado_por=Variables.get_valor_by_nombre
+				        complejidad=complejidad, estado = "nuevo", 
+                        fase=fas_act,proyecto=proy_act,
+				        creado_por=Variables.get_valor_by_nombre
                                         ("usuario_actual"),
-						fecha_creacion = time.ctime(), version =1 ,
+				        fecha_creacion = time.ctime(), version =1 ,
                         estado_oculto="Activo"
-						)
+				        )
         DBSession.add(item)
         DBSession.flush()
         mayor =Item.get_ultimo_id()
 
-        for ad in adjunto:
-            encode=base64.b64encode(ad)
+       
+        mayor =Item.get_ultimo_id()
+        if adjunto is not None:
+            if not isinstance(adjunto, list):
+                adjunto = [adjunto]
+        for adj in adjunto:
+            data = adj.file.read()
+            encode=base64.b64encode(data)
             var=binascii.a2b_base64(encode)
-            adj = Adjunto (id_item=mayor, archivo=var)
+            adj = Adjunto (id_item=mayor, archivo=var,nombre_archivo=adj.filename)
             DBSession.add(adj)
-            DBSession.flush()
+            DBSession.flush()        
+
+        adj = DBSession.query(Adjunto).get(5)
+        var=binascii.b2a_base64(adj.archivo)
+        archivo=base64.b64decode(var)
+        
+        filenameDest = "/home/hermann/"+str(adj.nombre_archivo)
+        file = open(filenameDest, 'wb')
+        file.write(archivo) 
+        file.close( )
+
+        redirect('/item/item')
+
+     
         flash("Item Agregado!")  
         redirect('/item/item')
 ################################################################################
+
+    @expose()
+    def upload(self, upload_file, pagename, **keywords):
+        mayor =Item.get_ultimo_id()
+        data = upload_file.file.read()
+        encode=base64.b64encode(data)
+        var=binascii.a2b_base64(encode)
+        adj = Adjunto (id_item=mayor, archivo=var,nombre_archivo=pload_file.filename)
+        DBSession.add(adj)
+        DBSession.flush()
+
+        adj = DBSession.query(Adjunto).get(12)
+        var=binascii.b2a_base64(adj.archivo)
+        archivo=base64.b64decode(var)
+        
+        filenameDest = "/home/hermann/"+str(adj.nombre_archivo)
+        file = open(filenameDest, 'wb')
+        file.write(archivo) 
+        file.close( )
+
+        redirect('/item/item')
 

@@ -44,9 +44,9 @@ class Item(DeclarativeBase):
 
     nombre_tipo_item = relation('Tipo_Item', backref='Item')
 
-    fase = Column(Unicode(50), nullable=False)
+    fase = Column(Integer, nullable=False)
 
-    proyecto = Column(Unicode(50), nullable=False)
+    proyecto = Column(Integer, nullable=False)
 
     complejidad = Column(Integer, nullable=False)
 
@@ -60,26 +60,26 @@ class Item(DeclarativeBase):
 
     fecha_creacion = Column(DateTime, default=datetime.now)
 
-	#{ Special methods
+    #{ Special methods
 
     def __repr__(self):
-	    return '<Item: Id Item=%s>' % self.id_item
+        return '<Item: Id Item=%s>' % self.id_item
 
     def __unicode__(self):
-	    return self.id_item
+        return self.id_item
 
     @classmethod
     def get_ultimo_id(self):
-	    """
-	    Obtiene el ultimo id de la tabla
-	    """
-	    mayor =0
-	    items = DBSession.query(Item).all()
-	    for item in items:
-		    if (item.id_item > mayor):
-			    mayor =item.id_item
+        """
+        Obtiene el ultimo id de la tabla
+        """
+        mayor =0
+        items = DBSession.query(Item).all()
+        for item in items:
+	        if (item.id_item > mayor):
+		        mayor =item.id_item
 
-	    return mayor
+        return mayor
 
     @classmethod
     def get_item_proy_fase(self,proy,fase):
@@ -90,9 +90,9 @@ class Item(DeclarativeBase):
         lista=[]
         items = DBSession.query(Item).all()
         for item in items:
-	        if( item.estado_oculto=="Activo" and item.proyecto == proy
+            if( item.estado_oculto=="Activo" and item.proyecto == proy
                 and item.fase == fase):
-		        lista.append(item)  
+	            lista.append(item)  
         return lista
 
     @classmethod
@@ -119,57 +119,57 @@ class Item(DeclarativeBase):
         items = DBSession.query(Item).all()
         for item in items:
             if( item.estado_oculto=="Activo" and item.proyecto == proyecto
-                and item.fase == fase):
+                and item.fase == int(fase)):
                 lista.append(item)  
         return lista
 
-	@classmethod
-	def crear_codigo(self,id_tipo,pre_codigo,proy_actual,fas_act):
-		"""
-		crear el codigo del item
-		"""
-		codigo=""
-		cantidad=1
-		tipo = DBSession.query(Tipo_Item).get(id_tipo)
-		items = DBSession.query(Item).all()
+    @classmethod
+    def crear_codigo(self,id_tipo,pre_codigo,proy_actual,fas_act):
+	    """
+	    crear el codigo del item
+	    """
+	    codigo=""
+	    cantidad=1
+	    tipo = DBSession.query(Tipo_Item).get(id_tipo)
+	    items = DBSession.query(Item).all()
 
-		codigo+=pre_codigo+"-"
+	    codigo+=pre_codigo+"-"
 
-		for i in items:
-			if (i.id_tipo_item == id_tipo and i.proyecto == proy_actual
+	    for i in items:
+		    if (i.id_tipo_item == id_tipo and i.proyecto == proy_actual
                 and i.fase == fas_act):
-				cantidad=cantidad+1
-		codigo+=str(cantidad)
-		return codigo
+			    cantidad=cantidad+1
+	    codigo+=str(cantidad)
+	    return codigo
 
-	@classmethod
-	def get_item_eliminados(self):
-		"""
-		Obtiene la lista de todos los items
-		registrados en el sistema
-		"""
-		lista=[]
-		items = DBSession.query(Item).all()
-		for item in items:
-			if( item.estado_oculto=="Eliminado"):
-				lista.append(item)  
-		return lista
+    @classmethod
+    def get_item_eliminados(self):
+	    """
+	    Obtiene la lista de todos los items
+	    registrados en el sistema
+	    """
+	    lista=[]
+	    items = DBSession.query(Item).all()
+	    for item in items:
+		    if( item.estado_oculto=="Eliminado"):
+			    lista.append(item)  
+	    return lista
 
 
-	@classmethod
-	def get_historial(self, id_item):
-		"""
-		Obtiene la lista de todos los items
-		registrados en el sistema
-		"""
-		muestra=DBSession.query(Item).get(id_item)
-		lista=[]
-		items = DBSession.query(Item).all()
-		for item in items:
-			if( (item.proyecto == muestra.proyecto)  and (item.fase == muestra.fase ) 
-					and ( item.codigo_item ==muestra.codigo_item) and (item.estado_oculto == "Desactivado") ):
-					lista.append(item)  
-		return lista
+    @classmethod
+    def get_historial(self, id_item):
+	    """
+	    Obtiene la lista de todos los items
+	    registrados en el sistema
+	    """
+	    muestra=DBSession.query(Item).get(id_item)
+	    lista=[]
+	    items = DBSession.query(Item).all()
+	    for item in items:
+		    if( (item.proyecto == muestra.proyecto)  and (item.fase == muestra.fase ) 
+				    and ( item.codigo_item ==muestra.codigo_item) and (item.estado_oculto == "Desactivado") ):
+				    lista.append(item)  
+	    return lista
 
     @classmethod
     def get_item_eliminados_by_fase(self,fase):
@@ -181,60 +181,60 @@ class Item(DeclarativeBase):
         lista=[]
         items = DBSession.query(Item).all()
         for item in items:
-	        if( item.estado_oculto=="Eliminado"and item.proyecto == proyecto
+            if( item.estado_oculto=="Eliminado"and item.proyecto == proyecto
                 and item.fase == fase):
-		        lista.append(item)  
+	            lista.append(item)  
         return lista
 
 
-	
-	@classmethod
-	def version_actual(self, id_item):
-		"""
-		Obtiene la lista de todos los items
-		registrados en el sistema
-		"""
 
-		items = Item.get_item_activados()
-		item_viejo = DBSession.query(Item).get(id_item)
-		for item in items:
-			if( (item.nombre_item == item_viejo.nombre_item) and  (item.proyecto == item_viejo.proyecto)  and (item.fase == item_viejo.fase ) ):
-				return item 
-		 
-	@classmethod
-	def activar(self, id_item):
-		item = DBSession.query(Item).get(id_item)
-		if item.estado == "nuevo":
-			item.estado="en_desarrollo"
-			DBSession.flush()
+    @classmethod
+    def version_actual(self, id_item):
+	    """
+	    Obtiene la lista de todos los items
+	    registrados en el sistema
+	    """
 
-	@classmethod
-	def aprobar(self, id_item):
-		item = DBSession.query(Item).get(id_item)
-		if item.estado == "en_desarrollo":
-			item.estado="aprobado"
-			DBSession.flush()
+	    items = Item.get_item_activados()
+	    item_viejo = DBSession.query(Item).get(id_item)
+	    for item in items:
+		    if( (item.nombre_item == item_viejo.nombre_item) and  (item.proyecto == item_viejo.proyecto)  and (item.fase == item_viejo.fase ) ):
+			    return item 
+	     
+    @classmethod
+    def activar(self, id_item):
+	    item = DBSession.query(Item).get(id_item)
+	    if item.estado == "nuevo":
+		    item.estado="en_desarrollo"
+		    DBSession.flush()
 
-	@classmethod
-	def con_linea_base(self, id_item):
-		item = DBSession.query(Item).get(id_item)
-		if item.estado == "aprobado":
-			item.estado="con_linea_base"
-			DBSession.flush()
+    @classmethod
+    def aprobar(self, id_item):
+	    item = DBSession.query(Item).get(id_item)
+	    if item.estado == "en_desarrollo":
+		    item.estado="aprobado"
+		    DBSession.flush()
 
-	@classmethod
-	def revisar(self, id_item):
-		item = DBSession.query(Item).get(id_item)
-		if item.estado == "aprobado" or item.estado == "con_linea_base":
-			item.estado="a_revisar"
-			DBSession.flush()
+    @classmethod
+    def con_linea_base(self, id_item):
+	    item = DBSession.query(Item).get(id_item)
+	    if item.estado == "aprobado":
+		    item.estado="con_linea_base"
+		    DBSession.flush()
 
-	@classmethod
-	def finalizar(self, id_proyecto):
-		proyecto = DBSession.query(Proyecto).get(id_proyecto)
-		if item.estado == "con_linea_base":
-			proyecto.estado="finalizado"
-			DBSession.flush()
+    @classmethod
+    def revisar(self, id_item):
+	    item = DBSession.query(Item).get(id_item)
+	    if item.estado == "aprobado" or item.estado == "con_linea_base":
+		    item.estado="a_revisar"
+		    DBSession.flush()
+
+    @classmethod
+    def finalizar(self, id_proyecto):
+	    proyecto = DBSession.query(Proyecto).get(id_proyecto)
+	    if item.estado == "con_linea_base":
+		    proyecto.estado="finalizado"
+		    DBSession.flush()
 
     #}
 

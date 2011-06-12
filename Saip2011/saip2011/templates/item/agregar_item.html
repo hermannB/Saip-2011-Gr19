@@ -24,7 +24,7 @@
       <h2>Agregar nuevo Item</h2>
     </div>
 
-    <form action="post_item" method="POST">
+    <form action="post_item" method="POST" enctype="multipart/form-data">
     <table summary=""><tbody><tr>
        
 	<tr><td>Nombre del Item </td><td><input class="required" maxlength="50" type="textfield" name="nombre_item" value="${values.get('nombre_item', '')}"/>${tmpl_context.form_errors.get('nombre_item')}</td></tr>

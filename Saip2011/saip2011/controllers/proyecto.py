@@ -224,6 +224,7 @@ class ProyectoController(BaseController):
     def post_proyecto(self, nombre_proyecto, idusuario, tipos_fases, asmSelect0,
                              descripcion):
         nom_proyecto=Variables.get_valor_by_nombre("nombre_proyecto_actual")
+        nom_fase=Variables.get_valor_by_nombre("nombre_fase_actual")
         if idusuario is not None:
             idusuario = int(idusuario)
 
