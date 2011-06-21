@@ -1,6 +1,6 @@
 # -*- coding: utf-8 -*-
 """
-Linea Base* related model.
+Equipo de Desarrollo* related model.
 
 
 """
@@ -24,7 +24,7 @@ __all__ = ['Linea_Base']
 
 class Linea_Base (DeclarativeBase):
     """
-   Definicion de Linea Base.
+   Definicion de Equipo de Desarrollo.
     
     """
     
@@ -59,19 +59,15 @@ class Linea_Base (DeclarativeBase):
     @classmethod
     def get_tipo_campos(self):
         """
-        Obtiene los tipos de campos.
+        Obtiene la lista de todos los equipos
+        registrados en el sistema
         """
         campos = DBSession.query(Tipo_Campos).all()
         return campos
-    print get_tipo_campos.__doc__
-##################################################################
 
 
     @classmethod
     def get_campos_by_tipo_item(self, id_tipo):
-        """
-        Obtiene los campos por el tipo de item.
-        """
         campos = DBSession.query(Tipo_Campos).all()
         lista = []
         for campo in campos:
@@ -79,15 +75,10 @@ class Linea_Base (DeclarativeBase):
                 lista.append(campo)
 
         return lista
-    print get_campos_by_tipo_item.__doc__
-#####################################################################
     #}
 
     @classmethod
     def get_nombres_by_tipo_item(self, id_tipo):
-        """
-        Obtiene los nombres de campos filtrados por el identificador del tipo de item.
-        """
         campos = DBSession.query(Tipo_Campos).all()
         lista = []
         for campo in campos:
@@ -95,7 +86,6 @@ class Linea_Base (DeclarativeBase):
                 lista.append(campo.nombre_campo)
 
         return lista
-    print get_nombres_by_tipo_item.__doc__
     #}
 
 #

@@ -1,6 +1,6 @@
 # -*- coding: utf-8 -*-
 """
-Campos* related model.
+Equipo de Desarrollo* related model.
 
 
 """
@@ -59,55 +59,48 @@ class Campos (DeclarativeBase):
         """
         campos = DBSession.query(Campos).all()
         return campos
-    print get_campos.__doc__
 
 #-------------------------------------------------------------------------------
 
     @classmethod
     def get_campo_por_pagina(self,start=0,end=5):
         """
-        Obtiene la lista de todos los campos
+        Obtiene la lista de todos los roles
         registrados en el sistema
         """
 
         campos = DBSession.query(Campos).slice(start,end).all()
             
         return campos
-    print get_campo_por_pagina.__doc__
 
 
 #-------------------------------------------------------------------------------
 
     @classmethod
     def get_campos_by_item(self, id_item):
-        """
-        Obtiene los campos de un item.
-        """
         campos = DBSession.query(Campos).all()
         lista = []
         for campo in campos:
             if (campo.id_item == id_item):
                 lista.append(campo)
         return lista
-    print get_campos_by_item.__doc__
 
 #-------------------------------------------------------------------------------
 
     @classmethod
     def get_campo_by_id(self,id_campo):
         """
-        Obtiene el campo por medio de su identificador de campo.         
+        Obtiene la lista de todos los adjuntos         
         """
         campo = DBSession.query(Campo).get(int(id_campo))
         return campo
-    print get_campo_by_id.__doc__
 
 #-------------------------------------------------------------------------------
 
     @classmethod
     def borrar_by_id(self,id_campos):
         """
-        Elimina un campo.
+        Obtiene la lista de todos los adjuntos         
         """
         DBSession.delete(DBSession.query(Campos).get(id_campos))
         DBSession.flush()	
@@ -116,9 +109,6 @@ class Campos (DeclarativeBase):
 
     @classmethod
     def get_nombres_by_item(self, id_item):
-        """
-        Obtiene los nombres de campos por item
-        """
         campos = DBSession.query(Campos).all()
         lista = []
         for campo in campos:
@@ -126,6 +116,5 @@ class Campos (DeclarativeBase):
                 lista.append(campo.nombre_campo)
 
         return lista
-    print get_nombres_by_item.__doc__
 
 #-------------------------------------------------------------------------------

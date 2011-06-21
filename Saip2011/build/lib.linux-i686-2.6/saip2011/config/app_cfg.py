@@ -37,14 +37,6 @@ base_config.use_sqlalchemy = True
 base_config.model = saip2011.model
 base_config.DBSession = saip2011.model.DBSession
 
-#Mis configuraciones
-base_config.sa_auth.translations.users = 'usuarios' #Group.users
-base_config.sa_auth.translations.user_name = 'alias' #User.user_name
-base_config.sa_auth.translations.group_name = 'nombrerol' #Group.group_name
-base_config.sa_auth.translations.groups = 'roles' #User.group y Permission.groups
-base_config.sa_auth.translations.permission_name = 'nombreprivilegio' #Permission.permission_name
-base_config.sa_auth.translations.permissions = 'privilegios' #User.permissions y Group.permissions
-#base_config.sa_auth.translations.validate_password = 'privilegios' #User.validate_password
 
 # YOU MUST CHANGE THIS VALUE IN PRODUCTION TO SECURE YOUR APP
 base_config.sa_auth.cookie_secret = "ChangeME"
@@ -53,11 +45,11 @@ base_config.sa_auth.cookie_secret = "ChangeME"
 base_config.auth_backend = 'sqlalchemy'
 base_config.sa_auth.dbsession = model.DBSession
 # what is the class you want to use to search for users in the database
-base_config.sa_auth.user_class = model.Usuario
+base_config.sa_auth.user_class = model.User
 # what is the class you want to use to search for groups in the database
-base_config.sa_auth.group_class = model.Rol
+base_config.sa_auth.group_class = model.Group
 # what is the class you want to use to search for permissions in the database
-base_config.sa_auth.permission_class = model.Privilegios
+base_config.sa_auth.permission_class = model.Permission
 
 
 # override this if you would like to provide a different who plugin for

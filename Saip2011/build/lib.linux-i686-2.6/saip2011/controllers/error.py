@@ -17,7 +17,6 @@ class ErrorController(object):
     ErrorDocuments middleware in your config/middleware.py file.
     
     """
-################################################################################
 
     @expose('saip2011.templates.error')
     def document(self, *args, **kwargs):
@@ -29,5 +28,3 @@ class ErrorController(object):
                       code=request.params.get('code', resp.status_int),
                       message=request.params.get('message', default_message))
         return values
-
-################################################################################

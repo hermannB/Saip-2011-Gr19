@@ -5,6 +5,7 @@
       xmlns:xi="http://www.w3.org/2001/XInclude">
 
   <xi:include href="master.html" />
+  <xi:include href="buscar.html" />
 
 <head>
   <meta content="text/html; charset=UTF-8" http-equiv="content-type" py:replace="''"/>
@@ -16,18 +17,18 @@
 
 <body >
   <div id="getting_started">
-    <h2>Reportes</h2>
-    <p><a href="${tg.url('../reporte/usuarios')}">Usuarios</a></p>
-    <p><a href="${tg.url('../reporte/miembros')}">Miembros por Proyecto</a></p>
-    <p><a href="${tg.url('../reporte/proyectos')}">Proyectos</a></p>
-    <p><a href="${tg.url('../reporte/fases')}">Fases por Proyecto</a></p>
-    <p><a href="${tg.url('../reporte/tipos_items')}">Tipos de Items</a></p>
-    <p><a href="${tg.url('../reporte/item2')}">Item</a></p>
-    
-    
+    <h2>Reporte de Tipos de Item</h2>
+     		<div py:if="defined('lista') and len(tipos_items) > 0" >
+    			${buscar(lista)}
+    		</div>
+    		<xi:include href="listar_tipo_item.html" />
+    <form action="javascript:history.back()" method="POST" margin-left="3px">
+  	<input type="hidden" name="_method" value="post"/>
+	<input type="submit" value="retornar" />
+  </form>
   </div>
   <div class="clearingdiv" />
-  <div class="notice"> Estas en el menu de Reportes. 
+  <div class="notice"> Estas en el menu de Reporte->Tipo de Item. 
   </div>
 </body>
 </html>

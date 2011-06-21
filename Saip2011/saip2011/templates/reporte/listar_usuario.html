@@ -1,0 +1,45 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" 
+                      "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml"
+      xmlns:py="http://genshi.edgewall.org/"
+      xmlns:xi="http://www.w3.org/2001/XInclude">
+	
+	<xi:include href="paginacion.html" />
+
+  <div py:choose="len(usuarios)" py:strip="True" id="usuario">
+    <table class="usuarios" py:when="0">
+      <tr><th>No hay usuarios registrados..</th></tr>
+    </table>
+<form name="form1" id="form1" action="/editar_fase" method="PUT"> 
+   <table border="1" cellspacing="1" cellpadding="8" class="usuarios" py:otherwise="">    
+    
+     
+      <tr align="center">
+  		
+        <th>Alias</th>
+        <th>Nombre</th>
+        <th>Apellido</th>
+        <th>Nacionalidad</th>
+        <th>Nro.Documento</th>
+        <th>Email</th>
+
+      </tr>
+      <tr align="center" py:for="usuario in usuarios">
+	
+        <td>${usuario.alias}</td>
+        <td>${usuario.nombre}</td>
+        <td>${usuario.apellido}</td>
+        <td>${usuario.nacionalidad}</td>
+        <td>${usuario.nrodoc}</td>
+        <td>${usuario.email_address}</td>
+
+      </tr>
+      <tr py:if="defined('total') and total/paginado > 0">
+      	${paginar(pagina_actual,paginado,total,inicio,fin,param)}
+      </tr>       
+    </table>   
+   </form> 
+  </div>
+  <div class="clearingdiv" />
+  
+</html>

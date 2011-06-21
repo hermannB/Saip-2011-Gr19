@@ -1,0 +1,38 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" 
+                      "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml"
+      xmlns:py="http://genshi.edgewall.org/"
+      xmlns:xi="http://www.w3.org/2001/XInclude">
+
+  <xi:include href="paginacion.html" />
+
+  <div py:choose="len(tipos_items)" py:strip="True" id="tipos_item">
+    <table class="tipos_items" py:when="0">
+      <tr><th>No hay Tipos de Item registrados..</th></tr>
+    </table>
+    <table border="1" cellspacing="1" cellpadding="5" class="tipos_fases" py:otherwise="">    
+      
+      <tr align="center">
+    	
+        <th>Nombre del Tipo Item</th>
+        <th>Codigo del Tipo Item</th>
+        <th>Descripcion</th>
+        <th>Campos</th>
+      </tr>
+      <tr align="center" py:for="tipo_item in tipos_items">
+	    
+        <td>${tipo_item.nombre_tipo_item}</td>
+        <td>${tipo_item.codigo_tipo_item}</td> 
+        <td>${tipo_item.descripcion}</td>
+        <td><a href="${tg.url('/tipo_item/ver_campos?id_tipo_item=%d' % tipo_item.id_tipo_item)}">ver campos</a></td>
+
+      </tr> 
+      <tr py:if="defined('total') and total/paginado > 0">
+      	${paginar(pagina_actual,paginado,total,inicio,fin,param)}
+      </tr>         
+    </table>   
+    
+  </div>
+  <div class="clearingdiv" />
+
+</html>

@@ -1,5 +1,5 @@
 # -*- coding: utf-8 -*-
-"""Class Reporte"""
+"""Main Controller"""
 
 from tg import expose, flash, require, url, request, redirect
 from datetime import datetime
@@ -39,5 +39,6 @@ from psycopg2 import IntegrityError
 
 
 class Reporte():
-##########################################################################################
+
+ # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # #
 

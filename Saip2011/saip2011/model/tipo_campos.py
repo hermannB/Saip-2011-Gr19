@@ -1,4 +1,4 @@
-6# -*- coding: utf-8 -*-
+# -*- coding: utf-8 -*-
 """
 Equipo de Desarrollo* related model.
 
@@ -53,11 +53,11 @@ class Tipo_Campos (DeclarativeBase):
     @classmethod
     def get_tipo_campos(self):
         """
-        Permite obtener todos los tipos de campos.
+        Obtiene la lista de todos los equipos
+        registrados en el sistema
         """
         campos = DBSession.query(Tipo_Campos).all()
         return campos
-    print get_tipo_campos.__doc__
 
 #-------------------------------------------------------------------------------
 
@@ -65,7 +65,8 @@ class Tipo_Campos (DeclarativeBase):
     def get_tipo_campo_by_tipo_item_por_pagina(self,
                         id_tipo_item,start=0,end=5):
         """
-        Obtiene el tipo de campo por tipo de item.
+        Obtiene la lista de todos los usuarios
+        registrados en el sistema
         """
         tipos = DBSession.query(Tipo_Campos).slice(start,end).all()
         lista=[]
@@ -74,61 +75,49 @@ class Tipo_Campos (DeclarativeBase):
                 lista.append(tipo_campo)
 
         return lista
-    print get_tipo_campo_by_tipo_item_por_pagina.__doc__ 
 
 #-------------------------------------------------------------------------------
 
 
     @classmethod
     def get_campos_by_tipo_item(self, id_tipo):
-        """
-        Obtiene los campos por tipo de item.
-        """
         campos = DBSession.query(Tipo_Campos).all()
         lista = []
         for campo in campos:
             if (campo.id_tipo_item == id_tipo):
                 lista.append(campo)
         return lista
-    print get_campos_by_tipo_item.__doc__
 
 #-------------------------------------------------------------------------------
 
     @classmethod
     def get_nombres_by_tipo_item(self, id_tipo):
-        """
-        Obtiene los nombres por el tipo de item.
-        """
         campos = DBSession.query(Tipo_Campos).all()
         lista = []
         for campo in campos:
             if (campo.id_tipo_item == id_tipo):
                 lista.append(campo.nombre_campo)
         return lista
-    print get_nombres_by_tipo_item.__doc__
 
 #-------------------------------------------------------------------------------
 
     @classmethod
     def get_campo_by_id(self,id_campo):
         """
-        Obtiene los tipos de campos a través de su identificador.
+        Obtiene la lista de todos los campo         
         """
         campo = DBSession.query(Tipo_Campos).get(int(id_campo))
-
         return campo
-    print get_campo_by_id.__doc__
 
 #-------------------------------------------------------------------------------
 
     @classmethod
     def borrar_by_id(self,id_campo):
         """
-        Elimina el tipo de campo.         
+        Obtiene la lista de todos los adjuntos         
         """
         DBSession.delete(DBSession.query(Tipo_Campos).get(id_campo))
-        DBSession.flush()
-    print borrar_by_id.__doc__ 	
+        DBSession.flush()	
 
 #-------------------------------------------------------------------------------
 

@@ -73,45 +73,45 @@ class Fase(DeclarativeBase):
     @classmethod
     def get_fases(self):
         """
-        Obtiene la lista de todas los fases
-        registradas en el sistema
+        Obtiene la lista de todos los usuarios
+        registrados en el sistema
         """
         fases = DBSession.query(Fase).all()
         return fases
-    print get_fases.__doc__
 
 #-------------------------------------------------------------------------------
 
     @classmethod
     def get_fase_by_id(self,fase_id):
         """
-        Obtiene una fase buscada por su identificador de fase.
+        Obtiene la lista de todos los usuarios
+        registrados en el sistema
         """
         fases = DBSession.query(Fase).all()
         for fase in fases:
             if fase.id_fase == fase_id:
                 return fase
-    print get_fase_by_id.__doc__
 
 #-------------------------------------------------------------------------------
 
     @classmethod
     def get_fase_by_id(self,fase_id):
         """
-        Obtiene una fase buscada por su identificador de fase.
+        Obtiene la lista de todos los usuarios
+        registrados en el sistema
         """
         fases = DBSession.query(Fase).all()
         for fase in fases:
             if fase.id_fase == fase_id:
                 return fase
-    print get_fase_by_id.__doc__
 
 #-------------------------------------------------------------------------------
 
     @classmethod
     def get_fase_by_proyecto_por_pagina(self,id_proyecto,start=0,end=5):
         """
-        Obtiene una lista de fases que pertenece a un proyecto dado.
+        Obtiene la lista de todos los usuarios
+        registrados en el sistema
         """
         #obtengo las fases del proyecto
         if id_proyecto is not None:
@@ -127,14 +127,14 @@ class Fase(DeclarativeBase):
             c = c + 1    
                  
         return lista, len(fases)
-    print get_fase_by_proyecto_por_pagina.__doc__
 
 #-------------------------------------------------------------------------------
     
     @classmethod
     def get_fase_by_proyecto_por_filtro(self,id_proyecto,param,texto):
         """
-        Obtiene la lista de fases de un proyecto, buscada por 'nombre', 'TipoFase' y 'Descripcion'.
+        Obtiene la lista de todos los usuarios
+        registrados en el sistema
         """
         """privilegios = session.query(cls).all()"""
         #privilegios = DBSession.query(Privilegios).all()
@@ -152,7 +152,6 @@ class Fase(DeclarativeBase):
                 lista.append(fase)
 
         return lista
-    print get_fase_by_proyecto_por_filtro.__doc__
 
 
 #-------------------------------------------------------------------------------
@@ -161,7 +160,8 @@ class Fase(DeclarativeBase):
     @classmethod
     def get_nombres_by_id(self,proyecto_id):
         """
-        Obtiene la lista de nombres de fases de un proyecto dado.
+        Obtiene la lista de todos los usuarios
+        registrados en el sistema
         """
         fases = DBSession.query(Fase).all()
         lista=[]
@@ -169,14 +169,14 @@ class Fase(DeclarativeBase):
             if (fase.proyecto ==proyecto_id ):
                 lista.append(fase.nombre_fase) 
         return lista
-    print get_nombres_by_id.__doc__
 
 #-------------------------------------------------------------------------------
 
     @classmethod
     def get_fase_by_proyecto(self,id_proyecto):
         """
-        Obtiene una lista de fases por proyecto.
+        Obtiene la lista de todos los usuarios
+        registrados en el sistema
         """
         fases = DBSession.query(Fase).all()
         lista=[]
@@ -185,18 +185,16 @@ class Fase(DeclarativeBase):
 	            lista.append(fase)
 
         return lista
-    print get_fase_by_proyecto.__doc__
 
 #-------------------------------------------------------------------------------
 
     @classmethod
     def borrar_by_id(self,id_fase):
         """
-        Elimina una fase dada-
+        Obtiene la lista de todos los adjuntos         
         """
         DBSession.delete(DBSession.query(Fase).get(id_fase))
         DBSession.flush()	
-    print borrar_by_id.__doc__
 
 #-------------------------------------------------------------------------------
 

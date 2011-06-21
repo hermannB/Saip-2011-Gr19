@@ -1,0 +1,35 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" 
+                      "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml"
+      xmlns:py="http://genshi.edgewall.org/"
+      xmlns:xi="http://www.w3.org/2001/XInclude">
+
+  <xi:include href="paginacion.html" />
+
+  <div py:choose="len(equipos)" py:strip="True" id="equipo">
+    <table class="equipos" py:when="0">
+      <tr><th>No hay Miembros registrados..</th></tr>
+    </table>
+    <table border="1" cellspacing="1" cellpadding="4" class="equipos" py:otherwise="">    
+      <h2>Proyecto: ${proyecto}</h2>
+      <tr align="center">
+    	
+        <th>Nombre del Usuario</th>
+	    <th>Nombre del Rol</th>
+  	    <th>Fases Habilitadas</th>
+      </tr>
+      <tr align="center" py:for="equipo in equipos">
+	    
+	    <td>${equipo.nombre_usuario}</td>
+        <td>${equipo.nombre_rol}</td>
+        <td><a href="${tg.url('/equipo/ver_fases?id_equipo=%d' % equipo.id_equipo)}">ver fases</a></td>
+      </tr>
+      <tr py:if="defined('total') and total/paginado > 0">
+      	${paginar(pagina_actual,paginado,total,inicio,fin,param)}
+      </tr>          
+    </table>   
+    
+  </div>
+  <div class="clearingdiv" />
+ 
+</html>

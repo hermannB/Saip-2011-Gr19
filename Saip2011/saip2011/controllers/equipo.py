@@ -335,5 +335,4 @@ class EquipoController(BaseController):
         DBSession.flush()	
         flash("Miembro eliminado!")
         redirect('/equipo/equipo')
-print post_delete_miembro.__doc__
 

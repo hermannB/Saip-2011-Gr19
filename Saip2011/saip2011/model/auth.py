@@ -58,7 +58,9 @@ usuario_rol_tabla = Table('Tabla_Usuario_Rol', metadata,
 
 class Rol(DeclarativeBase):
     """
-    Definición de Rol
+    Group definition for :mod:`repoze.what`.
+
+    Only the ``group_name`` column is required by :mod:`repoze.what`.
 
     """
 
@@ -94,49 +96,47 @@ class Rol(DeclarativeBase):
         roles = DBSession.query(Rol).all()
             
         return roles
-    print get_roles.__doc__
 
 #-------------------------------------------------------------------------------
 
     @classmethod
     def get_nombreroles(self):
         """
-        Obtiene los nombres de los roles.
+        Obtiene 
         """
         roles = DBSession.query(Rol).all()
         lista=[]
         for rol in roles:
             lista.append(rol.nombrerol)    
         return lista
-    print get_nombreroles.__doc__
 
 #-------------------------------------------------------------------------------
 
     @classmethod
     def get_rol_by_nombre(self,nombre):
         """
-        Obtiene el rol buscado por su nombre
+        Obtiene la lista de los roles
+        registrados en el sistema
         """
         """roles = session.query(cls).all()"""
         roles = DBSession.query(Rol).all()
         for rol in roles:
 		    if rol.nombrerol == str(nombre): 
 			    return rol
-    print get_rol_by_nombre.__doc__
 
 #-------------------------------------------------------------------------------
 
     @classmethod
     def get_rol_by_id(self,id_rol):
         """
-        Obtiene el rol por medio de su identificador de rol
+        Obtiene la lista de los roles
+        registrados en el sistema
         """
         """roles = session.query(cls).all()"""
         roles = DBSession.query(Rol).all()
         for rol in roles:
             if rol.idrol == id_rol: 
 	            return rol
-    print get_rol_by_id.__doc__
 
 #-------------------------------------------------------------------------------
 
@@ -150,14 +150,14 @@ class Rol(DeclarativeBase):
         roles = DBSession.query(Rol).slice(start,end).all()
             
         return roles
-    print get_roles_por_pagina.__doc__
 
 #-------------------------------------------------------------------------------
 
     @classmethod
     def get_roles_por_filtro(self,param,texto,start=0,end=5):
         """
-        Obtiene la lista de todos los roles bsucados por 'nombre' o 'descripcion'
+        Obtiene la lista de todos los usuarios
+        registrados en el sistema
         """
         """usuarios = session.query(cls).all()"""
         if param == "nombre":
@@ -167,18 +167,16 @@ class Rol(DeclarativeBase):
         
             
         return roles
-    print get_roles_por_filtro.__doc__
 
 #-------------------------------------------------------------------------------
 
     @classmethod
     def borrar_by_id(self,id_rol):
         """
-        Elimina el rol         
+        Obtiene la lista de todos los adjuntos         
         """
         DBSession.delete(DBSession.query(Rol).get(id_rol))
-        DBSession.flush()
-    print borrar_by_id.__doc__	
+        DBSession.flush()	
 
 #-------------------------------------------------------------------------------
 
@@ -243,12 +241,11 @@ class Usuario(DeclarativeBase):
 
     @property
     def privilegios(self):
-        """Retorna un conjunto de strings para los permisos granteados."""
+        """Return a set of strings for the permissions granted."""
         perms = set()
         for g in self.roles:
             perms = perms | set(g.privilegios)
         return perms
-    print privilegios.__doc__
 
 #-------------------------------------------------------------------------------
 
@@ -331,7 +328,6 @@ class Usuario(DeclarativeBase):
         """usuarios = session.query(cls).all()"""
         usuarios = DBSession.query(Usuario).all()
         return usuarios
-    print get_usuarios.__doc__
 
 #-------------------------------------------------------------------------------
 
@@ -345,14 +341,13 @@ class Usuario(DeclarativeBase):
         usuarios = DBSession.query(Usuario).slice(start,end).all()
             
         return usuarios
-    print get_usuarios_por_pagina.__doc__
 
 #-------------------------------------------------------------------------------
 
     @classmethod
     def get_usuarios_por_filtro(self,param,texto,start=0,end=5):
         """
-        Obtiene la lista de usuarios buscados por 'alias', 'nombre' y  'apellido'
+        Obtiene la lista de todos los usuarios
         registrados en el sistema
         """
         """usuarios = session.query(cls).all()"""
@@ -364,14 +359,13 @@ class Usuario(DeclarativeBase):
             usuarios = DBSession.query(Usuario).filter(Usuario.apellido.like('%s%s%s' % ('%',texto,'%'))).all()
             
         return usuarios
-    print get_usuarios_por_filtro.__doc__
 
 #-------------------------------------------------------------------------------
 
     @classmethod
     def get_alias(self):
         """
-        Obtiene la lista de todos los alias de los usuarios
+        Obtiene la lista de todos los usuarios
         registrados en el sistema
         """
         usuarios = DBSession.query(Usuario).all()
@@ -379,20 +373,19 @@ class Usuario(DeclarativeBase):
         for usuario in usuarios:
             lista.append(usuario.alias)    
         return lista
-    print get_alias.__doc__
 
 #-------------------------------------------------------------------------------
 
     @classmethod
     def get_user_by_alias(self,name):
         """
-        Obtiene el usuario por medio del alias pasado como parámetro.
+        Obtiene la lista de todos los usuarios
+        registrados en el sistema
         """
         usuarios = DBSession.query(Usuario).all()
         for usuario in usuarios:    
             if (usuario.alias==name):	
                     return usuario
-    print get_user_by_alias.__doc__
 
 #-------------------------------------------------------------------------------
 
@@ -403,14 +396,13 @@ class Usuario(DeclarativeBase):
         """
         usuario = DBSession.query(Usuario).filter_by(idusuario=iduser).first()
         return usuario
-    print get_user_by_id.__doc__
 
 #-------------------------------------------------------------------------------
 
     @classmethod
     def borrar_by_id(self,iduser):
         """
-        Elimina el usuario dado.
+        Obtiene la lista de todos los adjuntos         
         """
         DBSession.delete(DBSession.query(Usuario).get(iduser))
         DBSession.flush()	
@@ -427,7 +419,6 @@ class Usuario(DeclarativeBase):
         usuarios = DBSession.query(Usuario).slice(start,end).all()
             
         return usuarios
-    print get_usuarios_por_pagina.__doc__
 
 #-------------------------------------------------------------------------------
 
@@ -475,33 +466,34 @@ class Privilegios(DeclarativeBase):
     @classmethod
     def get_privilegios(self):
         """
-        Obtiene la lista de todos los privilegios
+        Obtiene la lista de todos los usuarios
+        registrados en el sistema
         """
         """privilegios = session.query(cls).all()"""
         privilegios = DBSession.query(Privilegios).all()
         return privilegios
-    print get_privilegios.__doc__
 
 #-------------------------------------------------------------------------------
 
     @classmethod
     def get_privilegio_por_pagina(self,start=0,end=5):
         """
-        Obtiene la lista de todos los privilegios
+        Obtiene la lista de todos los usuarios
+        registrados en el sistema
         """
         """privilegios = session.query(cls).all()"""
         #privilegios = DBSession.query(Privilegios).all()
         privilegios = DBSession.query(Privilegios).slice(start,end).all()
             
         return privilegios
-    print get_privilegio_por_pagina.__doc__
 
 #-------------------------------------------------------------------------------
     
     @classmethod
     def get_privilegio_por_filtro(self,param,texto,start=0,end=5):
         """
-        Obtiene la lista de los privilegios buscados por 'nombre' o 'descripción'
+        Obtiene la lista de todos los usuarios
+        registrados en el sistema
         """
         """privilegios = session.query(cls).all()"""
         #privilegios = []
@@ -514,54 +506,52 @@ class Privilegios(DeclarativeBase):
               
            
         return privilegios
-    print get_privilegio_por_filtro.__doc__
 
 #-------------------------------------------------------------------------------
 
     @classmethod
     def get_nombreprivilegios(self):
         """
-        Obtiene los nombres de los privilegios.
+        Obtiene 
         """
         privilegios = DBSession.query(Privilegios).all()
         lista=[]
         for privilegio in privilegios:
             lista.append(privilegio.nombreprivilegio)    
         return lista
-    print get_nombreprivilegios.__doc__
 
 #-------------------------------------------------------------------------------
 
     @classmethod
     def get_privilegio_by_id(self,idprivilegio):
         """
-        Obtiene el privilegio a través de su idenf¡tificador de privilegio.
+        Obtiene
         """
         privilegio = DBSession.query(Privilegios).get(int(idprivilegio))
         return privilegio
-    print get_privilegio_by_id.__doc__
 
 #-------------------------------------------------------------------------------
-@classmethod
-def borrar_by_id(self,idprivilegio):
+
+    @classmethod
+    def borrar_by_id(self,idprivilegio):
         """
-        Borra un privilegio.
+        Obtiene la lista de todos los adjuntos         
         """
         DBSession.delete(DBSession.query(Privilegios).get(idprivilegio))
-        DBSession.flush()
-print borrar_by_id.__doc__
+        DBSession.flush()	
 
 #-------------------------------------------------------------------------------
-@classmethod
-def get_privilegio_por_pagina(self,start=0,end=5):
+
+    @classmethod
+    def get_privilegio_por_pagina(self,start=0,end=5):
         """
-        Obtiene la lista de todos los Privilegios.
+        Obtiene la lista de todos los usuarios
+        registrados en el sistema
         """
         """privilegios = session.query(cls).all()"""
         #privilegios = DBSession.query(Privilegios).all()
         privilegios = DBSession.query(Privilegios).slice(start,end).all()
             
         return privilegios
-print get_privilegio_por_pagina.__doc__
 
 #-------------------------------------------------------------------------------

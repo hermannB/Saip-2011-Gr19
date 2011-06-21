@@ -1,0 +1,38 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" 
+                      "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml"
+      xmlns:py="http://genshi.edgewall.org/"
+      xmlns:xi="http://www.w3.org/2001/XInclude">
+
+  <xi:include href="paginacion.html" />
+  
+  <div py:choose="len(proyectos)" py:strip="True" id="proyecto">
+    <table class="proyectos" py:when="0">
+      <tr><th>No hay Proyectos registrados..</th></tr>
+    </table>
+    <table border="1" cellspacing="1" cellpadding="6" class="proyectos" py:otherwise="">    
+      <h2>Lista de Proyectos</h2>
+      <tr align="center">
+		
+        <th>Nombre del Proyecto</th>
+		<th>Lider del Proyecto</th>
+        <th>Descripcion</th>
+        <th>Lista de Fases</th>
+      </tr>
+		<tr align="center" py:for="proyecto in proyectos">
+				
+		<td>${proyecto.nombre_proyecto}</td>
+		<td>${proyecto.lider_equipo}</td>
+		<td>${proyecto.descripcion}</td>
+		<td><a href="${tg.url('/reporte/ver_fases?id_proyecto=%d' % proyecto.id_proyecto)}">ver fases</a></td>
+		
+      </tr>
+      <tr py:if="defined('total') and total/paginado > 0">
+      	${paginar(pagina_actual,paginado,total,inicio,fin,param)}
+      </tr>          
+    </table>   
+    
+  </div>
+  <div class="clearingdiv" />
+  
+</html>

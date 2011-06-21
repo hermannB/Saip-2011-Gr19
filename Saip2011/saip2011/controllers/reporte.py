@@ -163,7 +163,7 @@ class ReporteController(BaseController):
         id_fase=int(Variables.get_valor_by_nombre("fase_actual"))
         items = Relaciones.get_mis_padres(id_item)
         for it in items:
-            if (it.estado_oculto=="Activo"):
+            if (it.estado_oculto!="Activo"):
                 items.remove(it)
       
         return dict(pagina='ver_mis_padres.html',items=items,nom_proyecto=nom_proyecto
@@ -232,13 +232,300 @@ class ReporteController(BaseController):
 		               nombre_tipo_item=item.nombre_tipo_item
 
 		                )
-
-
-
-
       
         return dict(pagina='imagen.html',values=values,nom_proyecto=nom_proyecto
                     ,nom_fase=nom_fase)
 
 
  # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # #
+ 
+ ################################################################################
+    
+    @expose('saip2011.templates.reporte.usuarios')
+    def usuarios(self,start=0,end=5,indice=None,texto=""):
+        """
+        Menu para USUARIO
+        """
+        nom_proyecto=Variables.get_valor_by_nombre("nombre_proyecto_actual")
+        nom_fase=Variables.get_valor_by_nombre("nombre_fase_actual")
+
+        paginado = 5
+        if start <> 0:
+            end=int(start.split('=')[1]) #obtiene el fin de pagina
+            start=int(start.split('&')[0]) #obtiene el inicio de pagina
+        #print start,end
+        
+        pagina_actual = ((start % end) / paginado) + 1
+        if ((start % end) % paginado) <> 0:
+             pagina_actual = pagina_actual + 1
+        
+        if indice  <> None and texto <> "":  
+            usuarios = Usuario.get_usuarios_por_filtro(indice,texto,start,end)
+            total = len(usuarios)
+        else:   
+             usuarios = Usuario.get_usuarios_por_pagina(start,end)
+             total = len(Usuario.get_usuarios())
+        
+        lista = ['alias','nombre','apellido']
+        
+        return dict(pagina="usuario",usuarios=usuarios,
+                        nom_proyecto=nom_proyecto,
+                        nom_fase=nom_fase,inicio=start,
+                        fin=end,paginado=paginado,
+                        pagina_actual=pagina_actual,
+                        total=total,param="/reporte/usuarios",lista=lista)
+
+ ################################################################################
+
+    @expose('saip2011.templates.reporte.proyectos2')
+    def miembros(self,start=0,end=5,indice=None,texto=""):
+        """Lista proyectos 
+        """
+        proyectos=""
+
+        nom_proyecto=Variables.get_valor_by_nombre("nombre_proyecto_actual")
+        nom_fase=Variables.get_valor_by_nombre("nombre_fase_actual")
+
+        
+
+        ############################
+        paginado = 5
+        if start <> 0:
+            end=int(start.split('=')[1]) #obtiene el fin de pagina
+            start=int(start.split('&')[0]) #obtiene el inicio de pagina
+        #print start,end
+        
+        pagina_actual = ((start % end) / paginado) + 1
+        if ((start % end) % paginado) <> 0:
+             pagina_actual = pagina_actual + 1
+         
+        #roles = Rol.get_roles_por_pagina(start,end)
+        ###########################
+        
+        lista = ['nombre','descripcion']
+
+        
+            #proyectos = Proyecto.get_proyecto_por_pagina(start,end)
+        if indice  <> None and texto <> "":  
+            proyectos = Proyecto.get_proyectos_por_filtro(indice,texto)
+            total = len(proyectos)
+        else:   
+            proyectos = Proyecto.get_proyectos_por_pagina(start,end)
+            total = len(Proyecto.get_proyectos())
+            
+        
+        
+        return dict(pagina="listar_proyecto2.html",proyectos=proyectos,
+                        nom_proyecto=nom_proyecto,nom_fase=nom_fase,
+                        inicio=start,fin=end,paginado=paginado,
+                        pagina_actual=pagina_actual,total=total,
+                        lista=lista,param="/reporte/miembros")
+
+################################################################################
+
+    @expose('saip2011.templates.reporte.ver_miembros')
+    def ver_miembros(self,id_proyecto,start=0,end=5,indice=None,texto=""):
+        """
+        Menu para Equipo de Desarrollo
+        """
+        nom_proyecto=Variables.get_valor_by_nombre("nombre_proyecto_actual")
+        nom_fase=Variables.get_valor_by_nombre("nombre_fase_actual")
+
+        valor=int(id_proyecto)
+        nom_proyecto = Proyecto.get_proyecto_by_id(valor).nombre_proyecto
+                
+        paginado = 5
+        if start <> 0:
+            end=int(start.split('=')[1]) #obtiene el fin de pagina
+            start=int(start.split('&')[0]) #obtiene el inicio de pagina
+        #print start,end
+        
+        pagina_actual = ((start % end) / paginado) + 1
+        if ((start % end) % paginado) <> 0:
+             pagina_actual = pagina_actual + 1
+        
+        if indice  <> None and texto <> "":  
+            equipos =  Equipo_Desarrollo.get_miembros_by_proyecto_por_filtro(valor,indice,texto)
+            total = len(equipos)
+        else:   
+             equipos =  Equipo_Desarrollo.get_miembros_by_proyecto_por_pagina(valor,start,end)
+             total = len(Equipo_Desarrollo.get_miembros_by_proyecto(valor))
+        
+        lista = ['nombre']
+        param = "/reporte/ver_miembros?id_proyecto=%d" % valor
+
+        return dict(pagina="equipo",equipos=equipos,
+                        nom_proyecto=nom_proyecto,nom_fase=nom_fase,
+                        inicio=start,fin=end,paginado=paginado,
+                        pagina_actual=pagina_actual,total=total,
+                        param=param,lista=lista,proyecto=nom_proyecto)
+
+################################################################################
+
+    @expose('saip2011.templates.reporte.proyectos')
+    def proyectos(self,start=0,end=5,indice=None,texto=""):
+        """Lista proyectos 
+        """
+        proyectos=""
+
+        nom_proyecto=Variables.get_valor_by_nombre("nombre_proyecto_actual")
+        nom_fase=Variables.get_valor_by_nombre("nombre_fase_actual")
+
+        
+
+        ############################
+        paginado = 5
+        if start <> 0:
+            end=int(start.split('=')[1]) #obtiene el fin de pagina
+            start=int(start.split('&')[0]) #obtiene el inicio de pagina
+        #print start,end
+        
+        pagina_actual = ((start % end) / paginado) + 1
+        if ((start % end) % paginado) <> 0:
+             pagina_actual = pagina_actual + 1
+         
+        #roles = Rol.get_roles_por_pagina(start,end)
+        ###########################
+        
+        lista = ['nombre','descripcion']
+
+        
+            #proyectos = Proyecto.get_proyecto_por_pagina(start,end)
+        if indice  <> None and texto <> "":  
+            proyectos = Proyecto.get_proyectos_por_filtro(indice,texto)
+            total = len(proyectos)
+        else:   
+            proyectos = Proyecto.get_proyectos_por_pagina(start,end)
+            total = len(Proyecto.get_proyectos())
+            
+        
+        
+        return dict(pagina="listar_proyecto.html",proyectos=proyectos,
+                        nom_proyecto=nom_proyecto,nom_fase=nom_fase,
+                        inicio=start,fin=end,paginado=paginado,
+                        pagina_actual=pagina_actual,total=total,
+                        lista=lista,param="/reporte/proyectos")
+
+
+
+################################################################################
+
+    @expose('saip2011.templates.reporte.proyectos3')
+    def fases(self,start=0,end=5,indice=None,texto=""):
+        """Lista proyectos 
+        """
+        proyectos=""
+
+        nom_proyecto=Variables.get_valor_by_nombre("nombre_proyecto_actual")
+        nom_fase=Variables.get_valor_by_nombre("nombre_fase_actual")
+
+        
+
+        ############################
+        paginado = 5
+        if start <> 0:
+            end=int(start.split('=')[1]) #obtiene el fin de pagina
+            start=int(start.split('&')[0]) #obtiene el inicio de pagina
+        #print start,end
+        
+        pagina_actual = ((start % end) / paginado) + 1
+        if ((start % end) % paginado) <> 0:
+             pagina_actual = pagina_actual + 1
+         
+        #roles = Rol.get_roles_por_pagina(start,end)
+        ###########################
+        
+        lista = ['nombre','descripcion']
+
+        
+            #proyectos = Proyecto.get_proyecto_por_pagina(start,end)
+        if indice  <> None and texto <> "":  
+            proyectos = Proyecto.get_proyectos_por_filtro(indice,texto)
+            total = len(proyectos)
+        else:   
+            proyectos = Proyecto.get_proyectos_por_pagina(start,end)
+            total = len(Proyecto.get_proyectos())
+            
+        
+        
+        return dict(pagina="listar_proyecto3.html",proyectos=proyectos,
+                        nom_proyecto=nom_proyecto,nom_fase=nom_fase,
+                        inicio=start,fin=end,paginado=paginado,
+                        pagina_actual=pagina_actual,total=total,
+                        lista=lista,param="/reporte/fases")
+
+################################################################################
+
+    @expose('saip2011.templates.reporte.ver_fases')
+    def ver_fases(self,id_proyecto,start=0,end=5,indice=None,texto=""):
+        """
+        Menu para Fases
+        """
+        nom_proyecto=Variables.get_valor_by_nombre("nombre_proyecto_actual")
+        nom_fase=Variables.get_valor_by_nombre("nombre_fase_actual")
+        valor = int(id_proyecto)
+        nom_proyecto = Proyecto.get_proyecto_by_id(valor).nombre_proyecto
+
+        paginado = 5
+        if start <> 0:
+            end=int(start.split('=')[1]) #obtiene el fin de pagina
+            start=int(start.split('&')[0]) #obtiene el inicio de pagina
+        #print start,end
+        #total = len(Fase.get_fase_by_proyecto(int (Variables.get_valor_by_nombre
+         #                                       ("proyecto_actual")) ))
+        pagina_actual = ((start % end) / paginado) + 1
+        if ((start % end) % paginado) <> 0:
+             pagina_actual = pagina_actual + 1
+                      
+        if indice  <> None and texto <> "":  
+            fases = Fase.get_fase_by_proyecto_por_filtro(valor,indice,texto)
+            total = len(fases)
+        else:   
+            fases, total = Fase.get_fase_by_proyecto_por_pagina(valor,start,end )
+            
+        lista = ['nombre','descripcion']
+        param = "/reporte/ver_fases?id_proyecto=%d" % valor
+
+        return dict(pagina="fase",fases=fases,nom_proyecto=nom_proyecto
+                        ,nom_fase=nom_fase,inicio=start,fin=end,paginado=paginado,
+                        pagina_actual=pagina_actual,total=total,param=param,
+                        lista=lista,proyecto=nom_proyecto)
+
+################################################################################
+
+    @expose('saip2011.templates.reporte.tipos_item')
+    def tipos_items(self,start=0,end=5,indice=None,texto=""):
+        """
+           Menu para Tipos de Item
+        """
+        nom_proyecto=Variables.get_valor_by_nombre("nombre_proyecto_actual")
+        nom_fase=Variables.get_valor_by_nombre("nombre_fase_actual")
+
+        paginado = 5
+        if start <> 0:
+            end=int(start.split('=')[1]) #obtiene el fin de pagina
+            start=int(start.split('&')[0]) #obtiene el inicio de pagina
+        #print start,end
+        
+        pagina_actual = ((start % end) / paginado) + 1
+        if ((start % end) % paginado) <> 0:
+             pagina_actual = pagina_actual + 1
+                
+        tipos_campos = Tipo_Campos.get_tipo_campos()
+        
+        if indice  <> None and texto <> "":  
+            tipos_items = Tipo_Item.get_tipos_items_por_filtro(indice,texto)
+            total = len(tipos_items)
+        else:   
+            tipos_items = Tipo_Item.get_tipos_items_por_pagina(start,end)
+            total = len(Tipo_Item.get_tipos_items())
+
+        lista = ['nombre','descripcion']
+
+        return dict(pagina="tipos_item",tipos_items=tipos_items, 
+                    tipos_campos=tipos_campos,nom_proyecto=nom_proyecto,
+                    nom_fase=nom_fase,inicio=start,fin=end,
+                    paginado=paginado,pagina_actual=pagina_actual,
+                    total=total,param="/reporte/tipos_item",lista=lista)
+
+###############################################################################

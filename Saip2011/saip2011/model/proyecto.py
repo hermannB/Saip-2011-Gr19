@@ -34,7 +34,7 @@ proyecto_tipo_fase_tabla = Table('Tabla_Proyecto_Tipo_Fase', metadata,
 class Proyecto(DeclarativeBase):
     """
 
-    Definición del Proyecto
+    Definicion del ṕroyecto
 
     """
 
@@ -71,18 +71,19 @@ class Proyecto(DeclarativeBase):
     @classmethod
     def get_proyectos(self):
 	    """
-	    Obtiene todos los proyectos.
-            """
+	    Obtiene la lista de todos los roles
+	    registrados en el sistema
+	    """
 	    proyectos = DBSession.query(Proyecto).all()
 	    return proyectos
-    print get_proyectos.__doc__
     
 #-------------------------------------------------------------------------------
 
     @classmethod
     def get_proyectos_by_equipo_desarrollo(self,idusuario):
         """
-        Obtiene los proyectos en los que el usuario enviado como parámetro forma parte.
+        Obtiene la lista de todos los roles
+        registrados en el sistema
         """
         proy = DBSession.query(Proyecto).all()
         proyectos = []
@@ -95,14 +96,14 @@ class Proyecto(DeclarativeBase):
 
         
         return proyectos
-    print get_proyectos_by_equipo_desarrollo.__doc__
     
     #-------------------------------------------------------------------------------
 
     @classmethod
     def get_proyectos_by_equipo_desarrollo_por_pagina(self,idusuario,start=0,end=5):
         """
-        Obtiene los proyectos en los que el usuario forma parte.
+        Obtiene la lista de todos los usuarios
+        registrados en el sistema
         """
         #obtengo los proyectos del usuario actual
         proyectos = Proyecto.get_proyectos_by_equipo_desarrollo(idusuario)
@@ -116,15 +117,14 @@ class Proyecto(DeclarativeBase):
              
         
         return lista_paginada, len(proyectos)
-    print get_proyectos_by_equipo_desarrollo_por_pagina.__doc__
 
 #-------------------------------------------------------------------------------
 
     @classmethod
     def get_proyectos_by_equipo_desarrollo_por_filtro(self,idusuario,param,texto):
         """
-        Obtiene los proyectos en los que está asignado el usuario. La búsqueda se realiza por nombre o por descripción 
-        del proyecto.
+        Obtiene la lista de todos los usuarios
+        registrados en el sistema
         """
         #obtengo los proyectos del usuario actual
         proyectos = Proyecto.get_proyectos_by_equipo_desarrollo(idusuario)
@@ -142,36 +142,36 @@ class Proyecto(DeclarativeBase):
                     lista_filtrada.append(proy)
                     
         return lista_filtrada
-    print get_proyectos_by_equipo_desarrollo_por_filtro.__doc__
 
 #-------------------------------------------------------------------------------
 
     @classmethod
     def get_proyecto_by_id(self,id_proyecto):
 	    """
-	    Obtiene el proyecto buscado por su identificador.
+	    Obtiene la lista de todos los roles
+	    registrados en el sistema
 	    """
 	    proyecto = DBSession.query(Proyecto).get(id_proyecto)
 	    return proyecto
-    print get_proyecto_by_id.__doc__
 
 #-------------------------------------------------------------------------------
 
     @classmethod
     def get_proyectos_por_pagina(self,start=0,end=5):
         """
-        Obtiene una lista de los proyectos
+        Obtiene la lista de todos los usuarios
+        registrados en el sistema
         """
         proyectos = DBSession.query(Proyecto).slice(start,end).all()
         return proyectos
-    print get_proyectos_por_pagina.__doc__
 
 #-------------------------------------------------------------------------------
 
     @classmethod
     def get_proyectos_por_filtro(self,param,texto):
         """
-        Obtiene los proyectos buscados por nombre o descripción del proyecto.
+        Obtiene la lista de todos los usuarios
+        registrados en el sistema
         """
         if param == "nombre":
             proyectos = DBSession.query(Proyecto).filter(Proyecto.nombre_proyecto.like('%s%s%s' % ('%',texto,'%'))).all()
@@ -179,7 +179,6 @@ class Proyecto(DeclarativeBase):
             proyectos = DBSession.query(Proyecto).filter(Proyecto.descripcion.like('%s%s%s' % ('%',texto,'%'))).all()
             
         return proyectos
-    print get_proyectos_por_filtro.__doc__
 
 #-------------------------------------------------------------------------------
 
@@ -187,21 +186,20 @@ class Proyecto(DeclarativeBase):
     @classmethod
     def get_nombres(self):
         """
-        Obtiene los nombres de los proyectos.
+        Obtiene la
         """
         proyectos = DBSession.query(Proyecto).all()
         lista=[]
         for proyecto in proyectos:
             lista.append(proyecto.nombre_proyecto) 
         return lista
-    print get_nombres.__doc__
 
 #-------------------------------------------------------------------------------
 
     @classmethod
     def get_ultimo_id(self):
 	    """
-	    Obtiene el ultimo id de la tabla Proyecto
+	    Obtiene el ultimo id de la tabla
 	    """
 	    mayor =0
 	    proyectos = DBSession.query(Proyecto).all()
@@ -209,7 +207,6 @@ class Proyecto(DeclarativeBase):
 		    if (proy.id_proyecto > mayor):
 			    mayor = proy.id_proyecto
 	    return mayor
-    print get_ultimo_id.__doc__
 
 #-------------------------------------------------------------------------------
 

@@ -28,8 +28,17 @@
     	</div>
     	<xi:include href="listar_usuario.html" />
       </span>
+      <span py:when="perm.var == 'alta_usuario'">
+      	<p><a href="${tg.url('/agregar_usuario')}">Agregar Usuario</a></p>
+      </span>
       <span py:when="perm.var == 'cam_pass'">
       	<p><a href="${tg.url('/cambiar_password')}">Cambiar Password</a></p>
+      </span>
+      <span py:when="perm.var == 'list_usuario'">
+      	<div py:if="defined('lista') and len(usuarios) > 0">
+    		${buscar(lista)}
+    	</div>
+    	<xi:include href="listar_usuario.html" />
       </span>
      </div>
     </div>
