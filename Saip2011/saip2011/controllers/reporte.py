@@ -41,18 +41,6 @@ import base64
 import binascii
 
 
-# Import graphviz
-import sys
-sys.path.append('..')
-sys.path.append('/usr/lib/graphviz/python/')
-sys.path.append('/usr/lib64/graphviz/python/')
-import gv
-
-# Import pygraph
-from pygraph.classes.graph import graph
-from pygraph.classes.digraph import digraph
-from pygraph.algorithms.searching import breadth_first_search
-from pygraph.readwrite.dot import write
 
 class ReporteController(BaseController):
     
@@ -174,6 +162,9 @@ class ReporteController(BaseController):
 
         id_fase=int(Variables.get_valor_by_nombre("fase_actual"))
         items = Relaciones.get_mis_padres(id_item)
+        for it in items:
+            if (it.estado_oculto=="Activo"):
+                items.remove(it)
       
         return dict(pagina='ver_mis_padres.html',items=items,nom_proyecto=nom_proyecto
                     ,nom_fase=nom_fase)
@@ -192,7 +183,8 @@ class ReporteController(BaseController):
         items=[]
         for hijo in hijos:
             h=Item.get_item_by_id(int(hijo))
-            items.append(h)
+            if (h.estado_oculto=="Activo"):
+                items.append(h)
       
         return dict(pagina='ver_mis_hijos.html',items=items,nom_proyecto=nom_proyecto
                     ,nom_fase=nom_fase)
@@ -209,7 +201,8 @@ class ReporteController(BaseController):
 
         impacto=item.complejidad
         for it in items:
-            impacto+=it.complejidad
+            if (it.estado_oculto=="Activo"):
+                impacto+=it.complejidad
     
         values = dict(id_item=item.id_item, 
 	                   nombre_item=item.nombre_item,
@@ -231,6 +224,7 @@ class ReporteController(BaseController):
             id_item=int(id_item)
         item=Item.get_item_by_id(id_item)
         items = Item.get_item_activados()
+        Relaciones.matriz_relaciones(id_item)
 
         values = dict(id_item=item.id_item, 
 	                   nombre_item=item.nombre_item,
@@ -241,25 +235,7 @@ class ReporteController(BaseController):
 
 
 
-        #Graph creation
-        gr = graph()
 
-        # Add nodes and edges
-        for item in items:
-            gr.add_nodes([item.nombre_item])
-        
-        # Add relation and edges
-
-        for item in items:
-           gr.add_edge((item.nombre_item, items[0].nombre_item))
-        
-        
-
-        # Draw as PNG
-        dot = write(gr)
-        gvv = gv.readstring(dot)
-        gv.layout(gvv,'dot')
-        gv.render(gvv,'png','/home/hermann/saip2011/saip2011/public/images/arbol.png')
       
         return dict(pagina='imagen.html',values=values,nom_proyecto=nom_proyecto
                     ,nom_fase=nom_fase)
