@@ -42,10 +42,7 @@ class Linea_Base (DeclarativeBase):
 
     items = relation(Item, secondary=linea_base_item_tabla,
                       backref='lineas_bases')
-
-
-   
-   
+  
     
     #{ Special methods
     

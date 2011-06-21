@@ -4,6 +4,7 @@ Tipo Item* related model.
 
 
 """
+
 import os
 from datetime import datetime
 import sys
@@ -79,6 +80,7 @@ class Tipo_Item(DeclarativeBase):
         Obtiene la lista de todos los tipos de item
         registrados en el sistema
         """
+
         tipos_items = DBSession.query(Tipo_Item).all()
         return tipos_items
 
@@ -119,6 +121,7 @@ class Tipo_Item(DeclarativeBase):
         Obtiene la lista de todos los usuarios
         registrados en el sistema
         """
+
         tipo_items = DBSession.query(Tipo_Item).all()
         for tipo_item in tipo_items:
             if tipo_item.id_tipo_item == tipo_item_id:
@@ -131,8 +134,10 @@ class Tipo_Item(DeclarativeBase):
         """
         Obtiene el ultimo id de la tabla
         """
+
         mayor =0
         tipos_items = DBSession.query(Tipo_Item).all()
+
         for tipo_item in tipos_items:
            if (tipo_item.id_tipo_item > mayor):
               mayor =tipo_item.id_tipo_item
@@ -146,6 +151,7 @@ class Tipo_Item(DeclarativeBase):
         Obtiene la lista de todos los tipos de item
         registrados en el sistema
         """
+
         lista=Tipo_Campos.get_campos_by_tipo_item(id_tipo)
         return lista
 
@@ -157,6 +163,7 @@ class Tipo_Item(DeclarativeBase):
         Obtiene la lista de todos los tipos de item
         registrados en el sistema
         """
+
         lista=Tipo_Campos.get_nombres_by_tipo_item(id_tipo)
         return lista
 
@@ -167,6 +174,7 @@ class Tipo_Item(DeclarativeBase):
         """
         Obtiene la lista de todos los tipo_item         
         """
+
         DBSession.delete(DBSession.query(Tipo_Item).get(id_tipo_item))
         DBSession.flush()	
 

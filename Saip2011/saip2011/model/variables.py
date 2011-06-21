@@ -4,6 +4,7 @@ Equipo de Desarrollo* related model.
 
 
 """
+
 import os
 from datetime import datetime
 import sys
@@ -54,20 +55,22 @@ class Variables (DeclarativeBase):
         Obtiene la lista de todos los equipos
         registrados en el sistema
         """
+
         var = DBSession.query(Variables).all()
         return var
+
     print get_variables.__doc__
 
 #-------------------------------------------------------------------------------
     @classmethod
     def get_valor_by_nombre(self, nombre):
-	"""
-        Obtiene el valor de la variable por el nombre.
-	""" 
-	variables = DBSession.query(Variables).all()
-        for var in variables:
-            if (var.nombre == nombre):
-			    return var.valor
+        """
+            Obtiene el valor de la variable por el nombre.
+        """ 
+        variables = DBSession.query(Variables).all()
+            for var in variables:
+                if (var.nombre == nombre):
+                    return var.valor
     print get_valor_by_nombre.__doc__
 
 #-------------------------------------------------------------------------------
@@ -76,10 +79,13 @@ class Variables (DeclarativeBase):
         """
         Setea el nombre de una variable.
         """
+
         variables = DBSession.query(Variables).all()
         for var in variables:
             if (var.nombre == nombre):
-				    var.valor=valor
-				    DBSession.flush()
+                var.valor=valor
+                DBSession.flush()
+
     print set_valor_by_nombre.__doc__
+
 #-------------------------------------------------------------------------------

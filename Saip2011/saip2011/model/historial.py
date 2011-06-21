@@ -59,9 +59,11 @@ class Historial(DeclarativeBase):
         Obtiene la lista de todos los historiales
         registrados en el sistema
         """
+
         historiales = DBSession.query(Historial).all()
             
         return historiales
+
     print get_historiales.__doc__
 
 #-------------------------------------------------------------------------------
@@ -71,10 +73,12 @@ class Historial(DeclarativeBase):
         """
         Obtiene un historial a traves de su identificador.
         """
+
         historiales = DBSession.query(Historial).all()
         for historial in historiales:
             if historial.id_historial == historial_id:
                 return historiales
+
     print get_historial_by_id.__doc__
 
 #-------------------------------------------------------------------------------
@@ -84,8 +88,10 @@ class Historial(DeclarativeBase):
         """
         Obtiene un historial a traves de su identificador.
         """
+
         historial = DBSession.query(Historial).get(int(id_historial))
         return historial
+
     print get_historial_by_id.__doc__
 
 #-------------------------------------------------------------------------------
@@ -95,13 +101,17 @@ class Historial(DeclarativeBase):
         """
         Obtiene la lista de todos los historiales de un item a través de su identificador.
         """
+
         lista=[]
         historiales = DBSession.query(Historial).all()
+
         for historial in historiales:
             if historial.id_item == id_item:
                 pos=historial.version-1
                 lista.insert(pos,historial)
+
         return lista
+
     print get_historiales_by_id_item.__doc__
 
 #-------------------------------------------------------------------------------
@@ -111,8 +121,10 @@ class Historial(DeclarativeBase):
         """
         Elimina un historial.
         """
+
         DBSession.delete(DBSession.query(Historial).get(id_historial))
         DBSession.flush()	
+
     print borrar_by_id.__doc__
 
 #-------------------------------------------------------------------------------

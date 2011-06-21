@@ -7,6 +7,7 @@ It's perfectly fine to re-use this definition in the Saip application,
 though.
 
 """
+
 import os
 from datetime import datetime
 import sys
@@ -35,8 +36,6 @@ from pygraph.algorithms.searching import breadth_first_search
 from pygraph.readwrite.dot import write
 
 
-
-
 ################################################################################
 
 class Relaciones(DeclarativeBase):
@@ -55,6 +54,7 @@ class Relaciones(DeclarativeBase):
 
     padres = relation(Item, secondary=relaciones_item_tabla,
                       backref='items')
+
 ################################################################################
 
     #                   Metodos
@@ -72,8 +72,10 @@ class Relaciones(DeclarativeBase):
         """
         Obtiene las relaciones.
         """
+
         relaciones = DBSession.query(Relaciones).all()
         return relaciones
+
     print get_relaciones.__doc__
 
 #-------------------------------------------------------------------------------
@@ -83,8 +85,10 @@ class Relaciones(DeclarativeBase):
         """
         Obtiene una relación a través de su identificador
         """
+
         relacion = DBSession.query(Relaciones).get(int(rel_id))
         return relacion
+
     print get_relacion_by_id.__doc__
 
 #-------------------------------------------------------------------------------
@@ -94,8 +98,10 @@ class Relaciones(DeclarativeBase):
         """
         Obtiene la lista de los padres de un item específico
         """
+
         relaciones = DBSession.query(Relaciones).all()
         lista =[]
+
         for rel in relaciones:
             if rel.id_item_hijo == id_item:
                 for padre in rel.padres:
@@ -103,6 +109,7 @@ class Relaciones(DeclarativeBase):
                         lista.append(padre) 
 
         return lista
+
     print get_mis_padres.__doc__
 
 #-------------------------------------------------------------------------------
@@ -112,8 +119,10 @@ class Relaciones(DeclarativeBase):
         """
         Obtiene la lista de los items hijos del item enviado como parámetro
         """
+
         relaciones = DBSession.query(Relaciones).all()
         lista =[]
+
         for rel in relaciones:
             for padre in rel.padres:
                 if (padre.estado_oculto=="Activo"):
@@ -131,6 +140,7 @@ class Relaciones(DeclarativeBase):
         """
         Obtiene los antecesores del item enviado como parámetro.
         """
+
         relaciones = DBSession.query(Relaciones).all()
         lista =[]
         padres =[]
@@ -146,12 +156,13 @@ class Relaciones(DeclarativeBase):
             mis_padres=Relaciones.get_mis_padres(int(lista[0].id_item))
             del lista[0]
             for padre in mis_padres:
-                if padre not in lista and (padre.estado_oculto=="Activo"):
-                    lista.append(padre) 
-                    padres.append(padre)
-            
+                if padre not in lista:
+                    if padre.estado_oculto=="Activo":
+                        lista.append(padre) 
+                        padres.append(padre)
 
         return padres
+
     print get_antecesores.__doc__
 
 
@@ -162,6 +173,7 @@ class Relaciones(DeclarativeBase):
         """
         Obtiene los sucesores del item enviado como parámetro.
         """
+
         relaciones = DBSession.query(Relaciones).all()
         lista =[]
         hijos =[]
@@ -188,6 +200,7 @@ class Relaciones(DeclarativeBase):
                         hijos.append (item)
 
         return hijos
+
     print get_sucesores.__doc__
 
 #-------------------------------------------------------------------------------
@@ -197,6 +210,7 @@ class Relaciones(DeclarativeBase):
     """
     Obtiene los items habilitados.    
         """
+
         if orden is not None:
             orden=int(orden)
 
@@ -211,12 +225,16 @@ class Relaciones(DeclarativeBase):
         for padre in padres:
 
             c=int(padre.orden)
-            if  c not in fases_habilitadas or (padre.estado_oculto=="Activo"):
-               aux.append(padre)
+            if  c not in fases_habilitadas:
+                aux.append(padre)
+            elif (padre.estado_oculto!="Activo"):
+                padres.remove(padre)
 
         for a in aux:
             padres.remove(a)       
+
         return padres
+
     print get_padres_habilitados.__doc__
 
 #-------------------------------------------------------------------------------
@@ -252,6 +270,7 @@ class Relaciones(DeclarativeBase):
                 if (sucesor.estado_oculto=="Activo"):
                     relacionados.append(sucesor)
                     usados.append(sucesor.nombre_item)
+
         #Graph creation
         gr = graph()
 
@@ -276,6 +295,7 @@ class Relaciones(DeclarativeBase):
         gvv = gv.readstring(dot)
         gv.layout(gvv,'dot')
         gv.render(gvv,'png','/home/hermann/saip2011/saip2011/public/images/arbol.png')
+
     print matriz_relaciones.__doc__
     
         
@@ -286,8 +306,10 @@ class Relaciones(DeclarativeBase):
         """
         Elimina una relación.         
         """
+
         DBSession.delete(DBSession.query(Relaciones).get(rel_id))
         DBSession.flush()	
+
     print borrar_by_id.__doc__
 
 #-------------------------------------------------------------------------------

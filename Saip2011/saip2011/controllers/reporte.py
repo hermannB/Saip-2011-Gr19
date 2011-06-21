@@ -179,7 +179,7 @@ class ReporteController(BaseController):
         id_fase=int(Variables.get_valor_by_nombre("fase_actual"))
         items = Relaciones.get_mis_padres(id_item)
         for it in items:
-            if (it.estado_oculto=="Activo"):
+            if (it.estado_oculto!="Activo"):
                 items.remove(it)
       
         return dict(pagina='ver_mis_padres.html',items=items,nom_proyecto=nom_proyecto

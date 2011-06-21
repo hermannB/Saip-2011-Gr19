@@ -74,8 +74,10 @@ class Equipo_Desarrollo(DeclarativeBase):
         Obtiene la lista de todos los equipos
         registrados en el sistema
         """
+
         equipos = DBSession.query(Equipo_Desarrollo).all()
         return equipos    
+
     print get_equipos.__doc__
 
 #-------------------------------------------------------------------------------
@@ -85,18 +87,19 @@ class Equipo_Desarrollo(DeclarativeBase):
         """
         Obtiene la lista de todos los miembros de un proyecto dado.
         """
+
         equipos = DBSession.query(Equipo_Desarrollo).all()
-            
         lista = []
         c = 0
+
         for equipo in equipos:
             if (equipo.proyecto == id_proyecto):
                 c = c + 1
                 if c < end and c > start-1:
-                    
                     lista.append(equipo)
                     
         return lista
+
     print get_miembros_by_proyecto_por_pagina.__doc__
 
 #-------------------------------------------------------------------------------
@@ -106,6 +109,7 @@ class Equipo_Desarrollo(DeclarativeBase):
         """
         Obtiene la lista de todos los miembros de un proyecto. Los miembros se buscan por nombre.
         """
+
         equipos = DBSession.query(Equipo_Desarrollo).all()
             
         lista = []
@@ -118,9 +122,9 @@ class Equipo_Desarrollo(DeclarativeBase):
             for equipo in lista:
                 if texto in equipo.nombre_usuario.alias:
                     lista_filtrada.append(equipo)
-                    
-       
+
         return lista_filtrada
+
     print get_miembros_by_proyecto_por_filtro.__doc__
 
 
@@ -131,12 +135,15 @@ class Equipo_Desarrollo(DeclarativeBase):
         """
         Obtiene los miembros asignados a un proyecto dado.
         """
+
         equipos = DBSession.query(Equipo_Desarrollo).all()
         lista = []
         for equipo in equipos:
-	        if (equipo.proyecto == id_proyecto):
-		        lista.append(equipo)
+            if (equipo.proyecto == id_proyecto):
+                lista.append(equipo)
+
         return lista
+
     print get_miembros_by_proyecto.__doc__
 
 #-------------------------------------------------------------------------------
@@ -147,10 +154,12 @@ class Equipo_Desarrollo(DeclarativeBase):
         """
         Obtiene un miembro de un equipo por su identificador.
         """
+
         equipos = DBSession.query(Equipo_Desarrollo).all()
         for equipo in equipos:
             if (equipo.id_equipo == id_miembro):
                 return equipo
+
     print get_miembro_by_id.__doc__
 
 #-------------------------------------------------------------------------------
@@ -160,13 +169,15 @@ class Equipo_Desarrollo(DeclarativeBase):
         """
         Obtiene un miembro de un equipo de desarrollo.
         """
+
         equipos = DBSession.query(Equipo_Desarrollo).all()
         lista = []
         for equipo in equipos:
             if (equipo.idusuario == id_miembro):
-	            lista.append(equipo)
+                lista.append(equipo)
 
         return lista
+
     print get_miembros_by_usuario.__doc__
 
 #-------------------------------------------------------------------------------
@@ -176,12 +187,16 @@ class Equipo_Desarrollo(DeclarativeBase):
         """
         Obtiene un miembro de un equipo filrtado por usuario y proyecto.
         """
+
         equipos = DBSession.query(Equipo_Desarrollo).all()
         lista = []
+
         for equipo in equipos:
             if(equipo.idusuario == id_usuario and equipo.proyecto==id_proyecto):
                 return equipo
+
     print get_miembro_by_usuario_by_proyecto.__doc__
+
 #-------------------------------------------------------------------------------
 
     @classmethod
@@ -189,8 +204,10 @@ class Equipo_Desarrollo(DeclarativeBase):
         """
         Elimina un miembro de equipo.
         """
+
         DBSession.delete(DBSession.query(Equipo_Desarrollo).get(id_miembro))
         DBSession.flush()	
+
     print borrar_by_id.__doc__
 
 #-------------------------------------------------------------------------------

@@ -77,7 +77,9 @@ class Fase(DeclarativeBase):
         registradas en el sistema
         """
         fases = DBSession.query(Fase).all()
+
         return fases
+
     print get_fases.__doc__
 
 #-------------------------------------------------------------------------------
@@ -87,10 +89,12 @@ class Fase(DeclarativeBase):
         """
         Obtiene una fase buscada por su identificador de fase.
         """
+
         fases = DBSession.query(Fase).all()
         for fase in fases:
             if fase.id_fase == fase_id:
                 return fase
+
     print get_fase_by_id.__doc__
 
 #-------------------------------------------------------------------------------
@@ -100,10 +104,12 @@ class Fase(DeclarativeBase):
         """
         Obtiene una fase buscada por su identificador de fase.
         """
+
         fases = DBSession.query(Fase).all()
         for fase in fases:
             if fase.id_fase == fase_id:
                 return fase
+
     print get_fase_by_id.__doc__
 
 #-------------------------------------------------------------------------------
@@ -113,6 +119,7 @@ class Fase(DeclarativeBase):
         """
         Obtiene una lista de fases que pertenece a un proyecto dado.
         """
+
         #obtengo las fases del proyecto
         if id_proyecto is not None:
             id_proyecto = int(id_proyecto)
@@ -127,6 +134,7 @@ class Fase(DeclarativeBase):
             c = c + 1    
                  
         return lista, len(fases)
+
     print get_fase_by_proyecto_por_pagina.__doc__
 
 #-------------------------------------------------------------------------------
@@ -152,11 +160,11 @@ class Fase(DeclarativeBase):
                 lista.append(fase)
 
         return lista
+
     print get_fase_by_proyecto_por_filtro.__doc__
 
 
 #-------------------------------------------------------------------------------
-
 
     @classmethod
     def get_nombres_by_id(self,proyecto_id):
@@ -165,10 +173,12 @@ class Fase(DeclarativeBase):
         """
         fases = DBSession.query(Fase).all()
         lista=[]
+
         for fase in fases:
             if (fase.proyecto ==proyecto_id ):
                 lista.append(fase.nombre_fase) 
         return lista
+
     print get_nombres_by_id.__doc__
 
 #-------------------------------------------------------------------------------
@@ -182,9 +192,10 @@ class Fase(DeclarativeBase):
         lista=[]
         for	fase in fases:
             if fase.proyecto == int(id_proyecto):
-	            lista.append(fase)
+                lista.append(fase)
 
         return lista
+
     print get_fase_by_proyecto.__doc__
 
 #-------------------------------------------------------------------------------

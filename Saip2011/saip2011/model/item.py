@@ -9,6 +9,7 @@ It's perfectly fine to re-use this definition in the Saip application,
 though.
 
 """
+
 import os
 from datetime import datetime
 import sys
@@ -45,7 +46,6 @@ class Item(DeclarativeBase):
 
     __tablename__ = 'Tabla_Item'
 
-################################################################################
 
     #           Columnas
 
@@ -98,12 +98,14 @@ class Item(DeclarativeBase):
         """
         Obtiene el ultimo id de la tabla Item.
         """
+
         mayor =0
         items = DBSession.query(Item).all()
         for item in items:
             if (item.id_item > mayor):
 	            mayor =item.id_item
         return mayor
+
     print get_ultimo_id.__doc__
 
 #-------------------------------------------------------------------------------
@@ -113,8 +115,10 @@ class Item(DeclarativeBase):
         """
         Obtiene item uscado por su identificador.
         """
+
         item = DBSession.query(Item).get(int(id_item))
         return item
+
     print get_item_by_id.__doc__
 
 #-------------------------------------------------------------------------------
@@ -125,12 +129,12 @@ class Item(DeclarativeBase):
         Obtiene item maestro.
         """
         items = DBSession.query(Item).all()
+
         for item in items:
             if item.nombre_item=="master":
                 return item
+
     print get_master.__doc__
-
-
 
 #-------------------------------------------------------------------------------
 
@@ -139,13 +143,17 @@ class Item(DeclarativeBase):
         """
         Obtiene la lista de los items por proyecto y fase.
         """
+
         lista=[]
         items = DBSession.query(Item).all()
+
         for item in items:
             if( item.estado_oculto=="Activo" and item.proyecto == proy
                 and item.fase == fase):
                 lista.append(item)  
+
         return lista
+
     print get_item_proy_fase.__doc__
 
 #-------------------------------------------------------------------------------
@@ -155,16 +163,16 @@ class Item(DeclarativeBase):
         """
         Obtiene la lista de todos los items en estado ACTIVO.
         """
+
         lista=[]
         items = DBSession.query(Item).all()
         for item in items:
             if( item.estado_oculto=="Activo"):
                 lista.append(item)  
+
         return lista
+
     print get_item_activados.__doc__
-
-
-
 
 #-------------------------------------------------------------------------------
 
@@ -173,13 +181,16 @@ class Item(DeclarativeBase):
         """
         Obtiene la lista de los nombres de los items
         """
+
         fase=int(Variables.get_valor_by_nombre("fase_actual"))
         items = Item.get_item_activados_by_fase(fase)
         lista=[]
         for item in items:
             if( item.estado_oculto=="Activo"):
                 lista.append(item.nombre_item)  
+
         return lista
+
     print get_nombres_items.__doc__
 
 #-------------------------------------------------------------------------------
@@ -189,14 +200,18 @@ class Item(DeclarativeBase):
         """
         Obtiene la lista de todos los items activos de una determinada fase.
         """
+
         proyecto=int(Variables.get_valor_by_nombre("proyecto_actual"))
         lista=[]
         items = DBSession.query(Item).all()
+
         for item in items:
             if( item.estado_oculto=="Activo" and item.proyecto == proyecto
                 and item.fase == int(fase)):
                 lista.append(item)  
+
         return lista
+
     print get_item_activados_by_fase.__doc__
 
 #-------------------------------------------------------------------------------
@@ -206,6 +221,7 @@ class Item(DeclarativeBase):
         """
         Obtiene la lista de todos los items activos de una determinada fase.
         """
+
         id_proyecto=int(Variables.get_valor_by_nombre("proyecto_actual"))
         items = DBSession.query(Item).slice(start,end).all()
         
@@ -216,6 +232,7 @@ class Item(DeclarativeBase):
                 lista.append(item)
 
         return lista
+
     print get_item_activados_by_fase_por_pagina.__doc__
 
 #-------------------------------------------------------------------------------
@@ -225,6 +242,7 @@ class Item(DeclarativeBase):
         """
         Obtiene la lista de todos los items activos de una fase. Los items se buscan por 'nombre' y 'estadp'
         """
+
         id_proyecto=int(Variables.get_valor_by_nombre("proyecto_actual"))
         
         if param == "nombre":
@@ -239,9 +257,8 @@ class Item(DeclarativeBase):
                 lista.append(item)
 
         return lista
+
     print get_item_activados_by_fase_por_filtro.__doc__
-
-
 
 #-------------------------------------------------------------------------------
 
@@ -250,6 +267,7 @@ class Item(DeclarativeBase):
         """
         Crea el codigo del item.
         """
+
         codigo=""
         cantidad=1
         tipo = DBSession.query(Tipo_Item).get(id_tipo)
@@ -258,11 +276,12 @@ class Item(DeclarativeBase):
         codigo+=pre_codigo+"-"
 
         for i in items:
-	        if (i.id_tipo_item == id_tipo and i.proyecto == proy_actual
+            if (i.id_tipo_item == id_tipo and i.proyecto == proy_actual
                 and i.fase == fas_act):
-		        cantidad=cantidad+1
-        codigo+=str(cantidad)
+                cantidad=cantidad+1
+                codigo+=str(cantidad)
         return codigo
+
     print crear_codigo.__doc__
 
 #-------------------------------------------------------------------------------
@@ -272,12 +291,16 @@ class Item(DeclarativeBase):
         """
         Obtiene la lista de todos los items eliminados.
         """
+
         lista=[]
         items = DBSession.query(Item).all()
+
         for item in items:
-	        if( item.estado_oculto=="Eliminado"):
-		        lista.append(item)  
+            if( item.estado_oculto=="Eliminado"):
+                lista.append(item)  
+
         return lista
+
     print get_item_eliminados.__doc__
 
 #-------------------------------------------------------------------------------
@@ -287,15 +310,19 @@ class Item(DeclarativeBase):
         """
         Obtiene la lista de todos los items eliminados de una fase.
         """
+
         proyecto=int(Variables.get_valor_by_nombre("proyecto_actual"))
         lista=[]
         items = DBSession.query(Item).all()
         for item in items:
-	        if( item.estado_oculto=="Eliminado"and item.proyecto == proyecto
+            if( item.estado_oculto=="Eliminado"and item.proyecto == proyecto
                 and item.fase == int(fase)):
-		        lista.append(item)  
+                lista.append(item)  
+
         return lista
+
     print get_item_eliminados_by_fase.__doc__
+
 #-------------------------------------------------------------------------------
 
     @classmethod
@@ -303,6 +330,7 @@ class Item(DeclarativeBase):
         """
         Obtiene la lista de todos los items eliminados de una fase.
         """
+
         id_proyecto=int(Variables.get_valor_by_nombre("proyecto_actual"))
         item = DBSession.query(Item).slice(start,end).all()
         lista=[]
@@ -312,6 +340,7 @@ class Item(DeclarativeBase):
                 lista.append(item)
 
         return lista
+
     print get_item_eliminados_por_pagina.__doc__
 
 #-------------------------------------------------------------------------------
@@ -322,15 +351,19 @@ class Item(DeclarativeBase):
         """
         Obtiene el historial de un item.
         """
+
         muestra=DBSession.query(Item).get(id_item)
         lista=[]
         items = DBSession.query(Item).all()
+
         for item in items:
-	        if( (item.proyecto== muestra.proyecto)and(item.fase == muestra.fase) 
-			        and ( item.codigo_item ==muestra.codigo_item) and
-                         (item.estado_oculto == "Desactivado") ):
-			        lista.append(item)  
+            if( (item.proyecto== muestra.proyecto)and(item.fase == muestra.fase) 
+                and ( item.codigo_item ==muestra.codigo_item) and
+                (item.estado_oculto == "Desactivado") ):
+                lista.append(item)  
+
         return lista
+
     print get_historial.__doc__
 
 #-------------------------------------------------------------------------------
@@ -340,20 +373,22 @@ class Item(DeclarativeBase):
         """
         Obtiene el historial de un item.
         """
+
         id_proyecto=int(Variables.get_valor_by_nombre("proyecto_actual"))
         item = DBSession.query(Item).slice(start,end).all()
         lista=[]
+
         for item in items:
             if( (item.proyecto== muestra.proyecto)and(item.fase == muestra.fase) 
-			        and ( item.codigo_item ==muestra.codigo_item) and
-                         (item.estado_oculto == "Desactivado") ):
+		        and ( item.codigo_item ==muestra.codigo_item) and
+                (item.estado_oculto == "Desactivado") ):
                 lista.append(item)
 
         return lista
+
     print get_historial_por_pagina.__doc__
 
 #-------------------------------------------------------------------------------
-
 
     @classmethod
     def version_actual(self, id_item):
@@ -363,11 +398,13 @@ class Item(DeclarativeBase):
 
         items = Item.get_item_activados()
         item_viejo = DBSession.query(Item).get(id_item)
+
         for item in items:
-	        if( (item.nombre_item == item_viejo.nombre_item) and  
-                    (item.proyecto == item_viejo.proyecto)  and 
-                    (item.fase == item_viejo.fase ) ):
-		        return item
+            if( (item.nombre_item == item_viejo.nombre_item) and  
+                (item.proyecto == item_viejo.proyecto)  and 
+                (item.fase == item_viejo.fase ) ):
+                return item
+
     print version_actual.__doc__ 
 
 #-------------------------------------------------------------------------------
@@ -377,10 +414,12 @@ class Item(DeclarativeBase):
         """
         Activa un item.
         """
+
         item = DBSession.query(Item).get(id_item)
         if item.estado == "nuevo":
-	        item.estado="en_desarrollo"
-	        DBSession.flush()
+            item.estado="en_desarrollo"
+            DBSession.flush()
+
     print activar.__doc__
 
 #-------------------------------------------------------------------------------
@@ -390,10 +429,12 @@ class Item(DeclarativeBase):
         """
         Aprueba un item en estado en desarrollo.
         """
+
         item = DBSession.query(Item).get(id_item)
         if item.estado == "en_desarrollo":
-	        item.estado="aprobado"
-	        DBSession.flush()
+            item.estado="aprobado"
+            DBSession.flush()
+
     print aprobar.__doc__
 
 #-------------------------------------------------------------------------------
@@ -403,10 +444,12 @@ class Item(DeclarativeBase):
         """
         Se asigna al item como parte de la linea base.
         """
+
         item = DBSession.query(Item).get(id_item)
         if item.estado == "aprobado":
-	        item.estado="con_linea_base"
-	        DBSession.flush()
+            item.estado="con_linea_base"
+            DBSession.flush()
+
     print con_linea_base.__doc__
 
 #-------------------------------------------------------------------------------
@@ -416,10 +459,12 @@ class Item(DeclarativeBase):
         """
         El item se pasa al estado 'a revisar'.
         """
+
         item = DBSession.query(Item).get(id_item)
         if item.estado == "aprobado" or item.estado == "con_linea_base":
-	        item.estado="a_revisar"
-	        DBSession.flush()
+            item.estado="a_revisar"
+            DBSession.flush()
+
     print revisar.__doc__
 
 #-------------------------------------------------------------------------------
@@ -431,17 +476,21 @@ class Item(DeclarativeBase):
         """
         proyecto = DBSession.query(Item).get(id_item)
         if item.estado == "con_linea_base":
-	        item.estado="finalizado"
-	        DBSession.flush()
+            item.estado="finalizado"
+            DBSession.flush()
+
     print finalizar.__doc__
+
 #-------------------------------------------------------------------------------
     @classmethod
     def borrar_by_id(self,id_item):
         """
         Eliina un item específico.         
         """
+
         DBSession.delete(DBSession.query(Item).get(id_item))
         DBSession.flush()
+
     print borrar_by_id.__doc__
 
 #-------------------------------------------------------------------------------

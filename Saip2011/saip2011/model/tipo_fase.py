@@ -7,6 +7,7 @@ It's perfectly fine to re-use this definition in the Saip application,
 though.
 
 """
+
 import os
 from datetime import datetime
 import sys
@@ -67,8 +68,10 @@ class Tipo_Fase(DeclarativeBase):
         """
         Obtiene todos los tipos de fases.
         """
+
         tipos_fases = DBSession.query(Tipo_Fase).all()
         return tipos_fases
+
     print get_tipo_fases.__doc__
 
 #-------------------------------------------------------------------------------
@@ -78,10 +81,13 @@ class Tipo_Fase(DeclarativeBase):
         """
         Obtiene un Tipo de Fase a través de su identificador.
         """
+
         tipos_fases = DBSession.query(Tipo_Fase).all()
+
         for tipo_fase in tipos_fases:
             if tipo_fase.id_tipo_fase == tipo_fase_id:
                 return tipo_fase
+
     print get_tipo_fase_by_id.__doc__
 
 #-------------------------------------------------------------------------------
@@ -93,8 +99,8 @@ class Tipo_Fase(DeclarativeBase):
         """
 
         tipos_fases = DBSession.query(Tipo_Fase).slice(start,end).all()
-            
         return tipos_fases
+
     print get_tipo_fase_por_pagina.__doc__
 
 #-------------------------------------------------------------------------------
@@ -111,6 +117,7 @@ class Tipo_Fase(DeclarativeBase):
             tipos_fases = DBSession.query(Tipo_Fase).filter(Tipo_Fase.descripcion.like('%s%s%s' % ('%',texto,'%'))).all()
                     
         return tipos_fases
+
     print get_tipo_fase_por_filtro.__doc__
 
 #-------------------------------------------------------------------------------
@@ -120,8 +127,10 @@ class Tipo_Fase(DeclarativeBase):
         """
         Elimina el Tipo de Fase.         
         """
+
         DBSession.delete(DBSession.query(Tipo_Fase).get(id_tipo_fase))
         DBSession.flush()
+
     print borrar_by_id.__doc__ 	
 
 #-------------------------------------------------------------------------------
