@@ -53,7 +53,7 @@
         <td>${item.proyecto}</td>
         <td>${item.complejidad}</td>
         <td>${item.estado}</td>
-        <td><a href="${tg.url('ver_adjuntos?id_item=%d' % item.id_item)}">ver adjuntos</a></td>
+        <td><a href="${tg.url('../item/ver_adjuntos?id_item=%d' % item.id_item)}">ver adjuntos</a></td>
 
       </tr>   
       <tr py:if="defined('total') and total/paginado > 0">

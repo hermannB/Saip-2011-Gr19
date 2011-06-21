@@ -42,11 +42,11 @@ from saip2011.controllers.item import ItemController
 from saip2011.controllers.proyecto import ProyectoController
 from saip2011.controllers.tipo_fase import Tipo_FaseController
 from saip2011.controllers.tipo_item import Tipo_ItemController
-#from saip2011.controllers.reporte import ReporteController
+from saip2011.controllers.reporte import ReporteController
 
 __all__ = ['RootController', 'FaseController' , 'EquipoController' ,
          'ItemController' , 'ProyectoController' ,  'Tipo_FaseController' 
-            , 'Tipo_ItemController' ]
+            , 'Tipo_ItemController', 'ReporteController' ]
 
 
 	
@@ -70,7 +70,7 @@ class RootController(BaseController):
     equipo = EquipoController()
     item = ItemController()
     proyecto = ProyectoController()
-    #    reporte = ReporteController()
+    reporte = ReporteController()
     tipo_fase = Tipo_FaseController()
     tipo_item = Tipo_ItemController()
 
@@ -586,7 +586,7 @@ class RootController(BaseController):
 #-------------------------------------------------------------------------------
 
     @expose()
-    def put_rol(self, idrol, nombrerol, descripcion, privilegios, **kw):
+    def put_rol(self, idrol, nombrerol, descripcion, privilegios,asmSelect0, **kw):
 
         if idrol is not None:
             idrol=int(idrol)
@@ -705,7 +705,7 @@ class RootController(BaseController):
 #-------------------------------------------------------------------------------
 
     @expose()
-    def post_rol(self, nombrerol, descripcion, privilegios=None):
+    def post_rol(self, nombrerol, descripcion, asmSelect0,privilegios=None):
         if privilegios is not None:
             if not isinstance(privilegios, list):
                 privilegios = [privilegios]

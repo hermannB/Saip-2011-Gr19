@@ -114,8 +114,11 @@ class Fase(DeclarativeBase):
         registrados en el sistema
         """
         #obtengo las fases del proyecto
+        if id_proyecto is not None:
+            id_proyecto = int(id_proyecto)
+
         fases = Fase.get_fase_by_proyecto(id_proyecto) 
-        
+
         lista=[]
         c = 0
         for fase in fases:
@@ -178,7 +181,7 @@ class Fase(DeclarativeBase):
         fases = DBSession.query(Fase).all()
         lista=[]
         for	fase in fases:
-            if fase.proyecto == id_proyecto:
+            if fase.proyecto == int(id_proyecto):
 	            lista.append(fase)
 
         return lista

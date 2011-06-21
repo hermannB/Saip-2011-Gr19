@@ -75,5 +75,7 @@ from saip2011.model.tipo_fase import Tipo_Fase
 from saip2011.model.proyecto import Proyecto
 from saip2011.model.historial import Historial
 from saip2011.model.tipo_campos import Tipo_Campos
+from saip2011.model.relaciones import Relaciones
+from saip2011.model.linea_base import Linea_Base
 
 ################################################################################

@@ -13,6 +13,7 @@ from sqlalchemy.types import Unicode, Integer, DateTime
 from sqlalchemy.orm import relation, synonym
 
 from saip2011.model import DeclarativeBase, metadata, DBSession
+from saip2011.model.item import Item , linea_base_item_tabla
 
 __all__ = ['Linea_Base']
 
@@ -27,15 +28,22 @@ class Linea_Base (DeclarativeBase):
     
     """
     
-    __tablename__ = 'Tabla_Tipo_Campos'
+    __tablename__ = 'Tabla_Linea_Base'
     
     #{ Columns
     
     id_linea_base = Column(Integer, autoincrement=True, primary_key=True)
 
-    id_tipo_item = Column(Integer)
-    
-    nombre_campo =Column(Unicode(50),  nullable=False)
+    proyecto = Column(Integer, nullable=False)
+
+    fase = Column(Integer, nullable=False)
+
+    tipo =Column(Unicode(50),  nullable=False)          #parcial o general
+
+    items = relation(Item, secondary=linea_base_item_tabla,
+                      backref='lineas_bases')
+
+
    
    
     

@@ -346,7 +346,7 @@ class FaseController(BaseController):
 
         lista = ['nombre','descripcion']
         param = "/fase/seleccionar_fase?id_fase=%s" % id_fase
-
+        items = Item.get_item_activados_by_fase(id_fase)
         return dict(pagina="menu_item",items=items,nom_proyecto=nom_proyecto
                         ,nom_fase=nom_fase,paginado=paginado,inicio=start,
                         fin=end,pagina_actual=pagina_actual,total=total,

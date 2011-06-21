@@ -22,6 +22,20 @@ from saip2011.model import DeclarativeBase, metadata, DBSession
 
 __all__ = ['Item']
 
+relaciones_item_tabla = Table('Tabla_Relaciones_Item', metadata,
+    Column('id_relacion', Integer, ForeignKey('Tabla_Relaciones.id_relacion',
+        onupdate="CASCADE", ondelete="CASCADE")),
+    Column('id_item', Integer, ForeignKey('Tabla_Item.id_item',
+        onupdate="CASCADE", ondelete="CASCADE"))
+)
+
+linea_base_item_tabla = Table('Tabla_Linea_Base_Item', metadata,
+    Column('id_linea_base', Integer, ForeignKey('Tabla_Linea_Base.id_linea_base',
+        onupdate="CASCADE", ondelete="CASCADE")),
+    Column('id_item', Integer, ForeignKey('Tabla_Item.id_item',
+        onupdate="CASCADE", ondelete="CASCADE"))
+)
+
 ################################################################################
 
 class Item(DeclarativeBase):
@@ -54,6 +68,10 @@ class Item(DeclarativeBase):
     estado = Column(Unicode(50), nullable=False)
 
     estado_oculto = Column(Unicode(50), nullable=False)
+
+    lb_general = Column(Integer, nullable=False)
+    
+    lb_parcial = Column(Integer, nullable=False)
 
     version = Column(Integer)
 

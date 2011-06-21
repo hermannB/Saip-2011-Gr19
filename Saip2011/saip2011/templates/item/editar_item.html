@@ -35,6 +35,23 @@
 
 	</script>
 
+<script type="text/javascript">
+
+function eliminarElemento(id){
+
+	imagen = document.getElementById(id);
+	
+	if (!imagen){
+		alert("El elemento selecionado no existe");
+	} else {
+		padre = imagen.parentNode;
+		padre.removeChild(imagen);
+	}
+
+}
+
+</script>
+
 <script language="javascript" type="text/javascript">
 
 function validacion(formulario) {
@@ -82,33 +99,20 @@ function validacion(formulario) {
 		<div>
 			<h2>Editar Item</h2>
 		</div>
-		  <form name="formulario" id="formulario" onsubmit="return validacion(this)" action="put_item" method="PUT" enctype="multipart/form-data" >
+		  <form name="formulario" id="formulario" onsubmit="return validacion(this)" action="put_item" method="POST" enctype="multipart/form-data" >
 			<table summary="">
 			<tbody>
              <tr><td><input type="hidden" name="id_item" value="${values['id_item']}"/>${tmpl_context.form_errors.get('id_item')}</td></tr>
-            <tr><td>nombre_item </td><td><input class="required" maxlength="50" type="textfield" name="nombre_item" value="${values['nombre_item']}"/>          ${tmpl_context.form_errors.get('nombre_fase')}</td></tr>	
-              <tr><td>Tipo de Item</td>
-     	     <td>
-     	     <select name="id_tipo_item">
-		          <py:for each="tipo_item in tipos_items">
-                    <div py:choose="">
-						    <span py:when="tipo_item.nombre_tipo_item in lista" >
-			       				<option value="$tipo_item.id_tipo_item" selected="selected" >$tipo_item.nombre_tipo_item</option>
-           					</span>
-           					<span py:otherwise="">
-						      <option value="$tipo_item.id_tipo_item" >$tipo_item.nombre_tipo_item</option>
-	       			        </span>
-				    </div>
-                  </py:for>
-			 </select>
-            </td></tr>
+            <tr><td>nombre_item </td><td><input class="required" maxlength="50" type="textfield" name="nombre_item" value="${values['nombre_item']}"/>          ${tmpl_context.form_errors.get('nombre_item')}</td></tr>	
+              <tr><td>Tipo de Item</td><td><input class="required" maxlength="50" type="textfield" readonly="readonly" name="nombre_tipo_item" value="${values['nombre_tipo_item']}"/>          ${tmpl_context.form_errors.get('nombre_tipo_item')}</td></tr>
+     	     
 
                 <tr><td>Lista de Antecesores</td>
 					<td>
 					<select id="padres" multiple="multiple" name="padres" title="Seleccionar los Antecesores Necesarios">
 				   	       <py:for each="padre in padres">
 								<div py:choose="">
-									<span py:when="padre.id_item in padres" >
+									<span py:when="padre.id_item in padres2" >
 						   				<option value="$padre.id_item" selected="selected" >$padre.nombre_item</option>
 			       					</span>
 			       					<span py:otherwise="">
@@ -121,14 +125,15 @@ function validacion(formulario) {
 					</td></tr>		 
 				
 				<tr><td>complejidad </td><td><input type="textfield" name="complejidad" value="${values['complejidad']}"/>${tmpl_context.form_errors.get('complejidad')}</td></tr>				        	
-				         <tr><td>Adjuntos Actuales</td> 
-			            <td><py:for each="adj in adjuntos2">
-			                <li><input  type="textfield" name="adjuntos" value="$adj.nombre_archivo"/></li>
-		                </py:for></td>
-           
-        </tr>
+		         <tr><td>Adjuntos Actuales</td> 
+	                 <td><py:for each="adj in adjuntados"><input  name="adjuntados" type="hidden" value=""/>
+        	                 <li id="$adj.id_adjunto" ><input  name="adjuntados" type="textfield" value="$adj.nombre_archivo"/>
+                             <a href="javascript:eliminarElemento($adj.id_adjunto);">Borrar</a></li>
+                     </py:for></td>
+               </tr>
+                	 <tr><td>adjunto </td><td><input type="file" class="multi" name="adjunto" value="${values.get('adjunto', '')}"/>${tmpl_context.form_errors.get('adjunto')}</td></tr>
 
-     		                <tr><td><input type="hidden" name="_method" value="PUT"/>
+     		                <tr><td>
 					<input type="submit" value="Actualizar"/>
 				</td></tr>
 			

@@ -131,7 +131,6 @@ class EquipoController(BaseController):
 
         miembros=Equipo_Desarrollo.get_miembros_by_proyecto(proy)
         fases = Fase.get_fase_by_proyecto(proy)
-        lider=Rol.get_rol_by_nombre("Lider Proyecto")
 
         if usuarios is not None:
             if not isinstance(usuarios, list):
@@ -148,12 +147,15 @@ class EquipoController(BaseController):
                 if usuario.idusuario == miembro.idusuario:
                     usuarios.remove(usuario)
 
-        for miembro in miembros:
-            for rol in roles:
-                if rol.idrol == miembro.idrol:          
-                    roles.remove(rol)
-                if rol.nombrerol =="Administrador":
-                    roles.remove(rol)            
+        for rol in roles:
+            if rol.nombrerol == "Usuario Basico":
+                roles.remove(rol)
+            if rol.nombrerol == "Administrador":
+                roles.remove(rol)            
+        for rol in roles:
+            if rol.nombrerol == "Lider Proyecto":        
+                roles.remove(rol)
+
 
 
         return dict(pagina="agregar_miembro",values=kw, roles=roles,
@@ -205,11 +207,42 @@ class EquipoController(BaseController):
 
         if id_equipo is not None:
             id_equipo=int(id_equipo)
-    
+
+        proy=int(Variables.get_valor_by_nombre("proyecto_actual") )
+        equipo = Equipo_Desarrollo.get_miembro_by_id(id_equipo)
         roles = Rol.get_roles()
         usuarios = Usuario.get_usuarios()
+        miembros=Equipo_Desarrollo.get_miembros_by_proyecto(proy)
+        rol=Rol.get_rol_by_id(equipo.idrol)
+        lider=Rol.get_rol_by_nombre("Lider Proyecto")
 
-        equipo = Equipo_Desarrollo.get_miembro_by_id(id_equipo)
+        if usuarios is not None:
+            if not isinstance(usuarios, list):
+                usuarios = [usuarios]
+        if roles is not None:
+            if not isinstance(roles, list):
+                roles = [roles]
+        if miembros is not None:
+            if not isinstance(miembros, list):
+                miembros = [miembros]
+    
+        for rol in roles:
+            if rol.nombrerol == "Usuario Basico":
+                roles.remove(rol)
+            if rol.nombrerol == "Administrador":
+                roles.remove(rol)            
+        
+        if lider in roles:
+                if not lider.idrol == equipo.idrol:
+                    roles.remove(lider)            
+
+        for usuario in usuarios:
+            for miembro in miembros:
+                if usuario.idusuario == miembro.idusuario and not (usuario.idusuario
+                                            ==equipo.idusuario):
+                    usuarios.remove(usuario)
+
+
         proy=int(Variables.get_valor_by_nombre("proyecto_actual"))
         fases = Fase.get_fase_by_proyecto(proy)
 
