@@ -474,5 +474,22 @@ def setup_app(command, conf, vars):
     var.valor = u'2'
     model.DBSession.add(var)
     
+
+    var = model.Item()
+    var.id_item = 1
+    var.nombre_item = u'master'
+    var.codigo_item = u'ms'
+    var.fase = 0
+    var.orden = 0
+    var.proyecto = 0
+    var.complejidad = 0
+    var.estado = u'Activo'
+    var.estado_oculto = u'Activo'
+    var.lb_general = 0
+    var.lb_parcial = 0
+    var.version = 1
+    var.creado_por = u'dani'
+    model.DBSession.add(var)
+
     transaction.commit()
     print "Successfully setup"

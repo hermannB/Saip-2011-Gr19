@@ -187,10 +187,10 @@ class EquipoController(BaseController):
         equipo =  Equipo_Desarrollo(proyecto=valor, idusuario=idusuario, 
 							        idrol=idrol, fases=fases)
 
-        usuario =  Usuario.get_user_by_id(idusuario)
-        rol = Rol.get_rol_by_id(idrol)
-        usuario.roles=[]
-        usuario.roles.append(rol)
+#        usuario =  Usuario.get_user_by_id(idusuario)
+#        rol = Rol.get_rol_by_id(idrol)
+#        usuario.roles=[]
+#        usuario.roles.append(rol)
         
         DBSession.add(equipo)
         DBSession.flush()

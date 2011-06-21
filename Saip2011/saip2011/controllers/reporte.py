@@ -41,6 +41,18 @@ import base64
 import binascii
 
 
+# Import graphviz
+import sys
+sys.path.append('..')
+sys.path.append('/usr/lib/graphviz/python/')
+sys.path.append('/usr/lib64/graphviz/python/')
+import gv
+
+# Import pygraph
+from pygraph.classes.graph import graph
+from pygraph.classes.digraph import digraph
+from pygraph.algorithms.searching import breadth_first_search
+from pygraph.readwrite.dot import write
 
 class ReporteController(BaseController):
     
@@ -209,5 +221,48 @@ class ReporteController(BaseController):
       
         return dict(pagina='impacto.html',values=values,nom_proyecto=nom_proyecto
                     ,nom_fase=nom_fase)
+
+    @expose('saip2011.templates.reporte.imagen')
+    def arbol (self, id_item):
+        nom_proyecto=Variables.get_valor_by_nombre("nombre_proyecto_actual")
+        nom_fase=Variables.get_valor_by_nombre("nombre_fase_actual")
+
+        if id_item is not None:
+            id_item=int(id_item)
+        item=Item.get_item_by_id(id_item)
+        items = Item.get_item_activados()
+
+        values = dict(id_item=item.id_item, 
+	                   nombre_item=item.nombre_item,
+	                   codigo_item=item.codigo_item,  
+		               nombre_tipo_item=item.nombre_tipo_item
+
+		                )
+
+
+
+        #Graph creation
+        gr = graph()
+
+        # Add nodes and edges
+        for item in items:
+            gr.add_nodes([item.nombre_item])
+        
+        # Add relation and edges
+
+        for item in items:
+           gr.add_edge((item.nombre_item, items[0].nombre_item))
+        
+        
+
+        # Draw as PNG
+        dot = write(gr)
+        gvv = gv.readstring(dot)
+        gv.layout(gvv,'dot')
+        gv.render(gvv,'png','/home/hermann/saip2011/saip2011/public/images/arbol.png')
+      
+        return dict(pagina='imagen.html',values=values,nom_proyecto=nom_proyecto
+                    ,nom_fase=nom_fase)
+
 
  # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # #

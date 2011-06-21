@@ -164,8 +164,20 @@ class ItemController(BaseController):
         if id_item is not None:
             id_item=int(id_item)
 
-        padres=Item.get_item_activados()                                        #cambiar esta funcion y solo traer lo que no forman ciclos
+        id_fase=int(Variables.get_valor_by_nombre("fase_actual"))
+        item = Item.get_item_by_id(id_item)
+        fase = Fase.get_fase_by_id(id_fase)	
+
+        orden=str(fase.orden)
+
+        padres=Relaciones.get_padres_habilitados(fase.orden)   
         hijos=Relaciones.get_sucesores(id_item)
+       
+        master=[]
+        if (fase.orden ==1):
+            master.append(Item.get_master().id_item)
+        else:
+            master.append(0)
 
         for hijo in hijos:                                                      #evita que yo o algun sucesor sea mi nuevo padre
             if hijo in padres:
@@ -174,19 +186,6 @@ class ItemController(BaseController):
             if padre.id_item == id_item:
                 padres.remove(padre)
 
-        master=[]
-        fase = Fase.get_fase_by_id(id_fase)
-        orden=str(fase.orden)
-
-        if (fase.orden ==1):
-            master.append(Item.get_item_by_id(1).id_item)
-        else:
-            master.append(0)
-            padres.remove(Item.get_item_by_id(1))
-
-        id_fase=int(Variables.get_valor_by_nombre("fase_actual"))
-        item = Item.get_item_by_id(id_item)
-        fase = Fase.get_fase_by_id(id_fase)	
         tipos_items=fase.tipos_items
 
         lista=[]
@@ -213,11 +212,12 @@ class ItemController(BaseController):
         for pad in padr:
             padres2.append(pad.id_item)
 
-        flash(_('Bienvenido, %d!') % (len(padres)))
+        campos= Campos.get_campos_by_item(id_item)
+
         return dict(pagina="editar_item",values=values,adjuntados=adjuntados,
                         nom_proyecto=nom_proyecto,nom_fase=nom_fase,
                         lista=lista,tipos_items=tipos_items,padres=padres,
-                        padres2=padres2,master=master,orden=orden)
+                        padres2=padres2,master=master,orden=orden,campos=campos)
 
 #-------------------------------------------------------------------------------
 
@@ -229,16 +229,35 @@ class ItemController(BaseController):
 
     @expose('saip2011.templates.item.editar_item')
     def put_item(self, id_item, nombre_item, nombre_tipo_item, complejidad,
+                    id_campos,nombre_campo,tipo_campo,dato,
                      padres,asmSelect0,adjunto=None,adjuntados=None):
 
         if id_item is not None:
             id_item=int(id_item)
+
 
         item = Item.get_item_by_id(id_item)
         items= Item.get_nombres_items()
         items.remove(item.nombre_item)
         
         if nombre_item not in items:
+
+            if id_campos is not None:
+                if not isinstance(id_campos, list):
+                    id_campos = [id_campos]
+
+            if nombre_campo is not None:
+                if not isinstance(nombre_campo, list):
+                    nombre_campo = [nombre_campo]
+
+            if tipo_campo is not None:
+                if not isinstance(tipo_campo, list):
+                    tipo_campo = [tipo_campo]
+
+            if dato is not None:
+                if not isinstance(dato, list):
+                    dato = [dato]
+
 
             if complejidad is not None:
                 complejidad=int(complejidad)
@@ -270,6 +289,7 @@ class ItemController(BaseController):
                          id_tipo_item=item.id_tipo_item , 
                          complejidad=complejidad,
                          estado = item.estado ,
+                         orden=item.orden,
                          fase=int(Variables.get_valor_by_nombre
                                 ("fase_actual")),
                          proyecto=int(Variables.get_valor_by_nombre
@@ -282,6 +302,17 @@ class ItemController(BaseController):
 
             DBSession.add(item2)
             DBSession.flush()
+
+            indice=0
+            id_item=Item.get_ultimo_id()        
+            for c in id_campos:
+                if len(c)>0:
+                    camp =Campos(id_item=id_item,
+                                    nombre_campo=nombre_campo[indice],
+                                    tipo_campo=tipo_campo[indice],
+                                    dato=dato[indice])
+                    DBSession.add(camp)
+                    indice+=1
 
             mayor =Item.get_ultimo_id()
             relacion = Relaciones (id_item_hijo=mayor,padres=padres)
@@ -507,6 +538,7 @@ class ItemController(BaseController):
         item3 = Item (nombre_item=item2.nombre_item,
                         codigo_item=item2.codigo_item, 
                         id_tipo_item=item2.id_tipo_item,
+                        orden=item2.orden,
 						complejidad=item2.complejidad, estado = item2.estado,
                         fase=item2.fase, proyecto=item2.proyecto,
                         creado_por =item2.creado_por, 
@@ -542,19 +574,20 @@ class ItemController(BaseController):
     def agregar_item(self, *args, **kw):
         nom_fase=Variables.get_valor_by_nombre("nombre_fase_actual")
         nom_proyecto=Variables.get_valor_by_nombre("nombre_proyecto_actual")
-        padres=Item.get_item_activados()                                        #cambiar esta funcion y solo traer lo que no forman ciclos
-
         id_fase=int(Variables.get_valor_by_nombre("fase_actual"))
-        master=[]
-        
-        
+       
+
         fase = Fase.get_fase_by_id(id_fase)
         orden=str(fase.orden)
+
+        padres=Relaciones.get_padres_habilitados(fase.orden)   
+       
+        master=[]
+        
         if (fase.orden ==1):
-            master.append(Item.get_item_by_id(1).id_item)
+            master.append(Item.get_master().id_item)
         else:
             master.append(0)
-            padres.remove(Item.get_item_by_id(1))
         tipos_items=fase.tipos_items
 
         return dict(pagina="agregar_item",values=kw, tipos_items=tipos_items
@@ -593,19 +626,22 @@ class ItemController(BaseController):
                 padres = [DBSession.query(Item).get(padre) for padre
                                          in padres]
 
+#----------------------------------------
 
             tipo_item =Tipo_Item.get_tipo_item_by_id(id_tipo_item)
             pre_codigo=tipo_item.codigo_tipo_item
 
             proy_act=int (Variables.get_valor_by_nombre("proyecto_actual"))
             fas_act=int (Variables.get_valor_by_nombre("fase_actual"))
+            fase=Fase.get_fase_by_id(fas_act)
+
             codigo_item=Item.crear_codigo(id_tipo_item,
                                             pre_codigo,proy_act,fas_act)
 
             item = Item (nombre_item=nombre_item, codigo_item=codigo_item,
                             id_tipo_item=id_tipo_item, 
 	                        complejidad=complejidad, estado = "nuevo", 
-                            fase=fas_act,proyecto=proy_act,
+                            fase=fas_act,proyecto=proy_act,orden=fase.orden,
 	                        creado_por=Variables.get_valor_by_nombre("usuario_actual"),
 	                        fecha_creacion = time.ctime(), version =1 ,
                             estado_oculto="Activo",lb_parcial=0,lb_general=0
@@ -614,6 +650,8 @@ class ItemController(BaseController):
             DBSession.add(item)
             DBSession.flush()
 
+#----------------------------------------
+
             for padre in padres:
                 if padre.nombre_item == "master":
                     padres.remove(padre)
@@ -621,6 +659,20 @@ class ItemController(BaseController):
             mayor =int(Item.get_ultimo_id())
         
             relacion = Relaciones (id_item_hijo=mayor,padres=padres)
+
+#----------------------------------------
+            id_item2=Item.get_ultimo_id()        
+            tipos_campos=Tipo_Campos.get_campos_by_tipo_item(id_tipo_item)
+
+            for tipo in tipos_campos:
+                camp =Campos(id_item=id_item2,
+                             nombre_campo=tipo.nombre_campo,
+                             tipo_campo= tipo.valor_campo)
+                DBSession.add(camp)
+            DBSession.flush()
+
+
+#----------------------------------------
 
             if adjunto is not None:
                 for adj in adjunto:

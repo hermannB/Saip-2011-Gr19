@@ -21,6 +21,7 @@
 	<link rel="stylesheet" type="text/css" href="/css/jquery.asmselect.css" />
 	<link rel="stylesheet" type="text/css" href="/css/example.css" />
 
+
 	<script type="text/javascript">
 
 		$(document).ready(function() {
@@ -53,35 +54,94 @@ function eliminarElemento(id){
 </script>
 
 <script language="javascript" type="text/javascript">
+function validar_alfa(campo) {
+    if( campo.value.length == 0 ) { 
+	    alert('Contenido del campo del Item no debe estar vacio.')
+	    return false;
+    }   	   	
+
+  
+    alert('Los campos introducidos son CORRECTOS.')
+	return true;			
+
+}
+
+</script>
+
+<script language="javascript" type="text/javascript">
+function validar_numero(campo) {
+    var er_complejidad = /^([0-9]+)+$/
+
+    if(!er_complejidad.test(campo.value)) { 
+	    alert('Contenido del campo del Item es del tipo numerico.');
+        campo.focus()
+	    return false;
+    }
+
+
+    if( campo.value.length == 0 ) { 
+        alert('Contenido del campo del Item no debe estar vacio.')
+        campo.focus()
+	    return false;
+    }   	
+
+    alert('Los campos introducidos son CORRECTOS.')
+	return true;			
+
+}
+
+</script>
+
+<script language="javascript" type="text/javascript">
+function validar_fecha(campo) {
+
+    var er_fecha = /^(\d{1,2}\/\d{1,2}\/\d{1,4})$/
+
+
+    if(!er_fecha.test(campo.value) ) { 
+	    alert('El formato de fecha aceptado es dd/mm/aaaa.')
+        campo.focus()
+	    return false;
+    }   	
+
+    if( campo.value.length == 0 ) { 
+	    alert('Contenido del campo del Item no debe estar vacio.')
+        campo.focus()
+	    return false;
+    }   	   	
+
+  
+    alert('Los campos introducidos son CORRECTOS.')
+	return true;			
+
+}
+
+</script>
+
+<script language="javascript" type="text/javascript">
 
 function validacion(formulario) {
 
     var er_nombre = /^([a-z]|[A-Z]|á|é|í|ó|ú|ñ|ü|\s|\.|-[0-9]+)+$/			//letras, '.' y '-' o vacio
     var er_complejidad = /^([0-9]+)+$/
 
+
 	//comprueba campo de nombre
 	if(!er_nombre.test(formulario.nombre_item.value)) { 
-		alert('Contenido del campo Nombre del Item no válido.')
-		return false
+		alert('Contenido del campo Nombre del Item no válido.');
+		return false;
 	}   	
 
 	if(!er_complejidad.test(formulario.complejidad.value)) { 
-		alert('Contenido del campo complejidad no válido.')
+		alert('Contenido del campo complejidad no válido.');
 		return false;
 	}   	
    	
-
-    if (formulario.id_tipo_item.selectedIndex == -1){ 
-        alert("Debe seleccionar un tipo de item"); 
-        return false;  
-    }
-
     if (formulario.padres.selectedIndex==-1){
         alert("Debes seleccionar al menos 1 Antecesor");
         return false;
     }
-    
-  
+ 
     alert('Los campos introducidos son CORRECTOS.')
 	return true;			
 }
@@ -137,8 +197,32 @@ function validacion(formulario) {
                      </py:for></td>
                </tr>
                 	 <tr><td>adjunto </td><td><input type="file" class="multi" name="adjunto" value="${values.get('adjunto', '')}"/>${tmpl_context.form_errors.get('adjunto')}</td></tr>
+                     <div name="campos" align="center" ><td>Mis campos </td>
+                     <span py:for="campo in campos">
+                        <tr>
+                            <td><input type="hidden" name="id_campos" value="${campo.id_campos}"/></td>
+                            <td><input type="hidden" id="tipo_campo" name="tipo_campo" value="${campo.tipo_campo}"/></td>
+                        </tr>
+                        <tr>
+                            
+                            <td><input class="required" maxlength="50" type="textfield" readonly="readonly" name="nombre_campo" value="${campo.nombre_campo}"/>   </td>
+							<div py:choose="">
+									<span py:when=" campo.tipo_campo == 'numerico' " >
+                    				    <td><textarea rows="10" cols="40" name="dato" onblur="return validar_numero(this)" >${campo.dato}</textarea></td>
+                                    </span>
+									<span py:when=" campo.tipo_campo == 'alfanumerico' " >
+                    				    <td><textarea rows="10" cols="40" name="dato" onblur="return validar_alfa(this)" >${campo.dato}</textarea></td>
+                                    </span>
+									<span py:when=" campo.tipo_campo == 'fecha' " >
+                    				    <td><textarea rows="10" cols="40" name="dato" onblur="return validar_fecha(this)" >${campo.dato}</textarea></td>
+                                    </span>
+                            </div>
+                        </tr>		
+                   
+                   </span>	 
+</div> 
 
-     		                <tr><td>
+                <tr><td>
 					<input type="submit" value="Actualizar"/>
 				</td></tr>
 			

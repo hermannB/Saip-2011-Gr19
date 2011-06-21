@@ -61,6 +61,8 @@ class Item(DeclarativeBase):
 
     fase = Column(Integer, nullable=False)
 
+    orden = Column(Integer, nullable=False)
+
     proyecto = Column(Integer, nullable=False)
 
     complejidad = Column(Integer, nullable=False)
@@ -112,6 +114,20 @@ class Item(DeclarativeBase):
         """
         item = DBSession.query(Item).get(int(id_item))
         return item
+
+#-------------------------------------------------------------------------------
+
+    @classmethod
+    def get_master(self):
+        """
+        Obtiene item
+        """
+        items = DBSession.query(Item).all()
+        for item in items:
+            if item.nombre_item=="master":
+                return item
+
+
 
 #-------------------------------------------------------------------------------
 

@@ -173,6 +173,27 @@ class Relaciones(DeclarativeBase):
 #-------------------------------------------------------------------------------
 
     @classmethod
+    def get_padres_habilitados(self,orden):
+
+        padres=Item.get_item_activados()                                        #cambiar esta funcion y solo traer lo que no forman ciclos
+        padres.remove(Item.get_master())
+
+        fases_habilitadas=[]
+        fases_habilitadas.append(orden)
+        fases_habilitadas.append(orden-1)
+
+        aux=[]
+        for padre in padres:
+            c=int(padre.orden)
+            if  c not in fases_habilitadas:
+               aux.append(padre)
+        for a in aux:
+            padres.remove(a)       
+        return padres
+
+#-------------------------------------------------------------------------------
+
+    @classmethod
     def borrar_by_id(self,rel_id):
         """
         Obtiene la lista de todos los adjuntos         

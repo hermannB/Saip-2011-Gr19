@@ -179,7 +179,6 @@ class RootController(BaseController):
         userid = request.identity['repoze.who.userid']
         
         Variables.set_valor_by_nombre("usuario_actual",userid)
-
         flash(_('Bienvenido, %s!') % userid)
         redirect(came_from)
 
@@ -475,8 +474,7 @@ class RootController(BaseController):
 
                 if usuario.alias not in usuarios:
                     usuario._set_password(data.get('clave'))
-                    xdef=int (Variables.get_valor_by_nombre("rol_por_defecto") )
-                    rol = DBSession.query(Rol).get(xdef)
+                    rol=Rol.get_rol_by_nombre("Usuario Basico")
                     usuario.roles.append(rol)
 
                     DBSession.add(usuario)
