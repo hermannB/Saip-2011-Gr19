@@ -159,10 +159,30 @@ class ItemController(BaseController):
     def editar_item(self,id_item,*args, **kw):
         nom_proyecto=Variables.get_valor_by_nombre("nombre_proyecto_actual")
         nom_fase=Variables.get_valor_by_nombre("nombre_fase_actual")
+        id_fase=int (Variables.get_valor_by_nombre("fase_actual") )
 
-        padres=Item.get_item_activados()                                        #cambiar esta funcion y solo traer lo que no forman ciclos
         if id_item is not None:
             id_item=int(id_item)
+
+        padres=Item.get_item_activados()                                        #cambiar esta funcion y solo traer lo que no forman ciclos
+        hijos=Relaciones.get_sucesores(id_item)
+
+        for hijo in hijos:                                                      #evita que yo o algun sucesor sea mi nuevo padre
+            if hijo in padres:
+                padres.remove(hijo)
+        for padre in padres:
+            if padre.id_item == id_item:
+                padres.remove(padre)
+
+        master=[]
+        fase = Fase.get_fase_by_id(id_fase)
+        orden=str(fase.orden)
+
+        if (fase.orden ==1):
+            master.append(Item.get_item_by_id(1).id_item)
+        else:
+            master.append(0)
+            padres.remove(Item.get_item_by_id(1))
 
         id_fase=int(Variables.get_valor_by_nombre("fase_actual"))
         item = Item.get_item_by_id(id_item)
@@ -193,11 +213,11 @@ class ItemController(BaseController):
         for pad in padr:
             padres2.append(pad.id_item)
 
-        flash(_('Bienvenido, %s!') % (lista[0]))
+        flash(_('Bienvenido, %d!') % (len(padres)))
         return dict(pagina="editar_item",values=values,adjuntados=adjuntados,
                         nom_proyecto=nom_proyecto,nom_fase=nom_fase,
                         lista=lista,tipos_items=tipos_items,padres=padres,
-                        padres2=padres2)
+                        padres2=padres2,master=master,orden=orden)
 
 #-------------------------------------------------------------------------------
 
@@ -523,6 +543,7 @@ class ItemController(BaseController):
         nom_fase=Variables.get_valor_by_nombre("nombre_fase_actual")
         nom_proyecto=Variables.get_valor_by_nombre("nombre_proyecto_actual")
         padres=Item.get_item_activados()                                        #cambiar esta funcion y solo traer lo que no forman ciclos
+
         id_fase=int(Variables.get_valor_by_nombre("fase_actual"))
         master=[]
         

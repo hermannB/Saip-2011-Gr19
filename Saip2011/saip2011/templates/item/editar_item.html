@@ -112,15 +112,20 @@ function validacion(formulario) {
 					<select id="padres" multiple="multiple" name="padres" title="Seleccionar los Antecesores Necesarios">
 				   	       <py:for each="padre in padres">
 								<div py:choose="">
-									<span py:when="padre.id_item in padres2" >
-						   				<option value="$padre.id_item" selected="selected" >$padre.nombre_item</option>
-			       					</span>
-			       					<span py:otherwise="">
-									   <option value="$padre.id_item"  >$padre.nombre_item</option>
-				   			        </span>
-								</div>
+									<span py:when="padre.id_item not in master" >
 
+								            <div py:choose="">
+									            <span py:when="padre.id_item in padres2" >
+						               				<option value="$padre.id_item" selected="selected" >$padre.nombre_item</option>
+			                   					</span>
+			                   					<span py:otherwise="">
+									               <option value="$padre.id_item"  >$padre.nombre_item</option>
+				               			        </span>
+								            </div>
+                                     </span>
+								</div>
 					       </py:for>
+    						<div py:choose=""><span py:when="orden == '1'" > <input type="hidden" name="padres" value="${master[0]}"/></span></div>
 					  </select>
 					</td></tr>		 
 				

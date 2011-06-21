@@ -5,6 +5,7 @@
       xmlns:xi="http://www.w3.org/2001/XInclude">
 
   <xi:include href="master.html" />
+  <xi:include href="buscar.html" />
 
 <head>
   <meta content="text/html; charset=UTF-8" http-equiv="content-type" py:replace="''"/>
@@ -16,14 +17,30 @@
 
 <body >
   <div id="getting_started">
-    <h2>Reportes</h2>
-    <p><a href="${tg.url('../reporte/item2')}">Item</a></p>
-    <p><a href="${tg.url('../reporte/reporte_2')}">Reporte Numero 2</a></p>
-    <p><a href="${tg.url('../reporte/reporte_3')}">Reporte Numero 3</a></p>
-    
-  </div>
+    <h2>Mantenimiento de Item</h2>
+  <div py:for="perm in request.identity['user'].privilegios">
+	    <div py:choose="">
+	     <span py:when="perm.var == 'control_total'">
+    		
+    		<div py:if="defined('lista') and len(items) > 0">
+    			${buscar(lista)}
+    		</div>
+    		<xi:include href="${pagina}" />
+    	 </span>
+    	 
+    	 <span py:when="perm.var == 'list_item'">
+    	 	<div py:if="defined('lista') and len(items) > 0">
+    			${buscar(lista)}
+    		</div>
+    		<xi:include href="${pagina}" />
+    	 </span>
+    	 
+    	</div>
+     </div>
+     
+  
   <div class="clearingdiv" />
-  <div class="notice"> Estas en el menu de Reportes. 
+  <div class="notice"> Estas en el menu de Reporte->Item. </div>
   </div>
 </body>
 </html>

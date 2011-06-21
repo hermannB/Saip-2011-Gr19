@@ -4,8 +4,7 @@
       xmlns:py="http://genshi.edgewall.org/"
       xmlns:xi="http://www.w3.org/2001/XInclude">
 
-  <xi:include href="master.html" />
-  
+    
   <div py:choose="len(items)" py:strip="True" id="item">
     <table class="items" py:when="0">
       <tr><th>No hay item registrados..</th></tr>
@@ -41,7 +40,7 @@
     
   </div>
   <div class="clearingdiv" />
-  <div class="notice"> Estas en el menu de Rol. 
+  <div class="notice"> Estas en el menu de Reporte->Item->Hijos. 
   </div>
 
 </html>

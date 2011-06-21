@@ -109,6 +109,69 @@ class Relaciones(DeclarativeBase):
         return lista
 
 #-------------------------------------------------------------------------------
+
+    @classmethod
+    def get_antecesores(self,id_item):
+        """
+        Obtiene la lista de todos los usuarios
+        registrados en el sistema
+        """
+        relaciones = DBSession.query(Relaciones).all()
+        lista =[]
+        padres =[]
+
+        for rel in relaciones:
+            if rel.id_item_hijo == id_item:
+                for padre in rel.padres:
+                    lista.append(padre) 
+                    padres.append(padre)
+
+        while len(lista)>0:
+            mis_padres=Relaciones.get_mis_padres(int(lista[0].id_item))
+            del lista[0]
+            for padre in mis_padres:
+                if padre not in lista:
+                    lista.append(padre) 
+                    padres.append(padre)
+            
+
+        return padres
+
+#-------------------------------------------------------------------------------
+
+    @classmethod
+    def get_sucesores(self,id_item):
+        """
+        Obtiene la lista de todos los usuarios
+        registrados en el sistema
+        """
+        relaciones = DBSession.query(Relaciones).all()
+        lista =[]
+        hijos =[]
+
+        if id_item is not None:
+            id_item=int(id_item)
+
+        for rel in relaciones:
+            for padre in rel.padres:
+                if padre.id_item == id_item:
+                    lista.append(rel.id_item_hijo)
+                    hijos.append (Item.get_item_by_id(rel.id_item_hijo) )                    
+                    break
+
+        while len(lista)>0:
+            mis_hijos=Relaciones.get_mis_id_hijos(lista[0])
+            del lista[0]
+            for hijo in mis_hijos:
+                if hijo not in lista:
+                    lista.append(hijo) 
+                    hijos.append (Item.get_item_by_id(int(hijo)) )
+            
+
+        return hijos
+
+#-------------------------------------------------------------------------------
+
     @classmethod
     def borrar_by_id(self,rel_id):
         """

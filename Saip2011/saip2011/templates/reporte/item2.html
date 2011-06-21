@@ -5,6 +5,8 @@
       xmlns:xi="http://www.w3.org/2001/XInclude">
 
   <xi:include href="master.html" />
+  <xi:include href="buscar.html" />
+  <xi:include href="listar_fases2.html" />
 
 <head>
   <meta content="text/html; charset=UTF-8" http-equiv="content-type" py:replace="''"/>
@@ -16,14 +18,17 @@
 
 <body >
   <div id="getting_started">
-    <h2>Reportes</h2>
-    <p><a href="${tg.url('../reporte/item2')}">Item</a></p>
-    <p><a href="${tg.url('../reporte/reporte_2')}">Reporte Numero 2</a></p>
-    <p><a href="${tg.url('../reporte/reporte_3')}">Reporte Numero 3</a></p>
-    
+    <h2>Logueo por Fase</h2>
+		<div py:if="defined('lista')">
+    		${buscar(lista)}
+    	</div>
+    	<div py:if="defined('fases')">
+    		${listar_fases2(fases,pagina_actual,paginado,total,inicio,fin,param)}
+  		</div>  		
+
   </div>
   <div class="clearingdiv" />
-  <div class="notice"> Estas en el menu de Reportes. 
+  <div class="notice"> Estas en el menu de Reporte->Item. 
   </div>
 </body>
 </html>
