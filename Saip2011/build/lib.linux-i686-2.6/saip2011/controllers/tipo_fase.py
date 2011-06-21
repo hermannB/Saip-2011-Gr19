@@ -42,8 +42,8 @@ class Tipo_FaseController(BaseController):
     
  ################################################################################
 
-    @expose('saip2011.templates.tipo_fase.listar_tipo_fase')
-    def tipo_fase(self,start=0,end=5):
+    @expose('saip2011.templates.tipo_fase.tipo_fase')
+    def tipo_fase(self,start=0,end=5,indice=None,texto=""):
         """
            Menu para Tipos de Fase
         """
@@ -55,16 +55,26 @@ class Tipo_FaseController(BaseController):
             end=int(start.split('=')[1]) #obtiene el fin de pagina
             start=int(start.split('&')[0]) #obtiene el inicio de pagina
         #print start,end
-        total = len(Tipo_Fase.get_tipo_fases())
+        #total = len(Tipo_Fase.get_tipo_fases())
         pagina_actual = ((start % end) / paginado) + 1
-         
-        tipos_fases = Tipo_Fase.get_tipo_fase_por_pagina(start,end)
+        if ((start % end) % paginado) <> 0:
+             pagina_actual = pagina_actual + 1
+                
+        if indice  <> None and texto <> "":  
+            tipos_fases = Tipo_Fase.get_tipo_fase_por_filtro(indice,texto)
+            total = len(tipos_fases)
+        else:   
+            tipos_fases = Tipo_Fase.get_tipo_fase_por_pagina(start,end)
+            total = len(Tipo_Fase.get_tipo_fases())
+
+        lista = ['nombre','descripcion']
 
 
-        return dict(pagina="listar_tipo_fase",tipos_fases=tipos_fases,
+        return dict(pagina="tipo_fase",tipos_fases=tipos_fases,
                         nom_proyecto=nom_proyecto,nom_fase=nom_fase,
                         inicio=start,fin=end,paginado=paginado,
-                        pagina_actual=pagina_actual,total=total)
+                        pagina_actual=pagina_actual,total=total,
+                        param="/tipo_fase/tipo_fase",lista=lista)
 
 
  ################################################################################

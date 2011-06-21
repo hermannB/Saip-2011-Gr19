@@ -5,6 +5,7 @@
       xmlns:xi="http://www.w3.org/2001/XInclude">
 
   <xi:include href="master.html" />
+  <xi:include href="buscar.html" />
 
 <head>
   <meta content="text/html; charset=UTF-8" http-equiv="content-type" py:replace="''"/>
@@ -21,8 +22,11 @@
      <div py:choose="">
       <span py:when="perm.var == 'control_total'">
     	<p><a href="${tg.url('/agregar_usuario')}">Agregar Usuario</a></p>
-    	<p><a href="${tg.url('/listar_usuario')}">Listar Usuario</a></p>
     	<p><a href="${tg.url('/cambiar_password')}">Cambiar Password</a></p>
+    	<div py:if="defined('lista') and len(usuarios) > 0">
+    		${buscar(lista)}
+    	</div>
+    	<xi:include href="listar_usuario.html" />
       </span>
       <span py:when="perm.var == 'cam_pass'">
       	<p><a href="${tg.url('/cambiar_password')}">Cambiar Password</a></p>

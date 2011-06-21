@@ -42,8 +42,8 @@ class ProyectoController(BaseController):
 
 ################################################################################
 
-    @expose('saip2011.templates.proyecto.listar_proyecto')
-    def proyecto(self,start=0,end=5):
+    @expose('saip2011.templates.proyecto.proyecto')
+    def proyecto(self,start=0,end=5,indice=None,texto=""):
         """Lista proyectos 
         """
         proyectos=""
@@ -60,33 +60,48 @@ class ProyectoController(BaseController):
             end=int(start.split('=')[1]) #obtiene el fin de pagina
             start=int(start.split('&')[0]) #obtiene el inicio de pagina
         #print start,end
-        total = len(Proyecto.get_proyectos())
+        
         pagina_actual = ((start % end) / paginado) + 1
+        if ((start % end) % paginado) <> 0:
+             pagina_actual = pagina_actual + 1
          
         #roles = Rol.get_roles_por_pagina(start,end)
         ###########################
-
+        
+        lista = ['nombre','descripcion']
 
         if rol.nombrerol == "Administrador":
-            proyectos = Proyecto.get_proyecto_por_pagina(start,end)
-            return dict(pagina="listar_proyecto",proyectos=proyectos,
+            #proyectos = Proyecto.get_proyecto_por_pagina(start,end)
+            if indice  <> None and texto <> "":  
+                proyectos = Proyecto.get_proyectos_por_filtro(indice,texto)
+                total = len(proyectos)
+            else:   
+                proyectos = Proyecto.get_proyectos_por_pagina(start,end)
+                total = len(Proyecto.get_proyectos())
+            
+            return dict(pagina="proyecto",proyectos=proyectos,
                             nom_proyecto=nom_proyecto,nom_fase=nom_fase,
                             inicio=start,fin=end,paginado=paginado,
-                            pagina_actual=pagina_actual,total=total)
+                            pagina_actual=pagina_actual,total=total,
+                            lista=lista,param="/proyecto/proyecto")
         else:
-            proy = Proyecto.get_proyecto_por_pagina(start,end)
-            proyectos = []
-            miembros=Equipo_Desarrollo.get_miembros_by_usuario(usuario.idusuario)
+            if indice  <> None and texto <> "":  
+                proyectos = Proyecto.get_proyectos_by_equipo_desarrollo_por_filtro(usuario.idusuario,
+                                                                                   indice,texto)
+                total = len(proyectos)
+            else:   
+                proyectos,total = Proyecto.get_proyectos_by_equipo_desarrollo_por_pagina(usuario.idusuario,
+                                                                                   start,end)
+                #total = len(Proyecto.get_proyectos_by_equipo_desarrollo(usuario.idusuario))
+            
+                        
+            #total = len(proyectos)
 
-        for miembro in miembros:
-            for p in proy:
-                if (miembro.proyecto == p.id_proyecto):
-                    proyectos.append(p)
-
-        return dict(pagina="listar_proyecto",proyectos=proyectos,
+        return dict(pagina="proyecto",proyectos=proyectos,
                         nom_proyecto=nom_proyecto,nom_fase=nom_fase,
                         inicio=start,fin=end,paginado=paginado,
-                        pagina_actual=pagina_actual,total=total)
+                        pagina_actual=pagina_actual,total=total,
+                        lista=lista,param="/proyecto/proyecto")
 
 
 ################################################################################
@@ -270,10 +285,10 @@ class ProyectoController(BaseController):
 
 
 #-------------------------------------------------------------------------------
-    
-    @expose('saip2011.templates.fase.listar_fase')
+    @expose('saip2011.templates.fase.fase')
     def post_proyecto(self, nombre_proyecto, idusuario, tipos_fases, asmSelect0,
-                             descripcion, **kw):
+                            descripcion,start=0,end=5,indice=None,texto=""):
+
         nom_proyecto=Variables.get_valor_by_nombre("nombre_proyecto_actual")
         nom_fase=Variables.get_valor_by_nombre("nombre_fase_actual")
 
@@ -281,7 +296,7 @@ class ProyectoController(BaseController):
 
         if not isinstance(nombres, list):
             nombres = [nombres]
-        
+
         if nombre_proyecto not in nombres:
             if idusuario is not None:
                 idusuario = int(idusuario)
@@ -289,19 +304,19 @@ class ProyectoController(BaseController):
             if tipos_fases is not None:
                 if not isinstance(tipos_fases, list):
                     tipos_fases = [tipos_fases]
-
-            tipos_fases = [DBSession.query(Tipo_Fase).get(tipo_fase) 
+    
+                tipos_fases = [DBSession.query(Tipo_Fase).get(tipo_fase) 
                                     for tipo_fase in tipos_fases]
-            
+
             proyecto = Proyecto (nombre_proyecto=nombre_proyecto, 
                                     idusuario=idusuario, 
                                     descripcion=descripcion, 
                                     tipos_fases=tipos_fases,
                                     estado ="Desactivado")
-
             DBSession.add(proyecto)
+            DBSession.flush()
 
-            proy=Proyecto.get_ultimo_id()
+            proy=int(Proyecto.get_ultimo_id())
             cant=1
             lista=[]
             for tipo_fase in tipos_fases:
@@ -311,22 +326,24 @@ class ProyectoController(BaseController):
                                 orden=cant,linea_base="Abierta", 
                                 descripcion=tipo_fase.descripcion)
 
-                lista.append(fase)
                 DBSession.add(fase)
                 DBSession.flush()
+                lista.append(fase)
                 cant+=1
 
-            proy=int (Proyecto.get_ultimo_id())
-            fases = Fase.get_fase_by_proyecto_por_pagina(proy,start,end)
             nom="Lider Proyecto"
             mirol=Rol.get_rol_by_nombre(nom)
-
+            fases2=Fase.get_fase_by_proyecto(proy)
             equipo = Equipo_Desarrollo(proyecto=Proyecto.get_ultimo_id(), 
                                         idusuario=idusuario, 
-                                        idrol=mirol.idrol,fases=fases)
+                                        idrol=mirol.idrol,fases=fases2)
 
             DBSession.add(equipo)
             DBSession.flush()
+
+
+            fases,len_fases = Fase.get_fase_by_proyecto_por_pagina(proy,start,end)
+
 
             ############
             paginado = 5
@@ -336,15 +353,18 @@ class ProyectoController(BaseController):
             #print start,end
             total = len(Fase.get_fase_by_proyecto(proy))
             pagina_actual = ((start % end) / paginado) + 1
+            if ((start % end) % paginado) <> 0:
+                pagina_actual = pagina_actual + 1
              
             #roles = Fase.get_fase_by_proyecto_por_pagina(proy,start,end)
             ###########
-
+            param="/fase/fase"
             flash("Proyecto Agregado!")  
-            return dict(pagina="/fase/listar_fase", fases=fases,
-                                nom_proyecto=nom_proyecto,nom_fase=nom_fase
-                                ,inicio=start,fin=end,paginado=paginado,
-                                pagina_actual=pagina_actual,total=total)
+            return dict(pagina="../fase/fase", fases=fases,
+                                nom_proyecto=nom_proyecto,nom_fase=nom_fase,
+                                inicio=start,fin=end,paginado=paginado,
+                                pagina_actual=pagina_actual,total=total,
+                                param=param)
 
         else:
             nom_proyecto=Variables.get_valor_by_nombre("nombre_proyecto_actual")
@@ -354,7 +374,7 @@ class ProyectoController(BaseController):
             tipos_fases = Tipo_Fase.get_tipo_fases()	
 
             flash("Nombre del Proyecto ya existe!")  
-            redirect('/proyecto/agregar_proyecto')
+            redirect('../proyecto/agregar_proyecto')
 
 ################################################################################
 
@@ -370,7 +390,8 @@ class ProyectoController(BaseController):
         tipos_fases = Tipo_Fase.get_tipo_fases()	
         proyecto = Proyecto.get_proyecto_by_id(id_proyecto)
 
-        usuario2 = proyecto.idusuario
+        usuario2 = Usuario.get_user_by_id(int(proyecto.idusuario))
+        
         tipos = proyecto.tipos_fases
 
         tipos_fases2 = []

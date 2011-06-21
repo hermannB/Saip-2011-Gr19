@@ -5,6 +5,7 @@
       xmlns:xi="http://www.w3.org/2001/XInclude">
 
   <xi:include href="master.html" />
+  <xi:include href="buscar.html" />
 
 <head>
   <meta content="text/html; charset=UTF-8" http-equiv="content-type" py:replace="''"/>
@@ -21,13 +22,19 @@
 	    <div py:choose="">
 	     <span py:when="perm.var == 'control_total'">
     		<p><a href="${tg.url('/equipo/agregar_miembro')}">Agregar Miembro al Equipo </a></p>
-    		<p><a href="${tg.url('/equipo/listar_miembro')}">Listar Miembros del Equipo</a></p>
+    		<div py:if="defined('lista') and len(equipos) > 0">
+    			${buscar(lista)}
+    		</div>
+    		<xi:include href="listar_miembro.html" />
   		 </span>
   		 <span py:when="perm.var == 'alta_equipo'">
     		<p><a href="${tg.url('/equipo/agregar_miembro')}">Agregar Miembro al Equipo </a></p>
     	 </span>
     	 <span py:when="perm.var == 'list_miembros'">
-    		<p><a href="${tg.url('/equipo/listar_miembro')}">Listar Miembros del Equipo</a></p>
+    		<div py:if="defined('lista') and len(equipos) > 0">
+    			${buscar(lista)}
+    		</div>
+    		<xi:include href="listar_miembro.html" />
   		 </span>
   		</div>
   	  </div>      

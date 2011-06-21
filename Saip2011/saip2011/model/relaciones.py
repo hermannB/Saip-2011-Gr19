@@ -1,6 +1,6 @@
 # -*- coding: utf-8 -*-
 """
-Fase* related model.
+Relaciones* related model.
 
 
 It's perfectly fine to re-use this definition in the Saip application,
@@ -41,7 +41,7 @@ from pygraph.readwrite.dot import write
 
 class Relaciones(DeclarativeBase):
     """
-    Definicion de Fase.
+    Definicion de Relaciones.
 
     """
 
@@ -70,30 +70,29 @@ class Relaciones(DeclarativeBase):
     @classmethod
     def get_relaciones(self):
         """
-        Obtiene la lista de todos los usuarios
-        registrados en el sistema
+        Obtiene las relaciones.
         """
         relaciones = DBSession.query(Relaciones).all()
         return relaciones
+    print get_relaciones.__doc__
 
 #-------------------------------------------------------------------------------
 
     @classmethod
     def get_relacion_by_id(self,rel_id):
         """
-        Obtiene la lista de todos los usuarios
-        registrados en el sistema
+        Obtiene una relación a través de su identificador
         """
         relacion = DBSession.query(Relaciones).get(int(rel_id))
         return relacion
+    print get_relacion_by_id.__doc__
 
 #-------------------------------------------------------------------------------
 
     @classmethod
     def get_mis_padres(self,id_item):
         """
-        Obtiene la lista de todos los usuarios
-        registrados en el sistema
+        Obtiene la lista de los padres de un item específico
         """
         relaciones = DBSession.query(Relaciones).all()
         lista =[]
@@ -104,14 +103,14 @@ class Relaciones(DeclarativeBase):
                         lista.append(padre) 
 
         return lista
+    print get_mis_padres.__doc__
 
 #-------------------------------------------------------------------------------
 
     @classmethod
     def get_mis_id_hijos(self,id_item):
         """
-        Obtiene la lista de todos los usuarios
-        registrados en el sistema
+        Obtiene la lista de los items hijos del item enviado como parámetro
         """
         relaciones = DBSession.query(Relaciones).all()
         lista =[]
@@ -123,14 +122,14 @@ class Relaciones(DeclarativeBase):
                         break 
 
         return lista
+    print get_mis_id_hijos.__doc__
 
 #-------------------------------------------------------------------------------
 
     @classmethod
     def get_antecesores(self,id_item):
         """
-        Obtiene la lista de todos los usuarios
-        registrados en el sistema
+        Obtiene los antecesores del item enviado como parámetro.
         """
         relaciones = DBSession.query(Relaciones).all()
         lista =[]
@@ -153,14 +152,15 @@ class Relaciones(DeclarativeBase):
             
 
         return padres
+    print get_antecesores.__doc__
+
 
 #-------------------------------------------------------------------------------
 
     @classmethod
     def get_sucesores(self,id_item):
         """
-        Obtiene la lista de todos los usuarios
-        registrados en el sistema
+        Obtiene los sucesores del item enviado como parámetro.
         """
         relaciones = DBSession.query(Relaciones).all()
         lista =[]
@@ -188,12 +188,15 @@ class Relaciones(DeclarativeBase):
                         hijos.append (item)
 
         return hijos
+    print get_sucesores.__doc__
 
 #-------------------------------------------------------------------------------
 
     @classmethod
     def get_padres_habilitados(self,orden):
-
+    """
+    Obtiene los items habilitados.    
+        """
         if orden is not None:
             orden=int(orden)
 
@@ -214,11 +217,15 @@ class Relaciones(DeclarativeBase):
         for a in aux:
             padres.remove(a)       
         return padres
+    print get_padres_habilitados.__doc__
 
 #-------------------------------------------------------------------------------
 
     @classmethod
     def matriz_relaciones(self,id_item):
+    """
+    Obtiene una matriz de la relaciones.
+    """
 
         if id_item is not None:
             id_item=int(id_item)
@@ -269,6 +276,7 @@ class Relaciones(DeclarativeBase):
         gvv = gv.readstring(dot)
         gv.layout(gvv,'dot')
         gv.render(gvv,'png','/home/hermann/saip2011/saip2011/public/images/arbol.png')
+    print matriz_relaciones.__doc__
     
         
 #-------------------------------------------------------------------------------
@@ -276,10 +284,11 @@ class Relaciones(DeclarativeBase):
     @classmethod
     def borrar_by_id(self,rel_id):
         """
-        Obtiene la lista de todos los adjuntos         
+        Elimina una relación.         
         """
         DBSession.delete(DBSession.query(Relaciones).get(rel_id))
         DBSession.flush()	
+    print borrar_by_id.__doc__
 
 #-------------------------------------------------------------------------------
 

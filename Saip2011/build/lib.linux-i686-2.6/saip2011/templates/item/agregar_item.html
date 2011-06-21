@@ -94,14 +94,18 @@ function validacion(formulario) {
 	      </select>
          </td></tr>
 
-        <tr><td>Lista de Antecesores</td>
-        <td>
-		<select id="padres" multiple="multiple" name="padres" title="Seleccionar los Ancesores Necesarios">
-   	       <py:for each="padre in padres">
-                   <option value="$padre.id_item" >$padre.nombre_item</option>
-	       </py:for>
-          </select>
-        </td></tr>
+                <tr><td>Lista de Antecesores</td>
+					<td>
+					<select id="padres" multiple="multiple" name="padres" title="Seleccionar los Antecesores Necesarios">
+				   	       <py:for each="padre in padres">
+								<div py:choose="">
+						   				<option value="$padre.id_item">$padre.nombre_item</option>
+		       					
+								</div>
+					       </py:for>
+    						<div py:choose=""><span py:when="orden == '1'" > <input type="hidden" name="padres" value="${master[0]}"/></span></div>
+					  </select>
+					</td></tr>		 
 	
  	<tr><td>complejidad </td><td><input type="textfield" name="complejidad" value="${values.get('complejidad', '')}"/>${tmpl_context.form_errors.get('complejidad')}</td></tr>
 	 <tr><td>adjunto </td><td><input type="file" class="multi" name="adjunto" value="${values.get('adjunto', '')}"/>${tmpl_context.form_errors.get('adjunto')}</td></tr>

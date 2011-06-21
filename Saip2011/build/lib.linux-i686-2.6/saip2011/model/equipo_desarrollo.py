@@ -80,18 +80,47 @@ class Equipo_Desarrollo(DeclarativeBase):
 #-------------------------------------------------------------------------------
 
     @classmethod
-    def get_equipo_by_proyecto_por_pagina(self,id_proyecto,start=0,end=5):
+    def get_miembros_by_proyecto_por_pagina(self,id_proyecto,start=0,end=5):
         """
         Obtiene la lista de todos los roles
         registrados en el sistema
         """
-        equipos = DBSession.query(Equipo_Desarrollo).slice(start,end).all()
+        equipos = DBSession.query(Equipo_Desarrollo).all()
+            
+        lista = []
+        c = 0
+        for equipo in equipos:
+            if (equipo.proyecto == id_proyecto):
+                c = c + 1
+                if c < end and c > start-1:
+                    
+                    lista.append(equipo)
+                    
+        return lista
+
+#-------------------------------------------------------------------------------
+
+    @classmethod
+    def get_miembros_by_proyecto_por_filtro(self,id_proyecto,param,texto):
+        """
+        Obtiene la lista de todos los roles
+        registrados en el sistema
+        """
+        equipos = DBSession.query(Equipo_Desarrollo).all()
             
         lista = []
         for equipo in equipos:
-	        if (equipo.proyecto == id_proyecto):
-		        lista.append(equipo)
-        return lista
+            if (equipo.proyecto == id_proyecto):
+                lista.append(equipo)
+        
+        lista_filtrada = []
+        if param=="nombre":
+            for equipo in lista:
+                if texto in equipo.nombre_usuario.alias:
+                    lista_filtrada.append(equipo)
+                    
+       
+        return lista_filtrada
 
 
 #-------------------------------------------------------------------------------

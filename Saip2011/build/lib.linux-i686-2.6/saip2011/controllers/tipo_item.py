@@ -43,8 +43,8 @@ class Tipo_ItemController(BaseController):
 
 ################################################################################
 
-    @expose('saip2011.templates.tipo_item.listar_tipo_item')
-    def tipo_item(self,start=0,end=5):
+    @expose('saip2011.templates.tipo_item.tipo_item')
+    def tipo_item(self,start=0,end=5,indice=None,texto=""):
         """
            Menu para Tipos de Item
         """
@@ -56,18 +56,27 @@ class Tipo_ItemController(BaseController):
             end=int(start.split('=')[1]) #obtiene el fin de pagina
             start=int(start.split('&')[0]) #obtiene el inicio de pagina
         #print start,end
-        total = len(Tipo_Item.get_tipos_items())
+        
         pagina_actual = ((start % end) / paginado) + 1
-         
-        tipos_items = Tipo_Item.get_tipo_item_por_pagina(start,end)
-
-
+        if ((start % end) % paginado) <> 0:
+             pagina_actual = pagina_actual + 1
+                
         tipos_campos = Tipo_Campos.get_tipo_campos()
+        
+        if indice  <> None and texto <> "":  
+            tipos_items = Tipo_Item.get_tipos_items_por_filtro(indice,texto)
+            total = len(tipos_items)
+        else:   
+            tipos_items = Tipo_Item.get_tipos_items_por_pagina(start,end)
+            total = len(Tipo_Item.get_tipos_items())
 
-        return dict(pagina="listar_tipo_item",tipos_items=tipos_items, 
+        lista = ['nombre','descripcion']
+
+        return dict(pagina="tipo_item",tipos_items=tipos_items, 
                     tipos_campos=tipos_campos,nom_proyecto=nom_proyecto,
                     nom_fase=nom_fase,inicio=start,fin=end,
-                    paginado=paginado,pagina_actual=pagina_actual,total=total)
+                    paginado=paginado,pagina_actual=pagina_actual,
+                    total=total,param="/tipo_item/tipo_item",lista=lista)
 
 ################################################################################
        

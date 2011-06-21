@@ -4,27 +4,7 @@
       xmlns:py="http://genshi.edgewall.org/"
       xmlns:xi="http://www.w3.org/2001/XInclude">
 
-  <xi:include href="master.html" />
-
-<head>
-  <meta content="text/html; charset=UTF-8" http-equiv="content-type" py:replace="''"/>
-<script type="text/javascript" src="js/jquery-1.4.2.min.js"></script>
-	<script src="js/vanadium-min.js" type="text/javascript"></script>
-
-  <title>Sistema de Administracion de Item</title>
-</head>
-
-<body>
-  <div id="mainmenu">
-    <xi:include href="buscar.html" />
-  </div>
-  <div py:for="perm in request.identity['user'].privilegios">
-	    	<div py:choose="">
-	     		<span py:when="perm.var == 'control_total' or perm.var == 'alta_fase'">
-    				<p><a href="${tg.url('/fase/agregar_fase')}">Agregar Fase</a></p>
-    			</span>
-    		</div>
-    </div>    
+  <xi:include href="paginacion.html" />
 
   <div py:choose="len(fases)" py:strip="True" id="fase">
     <table class="fases" py:when="0">
@@ -68,13 +48,13 @@
         <td>${fase.linea_base}</td>
         <td>${fase.descripcion}</td>
         <td><a href="${tg.url('../proyecto/ver_tipos_items?id_fase=%d' % fase.id_fase)}">ver tipos Items</a></td>
-      </tr>          
+      </tr>   
+       <tr py:if="defined('total') and total/paginado > 0">
+      	${paginar(pagina_actual,paginado,total,inicio,fin,param)}
+      </tr>        
     </table>   
     
   </div>
   <div class="clearingdiv" />
-  <div class="notice"> Lista las fases registradas en el sistema.
-    
-  </div>
-</body>
+ 
 </html>

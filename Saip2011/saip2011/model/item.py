@@ -1,6 +1,6 @@
 # -*- coding: utf-8 -*-
 """
-Auth* related model.
+ITEM* related model.
 
 This is where the models used by :mod:`repoze.who` and :mod:`repoze.what` are
 defined.
@@ -96,7 +96,7 @@ class Item(DeclarativeBase):
     @classmethod
     def get_ultimo_id(self):
         """
-        Obtiene el ultimo id de la tabla
+        Obtiene el ultimo id de la tabla Item.
         """
         mayor =0
         items = DBSession.query(Item).all()
@@ -104,28 +104,31 @@ class Item(DeclarativeBase):
             if (item.id_item > mayor):
 	            mayor =item.id_item
         return mayor
+    print get_ultimo_id.__doc__
 
 #-------------------------------------------------------------------------------
 
     @classmethod
     def get_item_by_id(self, id_item):
         """
-        Obtiene item
+        Obtiene item uscado por su identificador.
         """
         item = DBSession.query(Item).get(int(id_item))
         return item
+    print get_item_by_id.__doc__
 
 #-------------------------------------------------------------------------------
 
     @classmethod
     def get_master(self):
         """
-        Obtiene item
+        Obtiene item maestro.
         """
         items = DBSession.query(Item).all()
         for item in items:
             if item.nombre_item=="master":
                 return item
+    print get_master.__doc__
 
 
 
@@ -134,8 +137,7 @@ class Item(DeclarativeBase):
     @classmethod
     def get_item_proy_fase(self,proy,fase):
         """
-        Obtiene la lista de todos los items
-        registrados en el sistema
+        Obtiene la lista de los items por proyecto y fase.
         """
         lista=[]
         items = DBSession.query(Item).all()
@@ -144,14 +146,14 @@ class Item(DeclarativeBase):
                 and item.fase == fase):
                 lista.append(item)  
         return lista
+    print get_item_proy_fase.__doc__
 
 #-------------------------------------------------------------------------------
 
     @classmethod
     def get_item_activados(self):
         """
-        Obtiene la lista de todos los items
-        registrados en el sistema
+        Obtiene la lista de todos los items en estado ACTIVO.
         """
         lista=[]
         items = DBSession.query(Item).all()
@@ -159,6 +161,7 @@ class Item(DeclarativeBase):
             if( item.estado_oculto=="Activo"):
                 lista.append(item)  
         return lista
+    print get_item_activados.__doc__
 
 
 
@@ -168,8 +171,7 @@ class Item(DeclarativeBase):
     @classmethod
     def get_nombres_items(self):
         """
-        Obtiene la lista de todos los items
-        registrados en el sistema
+        Obtiene la lista de los nombres de los items
         """
         fase=int(Variables.get_valor_by_nombre("fase_actual"))
         items = Item.get_item_activados_by_fase(fase)
@@ -178,14 +180,14 @@ class Item(DeclarativeBase):
             if( item.estado_oculto=="Activo"):
                 lista.append(item.nombre_item)  
         return lista
+    print get_nombres_items.__doc__
 
 #-------------------------------------------------------------------------------
 
     @classmethod
     def get_item_activados_by_fase(self,fase):
         """
-        Obtiene la lista de todos los items
-        registrados en el sistema
+        Obtiene la lista de todos los items activos de una determinada fase.
         """
         proyecto=int(Variables.get_valor_by_nombre("proyecto_actual"))
         lista=[]
@@ -195,14 +197,14 @@ class Item(DeclarativeBase):
                 and item.fase == int(fase)):
                 lista.append(item)  
         return lista
+    print get_item_activados_by_fase.__doc__
 
 #-------------------------------------------------------------------------------
 
     @classmethod
     def get_item_activados_by_fase_por_pagina(self,fase,start=0,end=5):
         """
-        Obtiene la lista de todos los usuarios
-        registrados en el sistema
+        Obtiene la lista de todos los items activos de una determinada fase.
         """
         id_proyecto=int(Variables.get_valor_by_nombre("proyecto_actual"))
         items = DBSession.query(Item).slice(start,end).all()
@@ -214,14 +216,14 @@ class Item(DeclarativeBase):
                 lista.append(item)
 
         return lista
+    print get_item_activados_by_fase_por_pagina.__doc__
 
 #-------------------------------------------------------------------------------
 
     @classmethod
     def get_item_activados_by_fase_por_filtro(self,id_fase,param,texto):
         """
-        Obtiene la lista de todos los usuarios
-        registrados en el sistema
+        Obtiene la lista de todos los items activos de una fase. Los items se buscan por 'nombre' y 'estadp'
         """
         id_proyecto=int(Variables.get_valor_by_nombre("proyecto_actual"))
         
@@ -237,6 +239,7 @@ class Item(DeclarativeBase):
                 lista.append(item)
 
         return lista
+    print get_item_activados_by_fase_por_filtro.__doc__
 
 
 
@@ -245,7 +248,7 @@ class Item(DeclarativeBase):
     @classmethod
     def crear_codigo(self,id_tipo,pre_codigo,proy_actual,fas_act):
         """
-        crear el codigo del item
+        Crea el codigo del item.
         """
         codigo=""
         cantidad=1
@@ -260,14 +263,14 @@ class Item(DeclarativeBase):
 		        cantidad=cantidad+1
         codigo+=str(cantidad)
         return codigo
+    print crear_codigo.__doc__
 
 #-------------------------------------------------------------------------------
 
     @classmethod
     def get_item_eliminados(self):
         """
-        Obtiene la lista de todos los items
-        registrados en el sistema
+        Obtiene la lista de todos los items eliminados.
         """
         lista=[]
         items = DBSession.query(Item).all()
@@ -275,14 +278,14 @@ class Item(DeclarativeBase):
 	        if( item.estado_oculto=="Eliminado"):
 		        lista.append(item)  
         return lista
+    print get_item_eliminados.__doc__
 
 #-------------------------------------------------------------------------------
 
     @classmethod
     def get_item_eliminados_by_fase(self,fase):
         """
-        Obtiene la lista de todos los items
-        registrados en el sistema
+        Obtiene la lista de todos los items eliminados de una fase.
         """
         proyecto=int(Variables.get_valor_by_nombre("proyecto_actual"))
         lista=[]
@@ -292,14 +295,13 @@ class Item(DeclarativeBase):
                 and item.fase == int(fase)):
 		        lista.append(item)  
         return lista
-
+    print get_item_eliminados_by_fase.__doc__
 #-------------------------------------------------------------------------------
 
     @classmethod
     def get_item_eliminados_por_pagina(self,id_fase,start=0,end=5):
         """
-        Obtiene la lista de todos los usuarios
-        registrados en el sistema
+        Obtiene la lista de todos los items eliminados de una fase.
         """
         id_proyecto=int(Variables.get_valor_by_nombre("proyecto_actual"))
         item = DBSession.query(Item).slice(start,end).all()
@@ -310,6 +312,7 @@ class Item(DeclarativeBase):
                 lista.append(item)
 
         return lista
+    print get_item_eliminados_por_pagina.__doc__
 
 #-------------------------------------------------------------------------------
 
@@ -317,8 +320,7 @@ class Item(DeclarativeBase):
     @classmethod
     def get_historial(self, id_item):
         """
-        Obtiene la lista de todos los items
-        registrados en el sistema
+        Obtiene el historial de un item.
         """
         muestra=DBSession.query(Item).get(id_item)
         lista=[]
@@ -329,14 +331,14 @@ class Item(DeclarativeBase):
                          (item.estado_oculto == "Desactivado") ):
 			        lista.append(item)  
         return lista
+    print get_historial.__doc__
 
 #-------------------------------------------------------------------------------
 
     @classmethod
     def get_historial_por_pagina(self,id_item,start=0,end=5):
         """
-        Obtiene la lista de todos los usuarios
-        registrados en el sistema
+        Obtiene el historial de un item.
         """
         id_proyecto=int(Variables.get_valor_by_nombre("proyecto_actual"))
         item = DBSession.query(Item).slice(start,end).all()
@@ -348,6 +350,7 @@ class Item(DeclarativeBase):
                 lista.append(item)
 
         return lista
+    print get_historial_por_pagina.__doc__
 
 #-------------------------------------------------------------------------------
 
@@ -355,8 +358,7 @@ class Item(DeclarativeBase):
     @classmethod
     def version_actual(self, id_item):
         """
-        Obtiene la lista de todos los items
-        registrados en el sistema
+        Obtiene la versión actual de un item
         """
 
         items = Item.get_item_activados()
@@ -365,60 +367,82 @@ class Item(DeclarativeBase):
 	        if( (item.nombre_item == item_viejo.nombre_item) and  
                     (item.proyecto == item_viejo.proyecto)  and 
                     (item.fase == item_viejo.fase ) ):
-		        return item 
+		        return item
+    print version_actual.__doc__ 
 
 #-------------------------------------------------------------------------------
          
     @classmethod
     def activar(self, id_item):
+        """
+        Activa un item.
+        """
         item = DBSession.query(Item).get(id_item)
         if item.estado == "nuevo":
 	        item.estado="en_desarrollo"
 	        DBSession.flush()
+    print activar.__doc__
 
 #-------------------------------------------------------------------------------
 
     @classmethod
     def aprobar(self, id_item):
+        """
+        Aprueba un item en estado en desarrollo.
+        """
         item = DBSession.query(Item).get(id_item)
         if item.estado == "en_desarrollo":
 	        item.estado="aprobado"
 	        DBSession.flush()
+    print aprobar.__doc__
 
 #-------------------------------------------------------------------------------
 
     @classmethod
     def con_linea_base(self, id_item):
+        """
+        Se asigna al item como parte de la linea base.
+        """
         item = DBSession.query(Item).get(id_item)
         if item.estado == "aprobado":
 	        item.estado="con_linea_base"
 	        DBSession.flush()
+    print con_linea_base.__doc__
 
 #-------------------------------------------------------------------------------
 
     @classmethod
     def revisar(self, id_item):
+        """
+        El item se pasa al estado 'a revisar'.
+        """
         item = DBSession.query(Item).get(id_item)
         if item.estado == "aprobado" or item.estado == "con_linea_base":
 	        item.estado="a_revisar"
 	        DBSession.flush()
+    print revisar.__doc__
 
 #-------------------------------------------------------------------------------
 
     @classmethod
     def finalizar(self, id_item):
+        """
+        
+        """
         proyecto = DBSession.query(Item).get(id_item)
         if item.estado == "con_linea_base":
 	        item.estado="finalizado"
 	        DBSession.flush()
+    print finalizar.__doc__
 #-------------------------------------------------------------------------------
     @classmethod
     def borrar_by_id(self,id_item):
         """
-        Obtiene la lista de todos los adjuntos         
+        Eliina un item específico.         
         """
         DBSession.delete(DBSession.query(Item).get(id_item))
-        DBSession.flush()	
+        DBSession.flush()
+    print borrar_by_id.__doc__
 
 #-------------------------------------------------------------------------------
 ################################################################################

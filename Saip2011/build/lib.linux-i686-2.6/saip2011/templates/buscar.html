@@ -1,9 +1,22 @@
-    <div id="buscar">
-	      <table width="100%" BORDER="0" CELLSPACING="0" CELLPADDING="0">
+<html xmlns:py="http://genshi.edgewall.org/"
+      xmlns:xi="http://www.w3.org/2001/XInclude"
+      py:strip="">
+      
+     <py:def function="buscar(lista)">
+     <div id="buscar" >
+	      <table width="100%" BORDER="0" >
       		<tr>
 	  			<td>
 	 				<form METHOD="GET" ACTION="" class="buscar">
-         				<INPUT TYPE="hidden" NAME="sp-a" VALUE="00070429-sp00000002"/>
+         			 
+         				<SELECT NAME="indice">
+         					<py:for each="m in lista">
+         	       				<option value="$m" >$m</option>
+	        				</py:for>
+					 	   
+						</SELECT>
+					
+         				
         				<INPUT SIZE="30" NAME="texto" TYPE="text"/>
         				<INPUT TYPE="submit" VALUE="Buscar"/> 
  					</form>
@@ -11,4 +24,5 @@
  	  		</tr>
  	  	</table>
  	  </div>
- 	
+ 	  </py:def>
+</html>

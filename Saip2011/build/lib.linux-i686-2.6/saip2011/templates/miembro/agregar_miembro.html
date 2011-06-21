@@ -66,7 +66,7 @@ function validacion(formulario) {
          <tr><td>Nombre del Usuario</td>
      	     <td>
      	     <select name="idusuario">
-		<py:for each="usuario in usuarios">
+		        <py:for each="usuario in usuarios">
          	       <option value="$usuario.idusuario" selected="selected">$usuario.alias</option>
 	        </py:for>
 	      </select>
@@ -75,7 +75,7 @@ function validacion(formulario) {
 	 <tr><td>Nombre del Rol</td>
      	     <td>
      	     <select name="idrol">
-		<py:for each="rol in roles">
+		        <py:for each="rol in roles">
          	       <option value="$rol.idrol" selected="selected">$rol.nombrerol</option>
 	        </py:for>
 	      </select>

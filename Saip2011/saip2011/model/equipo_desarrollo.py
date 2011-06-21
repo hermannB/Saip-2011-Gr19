@@ -76,14 +76,14 @@ class Equipo_Desarrollo(DeclarativeBase):
         """
         equipos = DBSession.query(Equipo_Desarrollo).all()
         return equipos    
+    print get_equipos.__doc__
 
 #-------------------------------------------------------------------------------
 
     @classmethod
     def get_miembros_by_proyecto_por_pagina(self,id_proyecto,start=0,end=5):
         """
-        Obtiene la lista de todos los roles
-        registrados en el sistema
+        Obtiene la lista de todos los miembros de un proyecto dado.
         """
         equipos = DBSession.query(Equipo_Desarrollo).all()
             
@@ -97,14 +97,14 @@ class Equipo_Desarrollo(DeclarativeBase):
                     lista.append(equipo)
                     
         return lista
+    print get_miembros_by_proyecto_por_pagina.__doc__
 
 #-------------------------------------------------------------------------------
 
     @classmethod
     def get_miembros_by_proyecto_por_filtro(self,id_proyecto,param,texto):
         """
-        Obtiene la lista de todos los roles
-        registrados en el sistema
+        Obtiene la lista de todos los miembros de un proyecto. Los miembros se buscan por nombre.
         """
         equipos = DBSession.query(Equipo_Desarrollo).all()
             
@@ -121,33 +121,45 @@ class Equipo_Desarrollo(DeclarativeBase):
                     
        
         return lista_filtrada
+    print get_miembros_by_proyecto_por_filtro.__doc__
 
 
 #-------------------------------------------------------------------------------
 
     @classmethod
     def get_miembros_by_proyecto(self, id_proyecto):
+        """
+        Obtiene los miembros asignados a un proyecto dado.
+        """
         equipos = DBSession.query(Equipo_Desarrollo).all()
         lista = []
         for equipo in equipos:
 	        if (equipo.proyecto == id_proyecto):
 		        lista.append(equipo)
         return lista
+    print get_miembros_by_proyecto.__doc__
 
 #-------------------------------------------------------------------------------
 
 
     @classmethod
     def get_miembro_by_id(self, id_miembro):
+        """
+        Obtiene un miembro de un equipo por su identificador.
+        """
         equipos = DBSession.query(Equipo_Desarrollo).all()
         for equipo in equipos:
             if (equipo.id_equipo == id_miembro):
                 return equipo
+    print get_miembro_by_id.__doc__
 
 #-------------------------------------------------------------------------------
 
     @classmethod
     def get_miembros_by_usuario(self, id_miembro):
+        """
+        Obtiene un miembro de un equipo de desarrollo.
+        """
         equipos = DBSession.query(Equipo_Desarrollo).all()
         lista = []
         for equipo in equipos:
@@ -155,25 +167,31 @@ class Equipo_Desarrollo(DeclarativeBase):
 	            lista.append(equipo)
 
         return lista
+    print get_miembros_by_usuario.__doc__
 
 #-------------------------------------------------------------------------------
 
     @classmethod
     def get_miembro_by_usuario_by_proyecto(self, id_usuario,id_proyecto):
+        """
+        Obtiene un miembro de un equipo filrtado por usuario y proyecto.
+        """
         equipos = DBSession.query(Equipo_Desarrollo).all()
         lista = []
         for equipo in equipos:
             if(equipo.idusuario == id_usuario and equipo.proyecto==id_proyecto):
                 return equipo
+    print get_miembro_by_usuario_by_proyecto.__doc__
 #-------------------------------------------------------------------------------
 
     @classmethod
     def borrar_by_id(self,id_miembro):
         """
-        Obtiene la lista de todos los adjuntos         
+        Elimina un miembro de equipo.
         """
         DBSession.delete(DBSession.query(Equipo_Desarrollo).get(id_miembro))
         DBSession.flush()	
+    print borrar_by_id.__doc__
 
 #-------------------------------------------------------------------------------
 

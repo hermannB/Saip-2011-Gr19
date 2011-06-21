@@ -5,6 +5,8 @@
       xmlns:xi="http://www.w3.org/2001/XInclude">
 
   <xi:include href="master.html" />
+  <xi:include href="buscar.html" />
+  <xi:include href="listar_fases.html" />
 
 <head>
   <meta content="text/html; charset=UTF-8" http-equiv="content-type" py:replace="''"/>
@@ -17,57 +19,12 @@
 <body >
   <div id="getting_started">
     <h2>Logueo por Fase</h2>
-
-	 <div py:choose="len(fases)" py:strip="True" id="fase">
-    <table class="fases" py:when="0">
-      <tr><th>No hay Fases registradas..</th></tr>
-    </table>
-    <table border="1" cellspacing="1" cellpadding="7" class="fases" py:otherwise="">    
-      <h2>Lista de Fases</h2>
-      <tr align="center">
-		<th>Accion</th>
-        <th>Nombre de la Fase</th>
-		<th>Tipo de Fase</th>
-        <th>Estado</th>
-        <th>Orden</th>
-
-        <th>Linea Base</th>
-        <th>Descripcion</th>
-      </tr>
-      <tr align="center" py:for="fase in fases">
-
-		<td>
-    	<div py:for="perm in request.identity['user'].privilegios">
-	    	<div py:choose="">
-	     		<span py:when="perm.var == 'control_total'">
-					<a href="${tg.url('/fase/editar_fase?id_fase=%d' % fase.id_fase)}"><img src="/images/lapiz.png" border="0" height="15"/></a>
-					<a href="${tg.url('/fase/eliminar_fase?id_fase=%d' % fase.id_fase)}"><img src="/images/cross.png" border="0"/></a>
-					<a href="${tg.url('/fase/seleccionar_fase?id_fase=%d' % fase.id_fase)}"><img src="/images/ok.png" border="0" height="15"/></a>
-				</span>
-				<span py:when="perm.var == 'mod_fase'">
-					<a href="${tg.url('/fase/editar_fase?id_fase=%d' % fase.id_fase)}"><img src="/images/lapiz.png" border="0" height="15"/></a>
-				</span>
-				<span py:when="perm.var == 'elim_fase'">
-					<a href="${tg.url('/fase/eliminar_fase?id_fase=%d' % fase.id_fase)}"><img src="/images/cross.png" border="0"/></a>
-					<a href="${tg.url('/fase/seleccionar_fase?id_fase=%d' % fase.id_fase)}"><img src="/images/ok.png" border="0" height="15"/></a>
-				</span>
-				
-					
-			</div>
-		</div>
-		</td>
-
-		<td>${fase.nombre_fase}</td>
-        <td>${fase.nombre_tipo_fase}</td>
-        <td>${fase.estado}</td>
-        <td>${fase.orden}</td>
-        <td>${fase.linea_base}</td>
-        <td>${fase.descripcion}</td>
-      </tr>          
-    </table>   
-    
-  </div>
-	
+		<div py:if="defined('lista')">
+    		${buscar(lista)}
+    	</div>
+    	<div py:if="defined('fases')">
+    		${listar_fases(fases,pagina_actual,paginado,total,inicio,fin,param)}
+  		</div>  		
 
   </div>
   <div class="clearingdiv" />

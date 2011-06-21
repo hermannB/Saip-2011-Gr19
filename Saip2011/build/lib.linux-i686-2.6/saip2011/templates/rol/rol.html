@@ -5,6 +5,7 @@
       xmlns:xi="http://www.w3.org/2001/XInclude">
 
   <xi:include href="master.html" />
+  <xi:include href="buscar.html" />
 
 <head>
   <meta content="text/html; charset=UTF-8" http-equiv="content-type" py:replace="''"/>
@@ -23,11 +24,17 @@
     	<p><a href="${tg.url('/agregar_rol')}">Agregar Rol</a></p>
        </span>
        <span py:when="perm.var == 'list_rol'">	
-    	<p><a href="${tg.url('/listar_rol')}">Listar Rol</a></p>
+    	<div py:if="defined('lista')">
+    		${buscar(lista)}
+    	</div>
+    	<xi:include href="listar_rol.html" />
        </span>
        <span py:when="perm.var == 'control_total'">
        	<p><a href="${tg.url('/agregar_rol')}">Agregar Rol</a></p>
-       	<p><a href="${tg.url('/listar_rol')}">Listar Rol</a></p>
+       	<div py:if="defined('lista')">
+    		${buscar(lista)}
+    	</div>
+    	<xi:include href="listar_rol.html" />
        </span>
       </div>
     </div>    

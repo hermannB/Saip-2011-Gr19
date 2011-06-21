@@ -25,6 +25,9 @@ from saip2011.model.tipo_item import Tipo_Item
 from saip2011.model.proyecto import Proyecto
 from saip2011.model.historial import Historial
 from saip2011.model.tipo_campos import Tipo_Campos
+from saip2011.model.campos import Campos
+from saip2011.model.relaciones import Relaciones
+from saip2011.model.linea_base import Linea_Base
 from cherrypy import HTTPRedirect
 from genshi.template import TemplateLoader
 import os
@@ -43,7 +46,7 @@ class ItemController(BaseController):
 
 ################################################################################
     @expose('saip2011.templates.item.item')
-    def item(self,start=0,end=5):
+    def item(self,start=0,end=5,indice=None,texto=""):
         """
         Menu para Item
         """
@@ -55,17 +58,28 @@ class ItemController(BaseController):
             end=int(start.split('=')[1]) #obtiene el fin de pagina
             start=int(start.split('&')[0]) #obtiene el inicio de pagina
         #print start,end
-        total = len(Fase.get_fase_by_proyecto(int (Variables.get_valor_by_nombre
-                                                ("proyecto_actual")) ))
+        
         pagina_actual = ((start % end) / paginado) + 1
-         
-        fases=Fase.get_fase_by_proyecto_por_pagina(int (Variables.get_valor_by_nombre
+        if ((start % end) % paginado) <> 0:
+             pagina_actual = pagina_actual + 1
+                         
+        if indice  <> None and texto <> "":  
+            fases=Fase.get_fase_by_proyecto_por_filtro(int (Variables.get_valor_by_nombre
+                                                ("proyecto_actual")), indice,texto )
+            total = len(fases)
+        else:   
+            fases,total=Fase.get_fase_by_proyecto_por_pagina(int (Variables.get_valor_by_nombre
                                                 ("proyecto_actual")), start,end )
+
+            #total = len(Fase.get_fase_by_proyecto(int (Variables.get_valor_by_nombre
+             #                                   ("proyecto_actual")) ))
+
+        lista = ['nombre','descripcion']
         
         return dict(pagina="listar_fase",fases=fases,nom_proyecto=nom_proyecto
                                 ,nom_fase=nom_fase,inicio=start,fin=end,
                                 pagina_actual=pagina_actual,paginado=paginado,
-                                total=total)
+                                total=total,param="/item/item",lista=lista)
 
 ###############################################################################
 
@@ -145,37 +159,65 @@ class ItemController(BaseController):
     def editar_item(self,id_item,*args, **kw):
         nom_proyecto=Variables.get_valor_by_nombre("nombre_proyecto_actual")
         nom_fase=Variables.get_valor_by_nombre("nombre_fase_actual")
-        padres=Item.get_item_activados()                                        #cambiar esta funcion y solo traer lo que no forman ciclos
+        id_fase=int (Variables.get_valor_by_nombre("fase_actual") )
+
         if id_item is not None:
             id_item=int(id_item)
 
         id_fase=int(Variables.get_valor_by_nombre("fase_actual"))
         item = Item.get_item_by_id(id_item)
         fase = Fase.get_fase_by_id(id_fase)	
+
+        orden=str(fase.orden)
+
+        padres=Relaciones.get_padres_habilitados(fase.orden)   
+        hijos=Relaciones.get_sucesores(id_item)
+       
+        master=[]
+        if (fase.orden ==1):
+            master.append(Item.get_master().id_item)
+        else:
+            master.append(0)
+
+        for hijo in hijos:                                                      #evita que yo o algun sucesor sea mi nuevo padre
+            if hijo in padres:
+                padres.remove(hijo)
+        for padre in padres:
+            if padre.id_item == id_item:
+                padres.remove(padre)
+
         tipos_items=fase.tipos_items
 
         lista=[]
-        lista.append(item.nombre_tipo_item )
+        lista.append(item.id_tipo_item )
 
         values = dict(id_item=item.id_item, 
-						nombre_item=item.nombre_item,        
+						nombre_item=item.nombre_item,
+                        nombre_tipo_item=item.nombre_tipo_item,        
 						codigo_item=item.codigo_item,
 						estado=item.estado,
 						complejidad=item.complejidad,
 						)
 
         adjuntos=Adjunto.get_adjuntos_by_item(item.id_item)
-        #decodificar
-        adjuntos2=[]
+ 
+        adjuntados=[]
         for adj in adjuntos:        
-            var=binascii.b2a_base64(adj.archivo)
-            archivo=base64.b64decode(var)  
-            adj.archvivo=archivo
-            adjuntos2.append(adj)
+            var = dict(id_adjunto=adj.id_adjunto,
+                            nombre_archivo=adj.nombre_archivo)
+            adjuntados.append(var)
+       
+        padres2=[]        
+        padr=Relaciones.get_mis_padres(id_item)
+        for pad in padr:
+            padres2.append(pad.id_item)
 
-        return dict(pagina="editar_item",values=values,adjuntos2=adjuntos2,
+        campos= Campos.get_campos_by_item(id_item)
+
+        return dict(pagina="editar_item",values=values,adjuntados=adjuntados,
                         nom_proyecto=nom_proyecto,nom_fase=nom_fase,
-                        lista=lista,tipos_items=tipos_items,padres=padres)
+                        lista=lista,tipos_items=tipos_items,padres=padres,
+                        padres2=padres2,master=master,orden=orden,campos=campos)
 
 #-------------------------------------------------------------------------------
 
@@ -186,17 +228,13 @@ class ItemController(BaseController):
 #-------------------------------------------------------------------------------
 
     @expose('saip2011.templates.item.editar_item')
-    def put_item(self, id_item, nombre_item, id_tipo_item,complejidad,
-                     adjuntos,**data):
+    def put_item(self, id_item, nombre_item, nombre_tipo_item, complejidad,
+                    id_campos,nombre_campo,tipo_campo,dato,
+                     padres,asmSelect0,adjunto=None,adjuntados=None):
 
         if id_item is not None:
             id_item=int(id_item)
 
-        if id_tipo_item is not None:
-            id_tipo_item=int(id_tipo_item)
-
-        if complejidad is not None:
-            complejidad=int(complejidad)
 
         item = Item.get_item_by_id(id_item)
         items= Item.get_nombres_items()
@@ -204,15 +242,54 @@ class ItemController(BaseController):
         
         if nombre_item not in items:
 
-            version=item.version+1
+            if id_campos is not None:
+                if not isinstance(id_campos, list):
+                    id_campos = [id_campos]
+
+            if nombre_campo is not None:
+                if not isinstance(nombre_campo, list):
+                    nombre_campo = [nombre_campo]
+
+            if tipo_campo is not None:
+                if not isinstance(tipo_campo, list):
+                    tipo_campo = [tipo_campo]
+
+            if dato is not None:
+                if not isinstance(dato, list):
+                    dato = [dato]
+
+
+            if complejidad is not None:
+                complejidad=int(complejidad)
+
+            if adjuntados is not None:
+                if not isinstance(adjuntados, list):
+                    adjuntados = [adjuntados]
+                if len(adjuntados)<1:
+                    adjuntados =[]
+
+            if adjunto is not None:
+                if not isinstance(adjunto, list):
+                    adjunto = [adjunto]
+
+            if padres is not None:
+                if not isinstance(padres, list):
+                    padres = [padres]
+                padres = [DBSession.query(Item).get(padre) for padre
+                                         in padres]
+
+
             item.estado_oculto="Desactivado"
             DBSession.flush()
+
+            version=item.version+1
 
             item2 = Item (nombre_item=nombre_item ,
                          codigo_item=item.codigo_item ,
                          id_tipo_item=item.id_tipo_item , 
                          complejidad=complejidad,
                          estado = item.estado ,
+                         orden=item.orden,
                          fase=int(Variables.get_valor_by_nombre
                                 ("fase_actual")),
                          proyecto=int(Variables.get_valor_by_nombre
@@ -220,10 +297,55 @@ class ItemController(BaseController):
                          creado_por=Variables.get_valor_by_nombre
                                 ("usuario_actual"),
                         fecha_creacion = time.ctime() ,
-                        version =version ,estado_oculto="Activo")
+                        version =version ,estado_oculto="Activo",
+                        lb_parcial=item.lb_parcial,lb_general=item.lb_general)
 
             DBSession.add(item2)
             DBSession.flush()
+
+            indice=0
+            id_item=Item.get_ultimo_id()        
+            for c in id_campos:
+                if len(c)>0:
+                    camp =Campos(id_item=id_item,
+                                    nombre_campo=nombre_campo[indice],
+                                    tipo_campo=tipo_campo[indice],
+                                    dato=dato[indice])
+                    DBSession.add(camp)
+                    indice+=1
+
+            mayor =Item.get_ultimo_id()
+            relacion = Relaciones (id_item_hijo=mayor,padres=padres)
+
+            if adjunto is not None:
+                for adj in adjunto:
+                    if len(str(adj))==0:
+                        break
+                    if len(adj.filename)==0:
+                        break
+                    data = adj.file.read()
+                    encode=base64.b64encode(data)
+                    var=binascii.a2b_base64(encode)
+                    adj = Adjunto (id_item=mayor, archivo=var,
+                                    nombre_archivo=adj.filename,version=item2.version,
+                                    estado_oculto=item2.estado_oculto)
+
+                    DBSession.add(adj)
+                    DBSession.flush() 
+
+            adjuntos=Adjunto.get_adjuntos_by_item(item.id_item)
+            for adjun in adjuntos:
+                if adjuntados is not None:
+                    if adjun.nombre_archivo in adjuntados:
+                        adj2 = Adjunto(id_item=mayor,archivo=adjun.archivo,
+                                       nombre_archivo=adjun.nombre_archivo,
+                                       version=item2.version, 
+                                       estado_oculto=item2.estado_oculto    )
+                        DBSession.add(adj2)
+                        DBSession.flush() 
+                
+                adjun.estado_oculto=item.estado_oculto
+                DBSession.flush()
 
             flash("Item Modificado!")
             redirect('/item/item')
@@ -232,6 +354,7 @@ class ItemController(BaseController):
             nom_proyecto=Variables.get_valor_by_nombre("nombre_proyecto_actual")
             nom_fase=Variables.get_valor_by_nombre("nombre_fase_actual")
 
+            padres=Item.get_item_activados()                                        #cambiar esta funcion y solo traer lo que no forman ciclos
             id_fase=int(Variables.get_valor_by_nombre("fase_actual"))          
             fase = Fase.get_fase_by_id(id_fase)	
             tipos_items=fase.tipos_items
@@ -246,20 +369,24 @@ class ItemController(BaseController):
     			            complejidad=complejidad,
 				            )
 
-            if adjuntos is not None:
-                if not isinstance(adjuntos, list):
-                    adjuntos = [adjuntos]
-
             adjuntos=Adjunto.get_adjuntos_by_item(item.id_item)
-            #decodificar
-            adjuntos2=[]
-            for adj in adjuntos:
-                adjuntos2.append(adj)
+     
+            adjuntados=[]
+            for adj in adjuntos:        
+                var = dict(id_adjunto=adj.id_adjunto,
+                                nombre_archivo=adj.nombre_archivo)
+                adjuntados.append(var)
+
+            padres2=[]        
+            padr=Relaciones.get_mis_padres(id_item)
+            for pad in padr:
+                padres2.append(pad.id_item)
 
             flash("EL NOMBRE DEL ITEM YA ESXISTE!")
-            return dict(pagina="editar_item",values=values,adjuntos2=adjuntos2,
+            return dict(pagina="editar_item",values=values,adjuntados=adjuntados,
                             nom_proyecto=nom_proyecto,nom_fase=nom_fase,
-                            lista=lista,tipos_items=tipos_items)
+                            lista=lista,tipos_items=tipos_items,padres=padres,
+                            padres2=padres2)
 
 
 ################################################################################
@@ -350,7 +477,7 @@ class ItemController(BaseController):
         item = Item.get_item_by_id(id_item)
         item.estado_oculto="Activo"
 
-        DBSession.add(item2)
+        DBSession.add(item)
         DBSession.flush()
 
         flash("item Revivido!")
@@ -411,14 +538,32 @@ class ItemController(BaseController):
         item3 = Item (nombre_item=item2.nombre_item,
                         codigo_item=item2.codigo_item, 
                         id_tipo_item=item2.id_tipo_item,
+                        orden=item2.orden,
 						complejidad=item2.complejidad, estado = item2.estado,
                         fase=item2.fase, proyecto=item2.proyecto,
                         creado_por =item2.creado_por, 
                         fecha_creacion = item2.fecha_creacion ,
-                        version =version , estado_oculto="Activo")
+                        version =version , estado_oculto="Activo",
+                        lb_parcial=item2.lb_parcial,lb_general=item2.lb_general)
 	
         DBSession.add(item3)
         DBSession.flush()
+        
+        adjuntos=Adjunto.get_adjuntos_by_item(item.id_item)
+        for adjun in adjuntos:
+            adjun.estado_oculto=item.estado_oculto
+            DBSession.flush()
+
+        mayor =Item.get_ultimo_id()
+        adjuntos=Adjunto.get_adjuntos_by_item(item2.id_item)
+        for adjun in adjuntos:
+            adj2 = Adjunto(id_item=mayor,archivo=adjun.archivo,
+                           nombre_archivo=adjun.nombre_archivo,
+                           version=item3.version, 
+                           estado_oculto=item3.estado_oculto    )
+            DBSession.add(adj2)
+            DBSession.flush() 
+
 
         flash("item recuperado!")
         redirect('/item/item')
@@ -429,14 +574,25 @@ class ItemController(BaseController):
     def agregar_item(self, *args, **kw):
         nom_fase=Variables.get_valor_by_nombre("nombre_fase_actual")
         nom_proyecto=Variables.get_valor_by_nombre("nombre_proyecto_actual")
-        padres=Item.get_item_activados()                                        #cambiar esta funcion y solo traer lo que no forman ciclos
         id_fase=int(Variables.get_valor_by_nombre("fase_actual"))
-    
-        fase = Fase.get_fase_by_id(id_fase)	
+       
+
+        fase = Fase.get_fase_by_id(id_fase)
+        orden=str(fase.orden)
+
+        padres=Relaciones.get_padres_habilitados(fase.orden)   
+       
+        master=[]
+        
+        if (fase.orden ==1):
+            master.append(Item.get_master().id_item)
+        else:
+            master.append(0)
         tipos_items=fase.tipos_items
 
         return dict(pagina="agregar_item",values=kw, tipos_items=tipos_items
-                    ,nom_proyecto=nom_proyecto,nom_fase=nom_fase,padres=padres)
+                    ,nom_proyecto=nom_proyecto,nom_fase=nom_fase,padres=padres,
+                    master=master,orden=orden)
 
 #-------------------------------------------------------------------------------
     
@@ -448,7 +604,7 @@ class ItemController(BaseController):
 
     @expose('saip2011.templates.item.agregar_item')
     def post_item(self, nombre_item, complejidad, adjunto, id_tipo_item,
-                    padres,asmSelect0):
+                    asmSelect0,padres=None):
 
         items= Item.get_nombres_items()
 
@@ -460,46 +616,81 @@ class ItemController(BaseController):
             if complejidad is not None:
                 complejidad=int(complejidad)
 
+            if adjunto is not None:
+                if not isinstance(adjunto, list):
+                    adjunto = [adjunto]
+
             if padres is not None:
                 if not isinstance(padres, list):
                     padres = [padres]
+                padres = [DBSession.query(Item).get(padre) for padre
+                                         in padres]
+
+#----------------------------------------
 
             tipo_item =Tipo_Item.get_tipo_item_by_id(id_tipo_item)
             pre_codigo=tipo_item.codigo_tipo_item
 
             proy_act=int (Variables.get_valor_by_nombre("proyecto_actual"))
             fas_act=int (Variables.get_valor_by_nombre("fase_actual"))
+            fase=Fase.get_fase_by_id(fas_act)
+
             codigo_item=Item.crear_codigo(id_tipo_item,
                                             pre_codigo,proy_act,fas_act)
 
             item = Item (nombre_item=nombre_item, codigo_item=codigo_item,
                             id_tipo_item=id_tipo_item, 
 	                        complejidad=complejidad, estado = "nuevo", 
-                            fase=fas_act,proyecto=proy_act,
-	                        creado_por=Variables.get_valor_by_nombre
-                                            ("usuario_actual"),
+                            fase=fas_act,proyecto=proy_act,orden=fase.orden,
+	                        creado_por=Variables.get_valor_by_nombre("usuario_actual"),
 	                        fecha_creacion = time.ctime(), version =1 ,
-                            estado_oculto="Activo"
+                            estado_oculto="Activo",lb_parcial=0,lb_general=0
 	                        )
 
             DBSession.add(item)
             DBSession.flush()
+
+#----------------------------------------
+
+            for padre in padres:
+                if padre.nombre_item == "master":
+                    padres.remove(padre)
            
-            mayor =Item.get_ultimo_id()
+            mayor =int(Item.get_ultimo_id())
+        
+            relacion = Relaciones (id_item_hijo=mayor,padres=padres)
+
+#----------------------------------------
+            id_item2=Item.get_ultimo_id()        
+            tipos_campos=Tipo_Campos.get_campos_by_tipo_item(id_tipo_item)
+
+            for tipo in tipos_campos:
+                camp =Campos(id_item=id_item2,
+                             nombre_campo=tipo.nombre_campo,
+                             tipo_campo= tipo.valor_campo)
+                DBSession.add(camp)
+            DBSession.flush()
+
+
+#----------------------------------------
+
             if adjunto is not None:
-                if not isinstance(adjunto, list):
-                    adjunto = [adjunto]
+                for adj in adjunto:
+                    if len(str(adj))==0:
+                        break
+                    if len(adj.filename)==0:
+                        break
 
-            for adj in adjunto:
-                data = adj.file.read()
-                encode=base64.b64encode(data)
-                var=binascii.a2b_base64(encode)
-                adj = Adjunto (id_item=mayor, archivo=var,
-                                nombre_archivo=adj.filename)
+                    data = adj.file.read()
+                    encode=base64.b64encode(data)
+                    var=binascii.a2b_base64(encode)
+                    adj = Adjunto (id_item=mayor, archivo=var,
+                                nombre_archivo=adj.filename, version =item.version ,
+                                    estado_oculto=item.estado_oculto)
 
-                DBSession.add(adj)
-                DBSession.flush() 
-       
+                    DBSession.add(adj)
+                    DBSession.flush() 
+
             flash("Item Agregado!")  
             redirect('/item/item')
 
@@ -509,7 +700,7 @@ class ItemController(BaseController):
             nom_proyecto=Variables.get_valor_by_nombre("nombre_proyecto_actual")
 
             id_fase=int(Variables.get_valor_by_nombre("fase_actual"))
-        
+            padres=Item.get_item_activados()                                        #cambiar esta funcion y solo traer lo que no forman ciclos
             fase = Fase.get_fase_by_id(id_fase)	
             tipos_items=fase.tipos_items
 
@@ -518,9 +709,10 @@ class ItemController(BaseController):
 						complejidad=complejidad,
 						)
 
-            flash("Nombre de fase ya existente!")
-            return dict(pagina="agregar_item",values=values, tipos_items=tipos_items
-                        ,nom_proyecto=nom_proyecto,nom_fase=nom_fase)
+            flash("Nombre de Item ya existente!")
+            return dict(pagina="agregar_item",values=values,
+                        tipos_items=tipos_items,nom_proyecto=nom_proyecto,
+                        nom_fase=nom_fase,padres=padres)
 
 ################################################################################
 

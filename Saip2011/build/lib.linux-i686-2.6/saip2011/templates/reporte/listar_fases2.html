@@ -1,0 +1,59 @@
+<html xmlns="http://www.w3.org/1999/xhtml"
+      xmlns:py="http://genshi.edgewall.org/"
+      xmlns:xi="http://www.w3.org/2001/XInclude">
+
+<xi:include href="paginacion.html" />
+
+<py:def function="listar_fases2(fases,pagina_actual,paginado,total,inicio,fin,param)">
+ <div py:choose="len(fases)" py:strip="True" id="fase">
+    <table class="fases" py:when="0">
+      <tr><th>No hay Fases registradas..</th></tr>
+    </table>
+    <table border="1" cellspacing="1" cellpadding="7" class="fases" py:otherwise="">
+        
+      <h2>Lista de Fases</h2>
+      <tr align="center">
+		<th>Accion</th>
+        <th>Nombre de la Fase</th>
+		<th>Tipo de Fase</th>
+        <th>Estado</th>
+        <th>Orden</th>
+
+        <th>Linea Base</th>
+        <th>Descripcion</th>
+      </tr>
+      <tr align="center" py:for="fase in fases">
+
+		<td>
+    	<div py:for="perm in request.identity['user'].privilegios">
+	    	<div py:choose="">
+	     		<span py:when="perm.var == 'control_total'">
+					
+					<a href="${tg.url('/reporte/seleccionar_fase?id_fase=%d' % fase.id_fase)}"><img src="/images/ok.png" border="0" height="15"/></a>
+				</span>
+				
+				<span py:when="perm.var == 'elim_fase'">
+					
+					<a href="${tg.url('/reporte/seleccionar_fase?id_fase=%d' % fase.id_fase)}"><img src="/images/ok.png" border="0" height="15"/></a>
+				</span>
+				
+					
+			</div>
+		</div>
+		</td>
+
+		<td>${fase.nombre_fase}</td>
+        <td>${fase.nombre_tipo_fase}</td>
+        <td>${fase.estado}</td>
+        <td>${fase.orden}</td>
+        <td>${fase.linea_base}</td>
+        <td>${fase.descripcion}</td>
+      </tr>          
+      <tr py:if="defined('total') and total/paginado > 0">
+      	${paginar(pagina_actual,paginado,total,inicio,fin,param)}
+      </tr>
+    </table>   
+    
+  </div>
+</py:def>
+</html>

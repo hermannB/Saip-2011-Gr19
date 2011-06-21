@@ -5,6 +5,7 @@
       xmlns:xi="http://www.w3.org/2001/XInclude">
 
   <xi:include href="master.html" />
+  <xi:include href="buscar.html" />
 
 <head>
   <meta content="text/html; charset=UTF-8" http-equiv="content-type" py:replace="''"/>
@@ -21,14 +22,21 @@
 	    <div py:choose="">
 	     <span py:when="perm.var == 'control_total'">
     		<p><a href="${tg.url('/fase/agregar_fase')}">Agregar Fase</a></p>
-    		<p><a href="${tg.url('/fase/listar_fase')}">Listar Fase</a></p>
+    		<div py:if="defined('lista')">
+    			${buscar(lista)}
+    		</div>
+    		<xi:include href="listar_fase.html" />
+
     	 </span>
     	 <span py:when="perm.var == 'alta_fase'">
     		<p><a href="${tg.url('/fase/agregar_fase')}">Agregar Fase</a></p>
     	 
     	 </span>
     	 <span py:when="perm.var == 'list_fase'">
-    		<p><a href="${tg.url('/fase/listar_fase')}">Listar Fase</a></p>
+    		<div py:if="defined('lista')">
+    			${buscar(lista)}
+    		</div>
+    		<xi:include href="listar_fase.html" />
     	 
     	 </span>
     	</div>
