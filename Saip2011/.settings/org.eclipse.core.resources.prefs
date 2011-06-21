@@ -1,4 +1,4 @@
-#Wed Jun 08 00:25:10 BOT 2011
+#Sun Jun 12 18:02:33 BOT 2011
 eclipse.preferences.version=1
 encoding//saip2011/controllers/equipo.py=utf-8
 encoding//saip2011/controllers/fase.py=utf-8
@@ -10,4 +10,10 @@ encoding//saip2011/controllers/tipo_fase.py=utf-8
 encoding//saip2011/controllers/tipo_item.py=utf-8
 encoding//saip2011/model/adjunto.py=utf-8
 encoding//saip2011/model/auth.py=utf-8
+encoding//saip2011/model/equipo_desarrollo.py=utf-8
+encoding//saip2011/model/fase.py=utf-8
+encoding//saip2011/model/item.py=utf-8
+encoding//saip2011/model/proyecto.py=utf-8
+encoding//saip2011/model/tipo_fase.py=utf-8
+encoding//saip2011/model/tipo_item.py=utf-8
 encoding//saip2011/websetup.py=utf-8

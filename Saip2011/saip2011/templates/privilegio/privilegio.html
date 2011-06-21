@@ -5,6 +5,7 @@
       xmlns:xi="http://www.w3.org/2001/XInclude">
 
   <xi:include href="master.html" />
+  <xi:include href="buscar.html" />
 
 <head>
   <meta content="text/html; charset=UTF-8" http-equiv="content-type" py:replace="''"/>
@@ -18,7 +19,10 @@
   <div id="getting_started">
     <h2>Mantenimiento de Privilegios</h2>
     <p><a href="${tg.url('/agregar_privilegio')}">Agregar Privilegio</a></p>
-    <p><a href="${tg.url('/listar_privilegio')}">Listar Privilegio</a></p>
+    <div py:if="defined('lista')">
+    	${buscar(lista)}
+    </div>
+    <xi:include href="listar_privilegio.html" />
     
   </div>
   <div class="clearingdiv" />

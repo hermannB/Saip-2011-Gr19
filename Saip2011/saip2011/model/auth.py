@@ -154,6 +154,23 @@ class Rol(DeclarativeBase):
 #-------------------------------------------------------------------------------
 
     @classmethod
+    def get_roles_por_filtro(self,param,texto,start=0,end=5):
+        """
+        Obtiene la lista de todos los usuarios
+        registrados en el sistema
+        """
+        """usuarios = session.query(cls).all()"""
+        if param == "nombre":
+            roles = DBSession.query(Rol).filter(Rol.nombrerol.like('%s%s%s' % ('%',texto,'%'))).all()
+        elif param == "descripcion":
+            roles = DBSession.query(Rol).filter(Rol.descripcion.like('%s%s%s' % ('%',texto,'%'))).all()
+        
+            
+        return roles
+
+#-------------------------------------------------------------------------------
+
+    @classmethod
     def borrar_by_id(self,id_rol):
         """
         Obtiene la lista de todos los adjuntos         
@@ -315,6 +332,37 @@ class Usuario(DeclarativeBase):
 #-------------------------------------------------------------------------------
 
     @classmethod
+    def get_usuarios_por_pagina(self,start=0,end=5):
+        """
+        Obtiene la lista de todos los usuarios
+        registrados en el sistema
+        """
+        """usuarios = session.query(cls).all()"""
+        usuarios = DBSession.query(Usuario).slice(start,end).all()
+            
+        return usuarios
+
+#-------------------------------------------------------------------------------
+
+    @classmethod
+    def get_usuarios_por_filtro(self,param,texto,start=0,end=5):
+        """
+        Obtiene la lista de todos los usuarios
+        registrados en el sistema
+        """
+        """usuarios = session.query(cls).all()"""
+        if param == "alias":
+            usuarios = DBSession.query(Usuario).filter(Usuario.alias.like('%s%s%s' % ('%',texto,'%'))).all()
+        elif param == "nombre":
+            usuarios = DBSession.query(Usuario).filter(Usuario.nombre.like('%s%s%s' % ('%',texto,'%'))).all()
+        elif param == "apellido":
+            usuarios = DBSession.query(Usuario).filter(Usuario.apellido.like('%s%s%s' % ('%',texto,'%'))).all()
+            
+        return usuarios
+
+#-------------------------------------------------------------------------------
+
+    @classmethod
     def get_alias(self):
         """
         Obtiene la lista de todos los usuarios
@@ -346,7 +394,7 @@ class Usuario(DeclarativeBase):
         """
         Obtiene el usuario por su id
         """
-        usuario = DBSession.query(Usuario).filter_by(idusuario=iduser)
+        usuario = DBSession.query(Usuario).filter_by(idusuario=iduser).first()
         return usuario
 
 #-------------------------------------------------------------------------------
@@ -423,6 +471,40 @@ class Privilegios(DeclarativeBase):
         """
         """privilegios = session.query(cls).all()"""
         privilegios = DBSession.query(Privilegios).all()
+        return privilegios
+
+#-------------------------------------------------------------------------------
+
+    @classmethod
+    def get_privilegio_por_pagina(self,start=0,end=5):
+        """
+        Obtiene la lista de todos los usuarios
+        registrados en el sistema
+        """
+        """privilegios = session.query(cls).all()"""
+        #privilegios = DBSession.query(Privilegios).all()
+        privilegios = DBSession.query(Privilegios).slice(start,end).all()
+            
+        return privilegios
+
+#-------------------------------------------------------------------------------
+    
+    @classmethod
+    def get_privilegio_por_filtro(self,param,texto,start=0,end=5):
+        """
+        Obtiene la lista de todos los usuarios
+        registrados en el sistema
+        """
+        """privilegios = session.query(cls).all()"""
+        #privilegios = []
+        
+        if param == "nombre":
+            privilegios = DBSession.query(Privilegios).filter(Privilegios.nombreprivilegio.like('%s%s%s' % ('%',texto,'%'))).all()
+            
+        elif param == "descripcion":
+            privilegios = DBSession.query(Privilegios).filter(Privilegios.descripcion.like('%s%s%s' % ('%',texto,'%'))).all()
+              
+           
         return privilegios
 
 #-------------------------------------------------------------------------------

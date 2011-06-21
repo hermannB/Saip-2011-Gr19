@@ -5,6 +5,7 @@
       xmlns:xi="http://www.w3.org/2001/XInclude">
 
   <xi:include href="master.html" />
+  <xi:include href="buscar.html" />
 
 <head>
   <meta content="text/html; charset=UTF-8" http-equiv="content-type" py:replace="''"/>
@@ -21,13 +22,19 @@
 	    <div py:choose="">
 	     <span py:when="perm.var == 'control_total'">
     		<p><a href="${tg.url('/tipo_item/agregar_tipo_item')}">Agregar Tipo Item</a></p>
-    		<p><a href="${tg.url('/tipo_item/listar_tipo_item')}">Listar Tipo Item</a></p>
+    		<div py:if="defined('lista')">
+    			${buscar(lista)}
+    		</div>
+    		<xi:include href="listar_tipo_item.html" />
     	 </span>
     	 <span py:when="perm.var == 'alta_tipo_item'">
     		<p><a href="${tg.url('/tipo_item/agregar_tipo_item')}">Agregar Tipo Item</a></p>
     	 </span>
     	 <span py:when="perm.var == 'list_tipo_item'">
-    		<p><a href="${tg.url('/tipo_item/listar_tipo_item')}">Listar Tipo Item</a></p>
+    		<div py:if="defined('lista') and len(tipos_items) > 0" >
+    			${buscar(lista)}
+    		</div>
+    		<xi:include href="listar_tipo_item.html" />
     	 </span>
     	</div>
      </div>

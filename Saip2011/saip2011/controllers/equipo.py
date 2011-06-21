@@ -41,8 +41,8 @@ class EquipoController(BaseController):
 
 ################################################################################ 
 
-    @expose('saip2011.templates.miembro.listar_miembro')
-    def equipo(self):
+    @expose('saip2011.templates.miembro.equipo')
+    def equipo(self,start=0,end=5,indice=None,texto=""):
         """
         Menu para Equipo de Desarrollo
         """
@@ -50,10 +50,31 @@ class EquipoController(BaseController):
         nom_fase=Variables.get_valor_by_nombre("nombre_fase_actual")
 
         valor=int(Variables.get_valor_by_nombre("proyecto_actual"))
-        equipos =  Equipo_Desarrollo.get_miembros_by_proyecto(valor)
+                
+        paginado = 5
+        if start <> 0:
+            end=int(start.split('=')[1]) #obtiene el fin de pagina
+            start=int(start.split('&')[0]) #obtiene el inicio de pagina
+        #print start,end
+        
+        pagina_actual = ((start % end) / paginado) + 1
+        if ((start % end) % paginado) <> 0:
+             pagina_actual = pagina_actual + 1
+        
+        if indice  <> None and texto <> "":  
+            equipos =  Equipo_Desarrollo.get_miembros_by_proyecto_por_filtro(valor,indice,texto)
+            total = len(equipos)
+        else:   
+             equipos =  Equipo_Desarrollo.get_miembros_by_proyecto_por_pagina(valor,start,end)
+             total = len(Equipo_Desarrollo.get_miembros_by_proyecto(valor))
+        
+        lista = ['nombre']
 
-        return dict(pagina="listar_miembro",equipos=equipos,
-                        nom_proyecto=nom_proyecto,nom_fase=nom_fase)
+        return dict(pagina="equipo",equipos=equipos,
+                        nom_proyecto=nom_proyecto,nom_fase=nom_fase,
+                        inicio=start,fin=end,paginado=paginado,
+                        pagina_actual=pagina_actual,total=total,
+                        param="/miembro/equipo",lista=lista)
 
 ################################################################################
     

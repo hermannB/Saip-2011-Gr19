@@ -42,8 +42,8 @@ class FaseController(BaseController):
 
 ################################################################################
 
-    @expose('saip2011.templates.fase.listar_fase')
-    def fase(self,start=0,end=5):
+    @expose('saip2011.templates.fase.fase')
+    def fase(self,start=0,end=5,indice=None,texto=""):
         """
         Menu para Fases
         """
@@ -55,16 +55,30 @@ class FaseController(BaseController):
             end=int(start.split('=')[1]) #obtiene el fin de pagina
             start=int(start.split('&')[0]) #obtiene el inicio de pagina
         #print start,end
-        total = len(Fase.get_fase_by_proyecto(int (Variables.get_valor_by_nombre
-                                                ("proyecto_actual")) ))
+        #total = len(Fase.get_fase_by_proyecto(int (Variables.get_valor_by_nombre
+         #                                       ("proyecto_actual")) ))
         pagina_actual = ((start % end) / paginado) + 1
-         
-        fases = Fase.get_fase_by_proyecto_por_pagina(int (Variables.get_valor_by_nombre
-                                                ("proyecto_actual")),start,end )
+        if ((start % end) % paginado) <> 0:
+             pagina_actual = pagina_actual + 1
+                      
+        if indice  <> None and texto <> "":  
+            fases = Fase.get_fase_by_proyecto_por_filtro(int (Variables.get_valor_by_nombre
+                                                ("proyecto_actual")),indice,texto)
+            total = len(fases)
+        else:   
+            fases, total = Fase.get_fase_by_proyecto_por_pagina(int (Variables.get_valor_by_nombre
+                                                            ("proyecto_actual")),start,end )
+            #fases = Fase.get_fase_by_proyecto(int (Variables.get_valor_by_nombre
+            #                                    ("proyecto_actual")) )
+            #total = len(fases)
 
-        return dict(pagina="listar_fase",fases=fases,nom_proyecto=nom_proyecto
+        lista = ['nombre','descripcion']
+
+
+        return dict(pagina="fase",fases=fases,nom_proyecto=nom_proyecto
                         ,nom_fase=nom_fase,inicio=start,fin=end,paginado=paginado,
-                        pagina_actual=pagina_actual,total=total)
+                        pagina_actual=pagina_actual,total=total,param="/fase/fase",
+                        lista=lista)
 
 ################################################################################
     
@@ -287,7 +301,7 @@ class FaseController(BaseController):
             values = dict(nombre_fase=nombre_fase, 
                             descripcion=descripcion,
                             )
-            flash("Nombre de Fase es repetidos!")
+            flash("Nombre de Fase es repetido!")
             return dict(pagina="agregar_fase",values=values, tipos_fases=tipos_fases,
                             tipos_items=tipos_items,nom_proyecto=nom_proyecto
                             ,nom_fase=nom_fase)
@@ -295,7 +309,7 @@ class FaseController(BaseController):
 ################################################################################
   
     @expose('saip2011.templates.item.menu_item')
-    def seleccionar_fase(self,id_fase,*kw,**args):
+    def seleccionar_fase(self,id_fase,start=0,end=5,indice=None,texto="",*kw,**args):
 
         if id_fase is not None:
             id_fase=int(id_fase)
@@ -308,10 +322,35 @@ class FaseController(BaseController):
         Variables.set_valor_by_nombre("nombre_fase_actual",fase.nombre_fase)
         nom_fase=Variables.get_valor_by_nombre("nombre_fase_actual")
 
-        items = Item.get_item_proy_fase( proy_act, id_fase)
+        #items = Item.get_item_proy_fase( proy_act, id_fase)
+        
+        #id_fase=int(Variables.get_valor_by_nombre("fase_actual"))
+        #items = Item.get_item_activados_by_fase(id_fase)
+        
+        paginado = 5
+        if start <> 0:
+            end=int(start.split('=')[1]) #obtiene el fin de pagina
+            start=int(start.split('&')[0]) #obtiene el inicio de pagina
+        #print start,end
+        #total = len(Privilegios.get_privilegios())
+        pagina_actual = ((start % end) / paginado) + 1
+        if ((start % end) % paginado) <> 0:
+             pagina_actual = pagina_actual + 1
+        
+        if indice  <> None and texto <> "":  
+            items = Item.get_item_activados_by_fase_por_filtro(id_fase,indice,texto)
+            total = len(privilegios)
+        else:   
+            items = Item.get_item_activados_by_fase_por_pagina(id_fase,start,end)
+            total = len(Item.get_item_activados_by_fase(id_fase))
 
-        return dict(pagina="listar_item",items=items,nom_proyecto=nom_proyecto
-                        ,nom_fase=nom_fase)
+        lista = ['nombre','descripcion']
+        param = "/fase/seleccionar_fase?id_fase=%s" % id_fase
+
+        return dict(pagina="menu_item",items=items,nom_proyecto=nom_proyecto
+                        ,nom_fase=nom_fase,paginado=paginado,inicio=start,
+                        fin=end,pagina_actual=pagina_actual,total=total,
+                        param=param,lista=lista)
 
 ################################################################################
         

@@ -85,13 +85,29 @@ class Tipo_Item(DeclarativeBase):
 #-------------------------------------------------------------------------------
 
     @classmethod
-    def get_tipo_item_por_pagina(self,start=0,end=5):
+    def get_tipos_items_por_pagina(self,start=0,end=5):
         """
         Obtiene la lista de todos los tipos de item
         registrados en el sistema
         """
 
         tipos_items = DBSession.query(Tipo_Item).slice(start,end).all()
+            
+        return tipos_items
+
+#-------------------------------------------------------------------------------
+
+    @classmethod
+    def get_tipos_items_por_filtro(self,param,texto):
+        """
+        Obtiene la lista de todos los tipos de item
+        registrados en el sistema
+        """
+
+        if param == "nombre":
+            tipos_items = DBSession.query(Tipo_Item).filter(Tipo_Item.nombre_tipo_item.like('%s%s%s' % ('%',texto,'%'))).all()
+        elif param == "descripcion":
+            tipos_items = DBSession.query(Tipo_Item).filter(Tipo_Item.descripcion.like('%s%s%s' % ('%',texto,'%'))).all()
             
         return tipos_items
 

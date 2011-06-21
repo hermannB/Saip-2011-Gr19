@@ -5,6 +5,7 @@
       xmlns:xi="http://www.w3.org/2001/XInclude">
 
   <xi:include href="master.html" />
+  <xi:include href="buscar.html" />
 
 <head>
   <meta content="text/html; charset=UTF-8" http-equiv="content-type" py:replace="''"/>
@@ -21,15 +22,20 @@
       <div py:choose="">
        <span py:when="perm.var == 'control_total'">
        	<p><a href="${tg.url('/proyecto/agregar_proyecto')}">Agregar Proyecto</a></p>
-    	<p><a href="${tg.url('/proyecto/listar_proyecto')}">Listar Proyecto</a></p>
-    	<p><a href="${tg.url('/proyecto/ingresar_proyecto')}">Seleccionar un Proyecto</a></p>
+    	<div py:if="defined('lista') and len(proyectos) > 0">
+    		${buscar(lista)}
+    	</div>
+    	<xi:include href="listar_proyecto.html" />
        </span>
        <span py:when="perm.var == 'ingresar_proyecto'">
-       	<p><a href="${tg.url('/proyecto/ingresar_proyecto')}">Seleccionar un Proyecto</a></p>
+       	<div py:if="defined('lista') and len(proyectos) > 0">
+    		${buscar(lista)}
+    	</div>
+    	<xi:include href="listar_proyecto.html" />
        </span>
       </div>
      </div>
-        <p><a href="${tg.url('/proyecto/activar_proyecto')}">Activar un Proyecto</a></p>
+        
     
   </div>
   <div class="clearingdiv" />

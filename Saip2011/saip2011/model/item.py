@@ -126,23 +126,8 @@ class Item(DeclarativeBase):
                 lista.append(item)  
         return lista
 
-#-------------------------------------------------------------------------------
 
-    @classmethod
-    def get_item_activos_por_pagina(self,id_fase,start=0,end=5):
-        """
-        Obtiene la lista de todos los usuarios
-        registrados en el sistema
-        """
-        id_proyecto=int(Variables.get_valor_by_nombre("proyecto_actual"))
-        item = DBSession.query(Item).slice(start,end).all()
-        lista=[]
-        for item in items:
-            if( item.estado_oculto=="Activo" and item.proyecto == proy
-                and item.fase == fase):
-                lista.append(item)
 
-        return lista
 
 #-------------------------------------------------------------------------------
 
@@ -176,6 +161,50 @@ class Item(DeclarativeBase):
                 and item.fase == int(fase)):
                 lista.append(item)  
         return lista
+
+#-------------------------------------------------------------------------------
+
+    @classmethod
+    def get_item_activados_by_fase_por_pagina(self,fase,start=0,end=5):
+        """
+        Obtiene la lista de todos los usuarios
+        registrados en el sistema
+        """
+        id_proyecto=int(Variables.get_valor_by_nombre("proyecto_actual"))
+        items = DBSession.query(Item).slice(start,end).all()
+        
+        lista=[]
+        for item in items:
+            if( item.estado_oculto=="Activo" and item.proyecto == id_proyecto
+                and item.fase == int(fase)):
+                lista.append(item)
+
+        return lista
+
+#-------------------------------------------------------------------------------
+
+    @classmethod
+    def get_item_activados_by_fase_por_filtro(self,id_fase,param,texto):
+        """
+        Obtiene la lista de todos los usuarios
+        registrados en el sistema
+        """
+        id_proyecto=int(Variables.get_valor_by_nombre("proyecto_actual"))
+        
+        if param == "nombre":
+            items = DBSession.query(Item).filter(Item.nombre_item.like('%s%s%s' % ('%',texto,'%'))).all()
+        elif param == "estado":
+            items = DBSession.query(Item).filter(Item.estado.like('%s%s%s' % ('%',texto,'%'))).all()
+        
+        lista=[]
+        for item in items:
+            if( item.estado_oculto=="Activo" and item.proyecto == id_proyecto
+                and item.fase == int(id_fase)):
+                lista.append(item)
+
+        return lista
+
+
 
 #-------------------------------------------------------------------------------
 

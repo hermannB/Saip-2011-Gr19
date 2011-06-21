@@ -42,8 +42,8 @@ class ProyectoController(BaseController):
 
 ################################################################################
 
-    @expose('saip2011.templates.proyecto.listar_proyecto')
-    def proyecto(self,start=0,end=5):
+    @expose('saip2011.templates.proyecto.proyecto')
+    def proyecto(self,start=0,end=5,indice=None,texto=""):
         """Lista proyectos 
         """
         proyectos=""
@@ -60,33 +60,48 @@ class ProyectoController(BaseController):
             end=int(start.split('=')[1]) #obtiene el fin de pagina
             start=int(start.split('&')[0]) #obtiene el inicio de pagina
         #print start,end
-        total = len(Proyecto.get_proyectos())
+        
         pagina_actual = ((start % end) / paginado) + 1
+        if ((start % end) % paginado) <> 0:
+             pagina_actual = pagina_actual + 1
          
         #roles = Rol.get_roles_por_pagina(start,end)
         ###########################
-
+        
+        lista = ['nombre','descripcion']
 
         if rol.nombrerol == "Administrador":
-            proyectos = Proyecto.get_proyecto_por_pagina(start,end)
-            return dict(pagina="listar_proyecto",proyectos=proyectos,
+            #proyectos = Proyecto.get_proyecto_por_pagina(start,end)
+            if indice  <> None and texto <> "":  
+                proyectos = Proyecto.get_proyectos_por_filtro(indice,texto)
+                total = len(proyectos)
+            else:   
+                proyectos = Proyecto.get_proyectos_por_pagina(start,end)
+                total = len(Proyecto.get_proyectos())
+            
+            return dict(pagina="proyecto",proyectos=proyectos,
                             nom_proyecto=nom_proyecto,nom_fase=nom_fase,
                             inicio=start,fin=end,paginado=paginado,
-                            pagina_actual=pagina_actual,total=total)
+                            pagina_actual=pagina_actual,total=total,
+                            lista=lista,param="/proyecto/proyecto")
         else:
-            proy = Proyecto.get_proyecto_por_pagina(start,end)
-            proyectos = []
-            miembros=Equipo_Desarrollo.get_miembros_by_usuario(usuario.idusuario)
+            if indice  <> None and texto <> "":  
+                proyectos = Proyecto.get_proyectos_by_equipo_desarrollo_por_filtro(usuario.idusuario,
+                                                                                   indice,texto)
+                total = len(proyectos)
+            else:   
+                proyectos,total = Proyecto.get_proyectos_by_equipo_desarrollo_por_pagina(usuario.idusuario,
+                                                                                   start,end)
+                #total = len(Proyecto.get_proyectos_by_equipo_desarrollo(usuario.idusuario))
+            
+                        
+            #total = len(proyectos)
 
-        for miembro in miembros:
-            for p in proy:
-                if (miembro.proyecto == p.id_proyecto):
-                    proyectos.append(p)
-
-        return dict(pagina="listar_proyecto",proyectos=proyectos,
+        return dict(pagina="proyecto",proyectos=proyectos,
                         nom_proyecto=nom_proyecto,nom_fase=nom_fase,
                         inicio=start,fin=end,paginado=paginado,
-                        pagina_actual=pagina_actual,total=total)
+                        pagina_actual=pagina_actual,total=total,
+                        lista=lista,param="/proyecto/proyecto")
 
 
 ################################################################################
@@ -336,6 +351,8 @@ class ProyectoController(BaseController):
             #print start,end
             total = len(Fase.get_fase_by_proyecto(proy))
             pagina_actual = ((start % end) / paginado) + 1
+            if ((start % end) % paginado) <> 0:
+                pagina_actual = pagina_actual + 1
              
             #roles = Fase.get_fase_by_proyecto_por_pagina(proy,start,end)
             ###########

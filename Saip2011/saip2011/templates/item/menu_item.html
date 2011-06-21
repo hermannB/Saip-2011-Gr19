@@ -5,6 +5,7 @@
       xmlns:xi="http://www.w3.org/2001/XInclude">
 
   <xi:include href="master.html" />
+  <xi:include href="buscar.html" />
 
 <head>
   <meta content="text/html; charset=UTF-8" http-equiv="content-type" py:replace="''"/>
@@ -21,23 +22,31 @@
 	    <div py:choose="">
 	     <span py:when="perm.var == 'control_total'">
     		<p><a href="${tg.url('/item/agregar_item')}">Agregar Item</a></p>
-    		<p><a href="${tg.url('/item/listar_item_activos')}">Listar Item</a></p>
     		<p><a href="${tg.url('/item/listar_item_eliminados')}">Revivir Item</a></p>
+    		<div py:if="defined('lista') and len(items) > 0">
+    			${buscar(lista)}
+    		</div>
+    		<xi:include href="listar_item.html" />
     	 </span>
     	 <span py:when="perm.var == 'alta_item'">
     	 	<p><a href="${tg.url('/item/agregar_item')}">Agregar Item</a></p>
     	 </span>
-    	 <span py:when="perm.var == 'list_item'">
-    	 	<p><a href="${tg.url('/item/listar_item_activos')}">Listar Item</a></p>
-    	 </span>
     	 <span py:when="perm.var == 'rev_item'">
     	 	<p><a href="${tg.url('/item/listar_item_eliminados')}">Revivir Item</a></p>
     	 </span>
+    	 <span py:when="perm.var == 'list_item'">
+    	 	<div py:if="defined('lista') and len(items) > 0">
+    			${buscar(lista)}
+    		</div>
+    		<xi:include href="listar_item.html" />
+    	 </span>
+    	 
     	</div>
      </div>
+     <div py:if="len(items) > 0">
        <p><a href="${tg.url('/item/linea_base')}">Crear Linea Base</a></p>
    	   <p><a href="${tg.url('/item/trabajar_item')}">Trabajar con Item</a></p>
-
+	 </div> 
   
   <div class="clearingdiv" />
   <div class="notice"> Estas en el menu de Item. </div>

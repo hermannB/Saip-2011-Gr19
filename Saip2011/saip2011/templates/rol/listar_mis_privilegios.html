@@ -4,6 +4,7 @@
       xmlns:xi="http://www.w3.org/2001/XInclude">
 
   <xi:include href="master.html" />
+  <xi:include href="paginacion.html" />
 
   <head>
   <meta content="text/html; charset=UTF-8" http-equiv="content-type" py:replace="''"/>
@@ -20,7 +21,7 @@
       <h2>Mis Privilegios</h2>
     </div>
 
-    <form action="./index" method="POST">
+    <form action="javascript:history.back()" method="POST">
    
       <table summary=""><tbody>
          <tr><td><input class="required" maxlength="50" type="hidden" name="idrol" value="${values['idrol']}"/>${tmpl_context.form_errors.get('idrol')}</td></tr>
@@ -28,7 +29,7 @@
          <tr><td>Nombre</td><td><input  readonly="readonly" class="required" maxlength="50" type="textfield" name="nombrerol" value="${values['nombrerol']}"/>${tmpl_context.form_errors.get('nombrerol')}</td>
         <td>Descripcion</td><td> <textarea readonly="readonly" rows="2" cols="40" name="descripcion">"${values['descripcion']}"</textarea>${tmpl_context.form_errors.get('descripcion')}</td></tr>
 	
-        <tr><td>Privilegios</td>
+        <tr>
           
             <table border="1" cellspacing="1" cellpadding="2" class="privielgios">    
             <h2>Lista de Privilegios</h2>
@@ -40,7 +41,10 @@
           <tr align="center" py:for="privilegio in privilegios">
                 <td>${privilegio.nombreprivilegio}</td>
                 <td>${privilegio.descripcion}</td>
-          </tr>          
+          </tr>
+          <tr py:if="defined('total') and total/paginado > 0">
+      		${paginar(pagina_actual,paginado,total,inicio,fin,param)}
+      	  </tr>          
           </table>
 
         </tr>

@@ -113,15 +113,46 @@ class Fase(DeclarativeBase):
         Obtiene la lista de todos los usuarios
         registrados en el sistema
         """
-        fases = DBSession.query(Fase).slice(start,end).all()
+        #obtengo las fases del proyecto
+        fases = Fase.get_fase_by_proyecto(id_proyecto) 
+        
         lista=[]
-        for    fase in fases:
+        c = 0
+        for fase in fases:
+            if c < end and c > start-1:
+                lista.append(fase)
+            c = c + 1    
+                 
+        return lista, len(fases)
+
+#-------------------------------------------------------------------------------
+    
+    @classmethod
+    def get_fase_by_proyecto_por_filtro(self,id_proyecto,param,texto):
+        """
+        Obtiene la lista de todos los usuarios
+        registrados en el sistema
+        """
+        """privilegios = session.query(cls).all()"""
+        #privilegios = DBSession.query(Privilegios).all()
+        
+        if param == "nombre":
+            fases = DBSession.query(Fase).filter(Fase.nombre_fase.like('%s%s%s' % ('%',texto,'%'))).all()
+        elif param == "TipoFase":
+            fases = DBSession.query(Fase).filter(Fase.nombre_tipo_fase.like('%s%s%s' % ('%',texto,'%'))).all()
+        elif param == "descripcion":
+            fases = DBSession.query(Fase).filter(Fase.descripcion.like('%s%s%s' % ('%',texto,'%'))).all()
+           
+        lista=[]
+        for fase in fases:
             if fase.proyecto == id_proyecto:
                 lista.append(fase)
 
         return lista
 
+
 #-------------------------------------------------------------------------------
+
 
     @classmethod
     def get_nombres_by_id(self,proyecto_id):

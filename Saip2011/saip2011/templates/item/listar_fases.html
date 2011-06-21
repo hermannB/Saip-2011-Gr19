@@ -1,16 +1,16 @@
-<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" 
-                      "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
 <html xmlns="http://www.w3.org/1999/xhtml"
       xmlns:py="http://genshi.edgewall.org/"
       xmlns:xi="http://www.w3.org/2001/XInclude">
 
-  <xi:include href="paginacion.html" />
+<xi:include href="paginacion.html" />
 
-  <div py:choose="len(fases)" py:strip="True" id="fase">
+<py:def function="listar_fases(fases,pagina_actual,paginado,total,inicio,fin,param)">
+ <div py:choose="len(fases)" py:strip="True" id="fase">
     <table class="fases" py:when="0">
       <tr><th>No hay Fases registradas..</th></tr>
     </table>
-    <table border="1" cellspacing="1" cellpadding="7" class="fases" py:otherwise="">    
+    <table border="1" cellspacing="1" cellpadding="7" class="fases" py:otherwise="">
+        
       <h2>Lista de Fases</h2>
       <tr align="center">
 		<th>Accion</th>
@@ -18,9 +18,9 @@
 		<th>Tipo de Fase</th>
         <th>Estado</th>
         <th>Orden</th>
+
         <th>Linea Base</th>
         <th>Descripcion</th>
-        <th>Tipos de Item</th>
       </tr>
       <tr align="center" py:for="fase in fases">
 
@@ -30,13 +30,17 @@
 	     		<span py:when="perm.var == 'control_total'">
 					<a href="${tg.url('/fase/editar_fase?id_fase=%d' % fase.id_fase)}"><img src="/images/lapiz.png" border="0" height="15"/></a>
 					<a href="${tg.url('/fase/eliminar_fase?id_fase=%d' % fase.id_fase)}"><img src="/images/cross.png" border="0"/></a>
+					<a href="${tg.url('/fase/seleccionar_fase?id_fase=%d' % fase.id_fase)}"><img src="/images/ok.png" border="0" height="15"/></a>
 				</span>
 				<span py:when="perm.var == 'mod_fase'">
 					<a href="${tg.url('/fase/editar_fase?id_fase=%d' % fase.id_fase)}"><img src="/images/lapiz.png" border="0" height="15"/></a>
 				</span>
 				<span py:when="perm.var == 'elim_fase'">
 					<a href="${tg.url('/fase/eliminar_fase?id_fase=%d' % fase.id_fase)}"><img src="/images/cross.png" border="0"/></a>
+					<a href="${tg.url('/fase/seleccionar_fase?id_fase=%d' % fase.id_fase)}"><img src="/images/ok.png" border="0" height="15"/></a>
 				</span>
+				
+					
 			</div>
 		</div>
 		</td>
@@ -47,14 +51,12 @@
         <td>${fase.orden}</td>
         <td>${fase.linea_base}</td>
         <td>${fase.descripcion}</td>
-        <td><a href="${tg.url('../proyecto/ver_tipos_items?id_fase=%d' % fase.id_fase)}">ver tipos Items</a></td>
-      </tr>   
-       <tr py:if="defined('total') and total/paginado > 0">
+      </tr>          
+      <tr py:if="defined('total') and total/paginado > 0">
       	${paginar(pagina_actual,paginado,total,inicio,fin,param)}
-      </tr>        
+      </tr>
     </table>   
     
   </div>
-  <div class="clearingdiv" />
- 
+</py:def>
 </html>

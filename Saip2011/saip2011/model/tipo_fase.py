@@ -100,6 +100,22 @@ class Tipo_Fase(DeclarativeBase):
 #-------------------------------------------------------------------------------
 
     @classmethod
+    def get_tipo_fase_por_filtro(self,param,texto,start=0,end=5):
+        """
+        Obtiene la lista de todos los roles
+        registrados en el sistema
+        """
+        
+        if param == "nombre":
+            tipos_fases = DBSession.query(Tipo_Fase).filter(Tipo_Fase.nombre_tipo_fase.like('%s%s%s' % ('%',texto,'%'))).all()
+        elif param == "descripcion":
+            tipos_fases = DBSession.query(Tipo_Fase).filter(Tipo_Fase.descripcion.like('%s%s%s' % ('%',texto,'%'))).all()
+                    
+        return tipos_fases
+
+#-------------------------------------------------------------------------------
+
+    @classmethod
     def borrar_by_id(self,id_tipo_fase):
         """
         Obtiene la lista de todos los adjuntos         

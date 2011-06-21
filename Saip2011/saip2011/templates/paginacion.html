@@ -1,0 +1,24 @@
+<html xmlns="http://www.w3.org/1999/xhtml"
+      xmlns:py="http://genshi.edgewall.org/"
+      xmlns:xi="http://www.w3.org/2001/XInclude">
+
+<py:def function="paginar(pagina_actual,paginado,total,inicio,fin,param)">
+<td><b>Pagina</b></td><td align="center">
+	<b>		
+		<div py:choose="total%paginado">
+		  <span py:when="0">${pagina_actual}/${(total/paginado)}</span>
+		  <span py:otherwise="">${pagina_actual}/${(total/paginado)+1}</span>
+		</div>
+	</b></td>
+      	<td align="center">
+      		<span py:if="inicio > 0 ">
+      			<a href="${param}?start=${0}%26end=${paginado}"><img src="/images/first.png" border="0"/></a>  
+      			<a href="${param}?start=${inicio-paginado}%26end=${fin-paginado}"  py:if="inicio-paginado > -1"><img src="/images/back.png" border="0"/></a> 
+      		</span>
+      		<span py:if="total > fin">
+      			<a href="${param}?start=${inicio + paginado}%26end=${fin + paginado}" py:if="total+1 > fin+paginado or inicio==0"><img src="/images/next.png" border="0"/></a> 
+      			<a href="${param}?start=${total - paginado}%26end=${total}" py:if="total-paginado > paginado"><img src="/images/last.png" border="0"/></a>
+      		</span>
+      	</td>
+</py:def>
+</html>

@@ -12,6 +12,8 @@ from sqlalchemy.types import Unicode, Integer, DateTime, Text
 from sqlalchemy.orm import relation, synonym
 
 
+from saip2011.model.equipo_desarrollo import Equipo_Desarrollo
+
 from saip2011.model import DeclarativeBase, metadata, DBSession
 
 __all__ = ['Proyecto']
@@ -74,6 +76,72 @@ class Proyecto(DeclarativeBase):
 	    """
 	    proyectos = DBSession.query(Proyecto).all()
 	    return proyectos
+    
+#-------------------------------------------------------------------------------
+
+    @classmethod
+    def get_proyectos_by_equipo_desarrollo(self,idusuario):
+        """
+        Obtiene la lista de todos los roles
+        registrados en el sistema
+        """
+        proy = DBSession.query(Proyecto).all()
+        proyectos = []
+        miembros=Equipo_Desarrollo.get_miembros_by_usuario(idusuario)
+
+        for miembro in miembros:
+            for p in proy:
+                if (miembro.proyecto == p.id_proyecto):
+                    proyectos.append(p)
+
+        
+        return proyectos
+    
+    #-------------------------------------------------------------------------------
+
+    @classmethod
+    def get_proyectos_by_equipo_desarrollo_por_pagina(self,idusuario,start=0,end=5):
+        """
+        Obtiene la lista de todos los usuarios
+        registrados en el sistema
+        """
+        #obtengo los proyectos del usuario actual
+        proyectos = Proyecto.get_proyectos_by_equipo_desarrollo(idusuario)
+        
+        lista_paginada = []
+        c = 0
+        for proy in proyectos:
+            if c < end and c > start-1:
+                lista_paginada.append(proy) 
+            c = c + 1
+             
+        
+        return lista_paginada, len(proyectos)
+
+#-------------------------------------------------------------------------------
+
+    @classmethod
+    def get_proyectos_by_equipo_desarrollo_por_filtro(self,idusuario,param,texto):
+        """
+        Obtiene la lista de todos los usuarios
+        registrados en el sistema
+        """
+        #obtengo los proyectos del usuario actual
+        proyectos = Proyecto.get_proyectos_by_equipo_desarrollo(idusuario)
+        
+        lista_filtrada = []
+        
+        if param=="nombre":
+            for proy in proyectos:
+                if texto in proy.nombre_proyecto:
+                    lista_filtrada.append(proy) 
+            
+        elif param=="descripcion":     
+            for proy in proyectos:
+                if texto in proy.descripcion:
+                    lista_filtrada.append(proy)
+                    
+        return lista_filtrada
 
 #-------------------------------------------------------------------------------
 
@@ -89,12 +157,27 @@ class Proyecto(DeclarativeBase):
 #-------------------------------------------------------------------------------
 
     @classmethod
-    def get_proyecto_por_pagina(self,start=0,end=5):
+    def get_proyectos_por_pagina(self,start=0,end=5):
         """
         Obtiene la lista de todos los usuarios
         registrados en el sistema
         """
         proyectos = DBSession.query(Proyecto).slice(start,end).all()
+        return proyectos
+
+#-------------------------------------------------------------------------------
+
+    @classmethod
+    def get_proyectos_por_filtro(self,param,texto):
+        """
+        Obtiene la lista de todos los usuarios
+        registrados en el sistema
+        """
+        if param == "nombre":
+            proyectos = DBSession.query(Proyecto).filter(Proyecto.nombre_proyecto.like('%s%s%s' % ('%',texto,'%'))).all()
+        elif param == "descripcion":
+            proyectos = DBSession.query(Proyecto).filter(Proyecto.descripcion.like('%s%s%s' % ('%',texto,'%'))).all()
+            
         return proyectos
 
 #-------------------------------------------------------------------------------
