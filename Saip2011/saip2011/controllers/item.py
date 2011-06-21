@@ -1,5 +1,5 @@
 # -*- coding: utf-8 -*-
-"""Main Controller"""
+"""Item Controller"""
 
 from tg import expose, flash, require, url, request, redirect
 from datetime import datetime
@@ -80,12 +80,13 @@ class ItemController(BaseController):
                                 ,nom_fase=nom_fase,inicio=start,fin=end,
                                 pagina_actual=pagina_actual,paginado=paginado,
                                 total=total,param="/item/item",lista=lista)
+    print item.__doc__
 
 ###############################################################################
 
     @expose('saip2011.templates.item.listar_mis_adjuntos')
     def ver_adjuntos(self,id_item):
-        """Lista  
+        """Lista los adjuntos del item dado.  
         """
         nom_proyecto=Variables.get_valor_by_nombre("nombre_proyecto_actual")
         nom_fase=Variables.get_valor_by_nombre("nombre_fase_actual")
@@ -105,11 +106,15 @@ class ItemController(BaseController):
         return dict(pagina="listar_mis_adjuntos",adjuntos=adjuntos,
                         nom_proyecto=nom_proyecto,nom_fase=nom_fase,
                         values=values)
+    print ver_adjuntos.__doc__
 
 ###############################################################################
         
     @expose('saip2011.templates.item.listar_item')
     def listar_item_activos (self):
+        """
+        Lista todos los items activos.
+        """
         nom_proyecto=Variables.get_valor_by_nombre("nombre_proyecto_actual")
         nom_fase=Variables.get_valor_by_nombre("nombre_fase_actual")
 
@@ -121,11 +126,15 @@ class ItemController(BaseController):
 
         return dict(pagina="listar_item",items=items,nom_proyecto=nom_proyecto
                     ,nom_fase=nom_fase)
+    print listar_item_activos.__doc__
 
 ################################################################################
 
     @expose('saip2011.templates.item.historial')
     def historial (self, id_item):
+        """
+        Muestra el historial de un item.
+        """
         nom_proyecto=Variables.get_valor_by_nombre("nombre_proyecto_actual")
         nom_fase=Variables.get_valor_by_nombre("nombre_fase_actual")
 
@@ -137,12 +146,13 @@ class ItemController(BaseController):
 
         return dict(pagina="historial",items=items,nom_proyecto=nom_proyecto
                     ,nom_fase=nom_fase)
+    print historial.__doc__
 
 ################################################################################
 
     @expose('saip2011.templates.item.listar_item eliminados')
     def listar_item_eliminados(self):
-        """Lista de item 
+        """Lista lso items eliminados.
         """
         nom_proyecto=Variables.get_valor_by_nombre("nombre_proyecto_actual")
         nom_fase=Variables.get_valor_by_nombre("nombre_fase_actual")
@@ -152,11 +162,15 @@ class ItemController(BaseController):
 
         return dict(pagina="listar_item eliminados",items=items,
                         nom_proyecto=nom_proyecto,nom_fase=nom_fase)
+    print listar_item_eliminados.__doc__
 
 ################################################################################
 
     @expose('saip2011.templates.item.editar_item')
     def editar_item(self,id_item,*args, **kw):
+        """
+        Permite la edición de un item.
+        """
         nom_proyecto=Variables.get_valor_by_nombre("nombre_proyecto_actual")
         nom_fase=Variables.get_valor_by_nombre("nombre_fase_actual")
         id_fase=int (Variables.get_valor_by_nombre("fase_actual") )
@@ -218,6 +232,7 @@ class ItemController(BaseController):
                         nom_proyecto=nom_proyecto,nom_fase=nom_fase,
                         lista=lista,tipos_items=tipos_items,padres=padres,
                         padres2=padres2,master=master,orden=orden,campos=campos)
+    print editar_item.__doc__
 
 #-------------------------------------------------------------------------------
 
@@ -231,6 +246,9 @@ class ItemController(BaseController):
     def put_item(self, id_item, nombre_item, nombre_tipo_item, complejidad,
                     id_campos,nombre_campo,tipo_campo,dato,
                      padres,asmSelect0,adjunto=None,adjuntados=None):
+        """
+        Permite la edición de un item.
+        """
 
         if id_item is not None:
             id_item=int(id_item)
@@ -382,17 +400,21 @@ class ItemController(BaseController):
             for pad in padr:
                 padres2.append(pad.id_item)
 
-            flash("EL NOMBRE DEL ITEM YA ESXISTE!")
+            flash("EL NOMBRE DEL ITEM YA EXISTE!")
             return dict(pagina="editar_item",values=values,adjuntados=adjuntados,
                             nom_proyecto=nom_proyecto,nom_fase=nom_fase,
                             lista=lista,tipos_items=tipos_items,padres=padres,
                             padres2=padres2)
+    print put_item.__doc__
 
 
 ################################################################################
 
     @expose('saip2011.templates.item.eliminar_item')
     def eliminar_item(self,id_item, *args, **kw):
+        """
+        Elimina un item dado.
+        """
         nom_proyecto=Variables.get_valor_by_nombre("nombre_proyecto_actual")
         nom_fase=Variables.get_valor_by_nombre("nombre_fase_actual")
 
@@ -411,6 +433,7 @@ class ItemController(BaseController):
 
         return dict(pagina="eliminar_item",values=values,
                         nom_proyecto=nom_proyecto,nom_fase=nom_fase)
+    print eliminar_item.__doc__
 
 #-------------------------------------------------------------------------------
 
@@ -426,6 +449,9 @@ class ItemController(BaseController):
     @expose()
     def post_delete_item(self, id_item, nombre_item, codigo_item, nombre_tipo_item,
                          estado, complejidad, **kw):
+        """
+        Permite la eliminación de un item dado.
+        """
 
         if id_item is not None:
             id_item=int(id_item)
@@ -435,13 +461,17 @@ class ItemController(BaseController):
 
         DBSession.flush()
 
-        flash("item eliminado!")
+        flash("Item eliminado!")
         redirect('/item/item')
+    print post_delete_item.__doc__
 
 ################################################################################
 
     @expose('saip2011.templates.item.revivir_item')
     def revivir_item(self,id_item, *args, **kw):
+        """
+        Permite revivir un item dado.
+        """
         nom_proyecto=Variables.get_valor_by_nombre("nombre_proyecto_actual")
         nom_fase=Variables.get_valor_by_nombre("nombre_fase_actual")
 
@@ -460,6 +490,7 @@ class ItemController(BaseController):
 
         return dict(pagina="revivir_item",values=values,
                         nom_proyecto=nom_proyecto,nom_fase=nom_fase)
+    print revivir_item.__doc__
 
 #-------------------------------------------------------------------------------
 
@@ -474,19 +505,26 @@ class ItemController(BaseController):
     @expose()
     def post_revivir_item(self, id_item, nombre_item , codigo_item, 
                             nombre_tipo_item, estado, complejidad, **kw):
+        """
+        Permite revivir un item dado.
+        """
         item = Item.get_item_by_id(id_item)
         item.estado_oculto="Activo"
 
         DBSession.add(item)
         DBSession.flush()
 
-        flash("item Revivido!")
+        flash("Item Revivido!")
         redirect('/item/item')
+    print post_revivir_item.__doc__
 
 ################################################################################
 
     @expose('saip2011.templates.item.recuperar_item')
     def recuperar_item(self,id_item, *args, **kw):
+        """
+        Recupera un item dado.
+        """
         nom_proyecto=Variables.get_valor_by_nombre("nombre_proyecto_actual")
         nom_fase=Variables.get_valor_by_nombre("nombre_fase_actual")
 
@@ -505,6 +543,7 @@ class ItemController(BaseController):
 
         return dict(pagina="recuperar_item",values=values,
                         nom_proyecto=nom_proyecto,nom_fase=nom_fase)
+    print recuperar_item.__doc__
 
 #-------------------------------------------------------------------------------
 
@@ -520,6 +559,9 @@ class ItemController(BaseController):
     @expose()
     def post_recuperar_item(self, id_item, nombre_item, codigo_item, 
                 nombre_tipo_item, estado, complejidad, **kw):
+        """
+        Permite la recuperación de un item dado.
+        """
 
         if id_item is not None:
             id_item=int(id_item)
@@ -565,13 +607,17 @@ class ItemController(BaseController):
             DBSession.flush() 
 
 
-        flash("item recuperado!")
+        flash("Item recuperado!")
         redirect('/item/item')
+    print post_recuperar_item.__doc__
 
 ################################################################################
 
     @expose('saip2011.templates.item.agregar_item')
     def agregar_item(self, *args, **kw):
+        """
+        Agrega un item a la fase.
+        """
         nom_fase=Variables.get_valor_by_nombre("nombre_fase_actual")
         nom_proyecto=Variables.get_valor_by_nombre("nombre_proyecto_actual")
         id_fase=int(Variables.get_valor_by_nombre("fase_actual"))
@@ -593,6 +639,7 @@ class ItemController(BaseController):
         return dict(pagina="agregar_item",values=kw, tipos_items=tipos_items
                     ,nom_proyecto=nom_proyecto,nom_fase=nom_fase,padres=padres,
                     master=master,orden=orden)
+    print agregar_item.__doc__
 
 #-------------------------------------------------------------------------------
     
@@ -605,6 +652,9 @@ class ItemController(BaseController):
     @expose('saip2011.templates.item.agregar_item')
     def post_item(self, nombre_item, complejidad, adjunto, id_tipo_item,
                     asmSelect0,padres=None):
+        """
+        Permite agregar un nuevo item a la fase.
+        """
 
         items= Item.get_nombres_items()
 
@@ -625,6 +675,7 @@ class ItemController(BaseController):
                     padres = [padres]
                 padres = [DBSession.query(Item).get(padre) for padre
                                          in padres]
+
 
 #----------------------------------------
 
@@ -713,11 +764,15 @@ class ItemController(BaseController):
             return dict(pagina="agregar_item",values=values,
                         tipos_items=tipos_items,nom_proyecto=nom_proyecto,
                         nom_fase=nom_fase,padres=padres)
+    print post_item.__doc__
 
 ################################################################################
 
     @expose('saip2011.templates.item.listar_mis_adjuntos')
     def descargar(self, id_adjunto):
+        """
+        Permite la descarga de un archivo adjunto.
+        """
         directorio = "/home/hermann/Descargas"
 
         adj = Adjunto.get_adjunto_by_id(id_adjunto)
@@ -758,12 +813,16 @@ class ItemController(BaseController):
             return dict(pagina="listar_mis_adjuntos",adjuntos=adjuntos,
                         nom_proyecto=nom_proyecto,nom_fase=nom_fase,
                         values=values)
+    print descargar.__doc__
 
 
 ################################################################################
 
     @expose()
     def validardir(self,dirdescarga):
+        """
+        Valida la dirección para la descarga de un adjunto.
+        """
         if (os.path.isdir(dirdescarga)):
             return True
         else:
@@ -773,6 +832,7 @@ class ItemController(BaseController):
             except:
                 print "No se puede crear el directorio"
                 return False  
+    print validardir.__doc__
     
 ################################################################################
 

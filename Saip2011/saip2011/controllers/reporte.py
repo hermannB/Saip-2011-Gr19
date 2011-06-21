@@ -1,5 +1,5 @@
 # -*- coding: utf-8 -*-
-"""Main Controller"""
+"""Reporte Controller"""
 
 from tg import expose, flash, require, url, request, redirect
 from datetime import datetime
@@ -46,12 +46,14 @@ class ReporteController(BaseController):
     
     @expose('saip2011.templates.reporte.reporte')
     def reporte(self):
-        """Lista de reportes 
+        """
+        Lista de reportes 
         """
         nom_proyecto=Variables.get_valor_by_nombre("nombre_proyecto_actual")
         nom_fase=Variables.get_valor_by_nombre("nombre_fase_actual")
         
         return dict(pagina="reporte",nom_proyecto=nom_proyecto,nom_fase=nom_fase)
+    print reporte.__doc__
 
 
  # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # #
@@ -91,11 +93,14 @@ class ReporteController(BaseController):
                                 ,nom_fase=nom_fase,inicio=start,fin=end,
                                 pagina_actual=pagina_actual,paginado=paginado,
                                 total=total,param="../reporte/item2",lista=lista)
+    print item2.__doc__
+
+###################################################################################
 
 
     @expose('saip2011.templates.reporte.listar_fases2')
     def listar_fases2(self):
-        """Lista fases 
+        """Lista las fases. 
         """
         nom_proyecto=Variables.get_valor_by_nombre("nombre_proyecto_actual")
         nom_fase=Variables.get_valor_by_nombre("nombre_fase_actual")
@@ -106,10 +111,15 @@ class ReporteController(BaseController):
         return dict(pagina="listar_fases2",fases=fases,nom_proyecto=nom_proyecto
                         ,nom_fase=nom_fase)
 
+    print listar_fases2.__doc__
+
 
  # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # 
     @expose('saip2011.templates.reporte.menu_item')
     def seleccionar_fase(self,id_fase,start=0,end=5,indice=None,texto="",*kw,**args):
+        """
+        Permite seleccionar una fase.
+        """
 
         if id_fase is not None:
             id_fase=int(id_fase)
@@ -151,9 +161,15 @@ class ReporteController(BaseController):
                         ,nom_fase=nom_fase,paginado=paginado,inicio=start,
                         fin=end,pagina_actual=pagina_actual,total=total,
                         param=param,lista=lista)
+    print seleccionar_fase.__doc__
+
+##################################################################################################
 
     @expose('saip2011.templates.reporte.menu_item')
     def ver_mis_padres (self, id_item):
+        """
+        Permite listar los padres de un item dado.
+        """
         nom_proyecto=Variables.get_valor_by_nombre("nombre_proyecto_actual")
         nom_fase=Variables.get_valor_by_nombre("nombre_fase_actual")
 
@@ -168,10 +184,15 @@ class ReporteController(BaseController):
       
         return dict(pagina='ver_mis_padres.html',items=items,nom_proyecto=nom_proyecto
                     ,nom_fase=nom_fase)
+    print ver_mis_padres.__doc__
+###################################################################################################
 
 
     @expose('saip2011.templates.reporte.menu_item')
     def ver_mis_hijos (self, id_item):
+        """
+        Permite visualizar los hijos de un item.
+        """
         nom_proyecto=Variables.get_valor_by_nombre("nombre_proyecto_actual")
         nom_fase=Variables.get_valor_by_nombre("nombre_fase_actual")
 
@@ -188,9 +209,14 @@ class ReporteController(BaseController):
       
         return dict(pagina='ver_mis_hijos.html',items=items,nom_proyecto=nom_proyecto
                     ,nom_fase=nom_fase)
+    print ver_mis_hijos.__doc__
+#####################################################################################################
 
     @expose('saip2011.templates.reporte.impacto')
     def impacto (self, id_item):
+        """
+        Permite visualizar un reporte de impacto.
+        """
         nom_proyecto=Variables.get_valor_by_nombre("nombre_proyecto_actual")
         nom_fase=Variables.get_valor_by_nombre("nombre_fase_actual")
 
@@ -214,9 +240,14 @@ class ReporteController(BaseController):
       
         return dict(pagina='impacto.html',values=values,nom_proyecto=nom_proyecto
                     ,nom_fase=nom_fase)
+    print impacto.__doc__
+###################################################################################
 
     @expose('saip2011.templates.reporte.imagen')
     def arbol (self, id_item):
+        """
+        Permite visualizar las relaciones de un item dado.
+        """
         nom_proyecto=Variables.get_valor_by_nombre("nombre_proyecto_actual")
         nom_fase=Variables.get_valor_by_nombre("nombre_fase_actual")
 
@@ -239,6 +270,7 @@ class ReporteController(BaseController):
       
         return dict(pagina='imagen.html',values=values,nom_proyecto=nom_proyecto
                     ,nom_fase=nom_fase)
+    print arbol.__doc__
 
 
  # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # #

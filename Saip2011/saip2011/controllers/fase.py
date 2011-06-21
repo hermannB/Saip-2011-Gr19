@@ -1,5 +1,5 @@
 # -*- coding: utf-8 -*-
-"""Main Controller"""
+"""Fase Controller"""
 
 from tg import expose, flash, require, url, request, redirect
 from datetime import datetime
@@ -79,12 +79,14 @@ class FaseController(BaseController):
                         ,nom_fase=nom_fase,inicio=start,fin=end,paginado=paginado,
                         pagina_actual=pagina_actual,total=total,param="/fase/fase",
                         lista=lista)
+    print fase.__doc__
 
 ################################################################################
     
     @expose('saip2011.templates.fase.listar_fase')
     def listar_fase(self):
-        """Lista fases 
+        """
+        Obtiene una Lista de fases del proyecto actual.
         """
         nom_proyecto=Variables.get_valor_by_nombre("nombre_proyecto_actual")
         nom_fase=Variables.get_valor_by_nombre("nombre_fase_actual")
@@ -94,12 +96,16 @@ class FaseController(BaseController):
 
         return dict(pagina="listar_fase",fases=fases,nom_proyecto=nom_proyecto
                         ,nom_fase=nom_fase)
+    print listar_fase.__doc__
 
 
  ################################################################################
 
     @expose('saip2011.templates.fase.editar_fase')
     def editar_fase(self,id_fase,*args, **kw):
+        """
+        Permite editar una fase. Es posible la modificación del nombre de la fase y de su descripción.
+        """
         nom_proyecto=Variables.get_valor_by_nombre("nombre_proyecto_actual")
         nom_fase=Variables.get_valor_by_nombre("nombre_fase_actual")
 
@@ -129,6 +135,7 @@ class FaseController(BaseController):
                         tipos_items=tipos_items,tipos_items2=tipos_items2,
                         lista=lista,nom_fase=nom_fase,
                         nom_proyecto= nom_proyecto )
+    print editar_fase.__doc__
 
 #-------------------------------------------------------------------------------
 
@@ -142,6 +149,10 @@ class FaseController(BaseController):
     @expose('saip2011.templates.fase.editar_fase')
     def put_fase(self, id_fase, nombre_fase, id_tipo_fase, tipos_items,
                     descripcion, asmSelect0,  **kw):
+        """
+        Permite editar una fase. Son posibles la modificación del nombre de la fase, el tipo de fase, los tipos de items
+        y su descripción.
+        """
 
         if id_fase is not None:
             id_fase=int(id_fase)
@@ -197,11 +208,15 @@ class FaseController(BaseController):
                                 tipos_items2=tipos_items2,lista=lista, 
                                 id_tipo_fase=id_tipo_fase,nom_fase=nom_fase,
                                 nom_proyecto= nom_proyecto )
+    print put_fase.__doc__
 
 ################################################################################
 
     @expose('saip2011.templates.fase.eliminar_fase')
     def eliminar_fase(self,id_fase, *args, **kw):
+        """
+        Elimina una fase del proyecto.
+        """
         nom_proyecto=Variables.get_valor_by_nombre("nombre_proyecto_actual")
         nom_fase=Variables.get_valor_by_nombre("nombre_fase_actual")
 
@@ -218,6 +233,7 @@ class FaseController(BaseController):
 
         return dict(pagina="eliminar_fase",values=values,
                         nom_proyecto=nom_proyecto,nom_fase=nom_fase)
+    print eliminar_fase.__doc__
 
 #-------------------------------------------------------------------------------
 
@@ -232,17 +248,24 @@ class FaseController(BaseController):
     @expose()
     def post_delete_fase(self, id_fase, nombre_fase,  nombre_tipo_fase, estado,
                                 descripcion, **kw):
+        """
+        Elimina una fase dada.
+        """
 
         Fase.borrar_by_id(id_fase)
         DBSession.flush()
 
         flash("Fase eliminada!")
         redirect('/fase/fase')
+    print post_delete_fase.__doc__
 
 ################################################################################
 
     @expose('saip2011.templates.fase.agregar_fase')
     def agregar_fase(self, *args, **kw):
+        """
+        Agrega una fase al proyecto actual.
+        """
         nom_proyecto=Variables.get_valor_by_nombre("nombre_proyecto_actual")
         nom_fase=Variables.get_valor_by_nombre("nombre_fase_actual")
 
@@ -252,6 +275,7 @@ class FaseController(BaseController):
         return dict(pagina="agregar_fase",values=kw, tipos_fases=tipos_fases,
                         tipos_items=tipos_items,nom_proyecto=nom_proyecto
                         ,nom_fase=nom_fase)
+    print agregar_fase.__doc__
 
 #-------------------------------------------------------------------------------
 
@@ -264,6 +288,9 @@ class FaseController(BaseController):
     @expose('saip2011.templates.fase.agregar_fase')
     def post_fase(self, nombre_fase, id_tipo_fase, tipos_items, descripcion,
                     asmSelect0):
+        """
+        Permite agregar una nueva fase al proyecto.
+        """
         proyecto=int(Variables.get_valor_by_nombre("proyecto_actual"))
         nombres=Fase.get_nombres_by_id(proyecto)
 
@@ -305,11 +332,15 @@ class FaseController(BaseController):
             return dict(pagina="agregar_fase",values=values, tipos_fases=tipos_fases,
                             tipos_items=tipos_items,nom_proyecto=nom_proyecto
                             ,nom_fase=nom_fase)
+    print post_fase.__doc__
 
 ################################################################################
   
     @expose('saip2011.templates.item.menu_item')
     def seleccionar_fase(self,id_fase,start=0,end=5,indice=None,texto="",*kw,**args):
+        """
+        Selecciona una fase de un proyecto.
+        """
 
         if id_fase is not None:
             id_fase=int(id_fase)
@@ -351,6 +382,7 @@ class FaseController(BaseController):
                         ,nom_fase=nom_fase,paginado=paginado,inicio=start,
                         fin=end,pagina_actual=pagina_actual,total=total,
                         param=param,lista=lista)
+    print seleccionar_fase.__doc__
 
 ################################################################################
         
