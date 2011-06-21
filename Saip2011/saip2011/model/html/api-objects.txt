@@ -1,0 +1,17 @@
+saip2011.saip2011.model.adjunto	saip2011.saip2011.model.adjunto-module.html
+saip2011.saip2011.model.adjunto.Adjunto	saip2011.saip2011.model.adjunto.Adjunto-class.html
+saip2011.saip2011.model.adjunto.Adjunto.id_item	saip2011.saip2011.model.adjunto.Adjunto-class.html#id_item
+saip2011.saip2011.model.adjunto.Adjunto.estado_oculto	saip2011.saip2011.model.adjunto.Adjunto-class.html#estado_oculto
+saip2011.saip2011.model.adjunto.Adjunto.borrar_by_id	saip2011.saip2011.model.adjunto.Adjunto-class.html#borrar_by_id
+saip2011.saip2011.model.adjunto.Adjunto.get_adjuntos	saip2011.saip2011.model.adjunto.Adjunto-class.html#get_adjuntos
+saip2011.saip2011.model.adjunto.Adjunto.get_adjunto_by_item_por_pagina	saip2011.saip2011.model.adjunto.Adjunto-class.html#get_adjunto_by_item_por_pagina
+saip2011.saip2011.model.adjunto.Adjunto.get_adjuntos_by_item	saip2011.saip2011.model.adjunto.Adjunto-class.html#get_adjuntos_by_item
+saip2011.saip2011.model.adjunto.Adjunto.get_adjunto_by_id	saip2011.saip2011.model.adjunto.Adjunto-class.html#get_adjunto_by_id
+saip2011.saip2011.model.adjunto.Adjunto.nombre_archivo	saip2011.saip2011.model.adjunto.Adjunto-class.html#nombre_archivo
+saip2011.saip2011.model.adjunto.Adjunto.version	saip2011.saip2011.model.adjunto.Adjunto-class.html#version
+saip2011.saip2011.model.adjunto.Adjunto.__repr__	saip2011.saip2011.model.adjunto.Adjunto-class.html#__repr__
+saip2011.saip2011.model.adjunto.Adjunto.archivo	saip2011.saip2011.model.adjunto.Adjunto-class.html#archivo
+saip2011.saip2011.model.adjunto.Adjunto.__tablename__	saip2011.saip2011.model.adjunto.Adjunto-class.html#__tablename__
+saip2011.saip2011.model.adjunto.Adjunto.guardar	saip2011.saip2011.model.adjunto.Adjunto-class.html#guardar
+saip2011.saip2011.model.adjunto.Adjunto.id_adjunto	saip2011.saip2011.model.adjunto.Adjunto-class.html#id_adjunto
+saip2011.saip2011.model.adjunto.Adjunto.__unicode__	saip2011.saip2011.model.adjunto.Adjunto-class.html#__unicode__

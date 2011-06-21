@@ -1,10 +1,9 @@
-#Sat Jun 18 16:19:54 BOT 2011
+#Sun Jun 12 18:02:33 BOT 2011
 eclipse.preferences.version=1
 encoding//saip2011/controllers/equipo.py=utf-8
 encoding//saip2011/controllers/fase.py=utf-8
 encoding//saip2011/controllers/item.py=utf-8
 encoding//saip2011/controllers/proyecto.py=utf-8
-encoding//saip2011/controllers/reporte.py=utf-8
 encoding//saip2011/controllers/root.py=utf-8
 encoding//saip2011/controllers/secure.py=utf-8
 encoding//saip2011/controllers/tipo_fase.py=utf-8

@@ -56,24 +56,30 @@ class Variables (DeclarativeBase):
         """
         var = DBSession.query(Variables).all()
         return var
+    print get_variables.__doc__
 
 #-------------------------------------------------------------------------------
-
     @classmethod
     def get_valor_by_nombre(self, nombre):
-        variables = DBSession.query(Variables).all()
+	"""
+        Obtiene el valor de la variable por el nombre.
+	""" 
+	variables = DBSession.query(Variables).all()
         for var in variables:
             if (var.nombre == nombre):
 			    return var.valor
+    print get_valor_by_nombre.__doc__
 
 #-------------------------------------------------------------------------------
-
     @classmethod
     def set_valor_by_nombre(self, nombre, valor):
+        """
+        Setea el nombre de una variable.
+        """
         variables = DBSession.query(Variables).all()
         for var in variables:
             if (var.nombre == nombre):
 				    var.valor=valor
 				    DBSession.flush()
-
+    print set_valor_by_nombre.__doc__
 #-------------------------------------------------------------------------------
