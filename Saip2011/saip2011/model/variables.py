@@ -28,7 +28,7 @@ class Variables (DeclarativeBase):
     __tablename__ = 'Tabla_Variables'
 
 ################################################################################
-    
+
     #               Columnas
 
     id_variable = Column(Integer, autoincrement=True, primary_key=True)
@@ -66,11 +66,11 @@ class Variables (DeclarativeBase):
     def get_valor_by_nombre(self, nombre):
         """
             Obtiene el valor de la variable por el nombre.
-        """ 
+        """
         variables = DBSession.query(Variables).all()
-            for var in variables:
-                if (var.nombre == nombre):
-                    return var.valor
+        for var in variables:
+            if (var.nombre == nombre):
+                return var.valor
     print get_valor_by_nombre.__doc__
 
 #-------------------------------------------------------------------------------

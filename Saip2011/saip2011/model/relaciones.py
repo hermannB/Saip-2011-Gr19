@@ -66,7 +66,7 @@ class Relaciones(DeclarativeBase):
         return self.id_relacion
 
 #-------------------------------------------------------------------------------
-       
+
     @classmethod
     def get_relaciones(self):
         """
@@ -106,7 +106,7 @@ class Relaciones(DeclarativeBase):
             if rel.id_item_hijo == id_item:
                 for padre in rel.padres:
                     if (padre.estado_oculto=="Activo"):
-                        lista.append(padre) 
+                        lista.append(padre)
 
         return lista
 
@@ -128,7 +128,7 @@ class Relaciones(DeclarativeBase):
                 if (padre.estado_oculto=="Activo"):
                     if padre.id_item == id_item:
                         lista.append(rel.id_item_hijo)
-                        break 
+                        break
 
         return lista
     print get_mis_id_hijos.__doc__
@@ -149,7 +149,7 @@ class Relaciones(DeclarativeBase):
             if rel.id_item_hijo == id_item:
                 for padre in rel.padres:
                     if (padre.estado_oculto=="Activo"):
-                        lista.append(padre) 
+                        lista.append(padre)
                         padres.append(padre)
 
         while len(lista)>0:
@@ -158,7 +158,7 @@ class Relaciones(DeclarativeBase):
             for padre in mis_padres:
                 if padre not in lista:
                     if padre.estado_oculto=="Activo":
-                        lista.append(padre) 
+                        lista.append(padre)
                         padres.append(padre)
 
         return padres
@@ -186,7 +186,7 @@ class Relaciones(DeclarativeBase):
                 if (padre.estado_oculto=="Activo"):
                     if padre.id_item == id_item:
                         lista.append(rel.id_item_hijo)
-                        hijos.append (Item.get_item_by_id(rel.id_item_hijo) )                    
+                        hijos.append (Item.get_item_by_id(rel.id_item_hijo) )
                         break
 
         while len(lista)>0:
@@ -196,7 +196,7 @@ class Relaciones(DeclarativeBase):
                 if hijo not in lista:
                     item=Item.get_item_by_id(int(hijo))
                     if (padre.estado_oculto=="Activo"):
-                        lista.append(hijo) 
+                        lista.append(hijo)
                         hijos.append (item)
 
         return hijos
@@ -207,8 +207,8 @@ class Relaciones(DeclarativeBase):
 
     @classmethod
     def get_padres_habilitados(self,orden):
-    """
-    Obtiene los items habilitados.    
+        """
+        Obtiene los items habilitados.
         """
 
         if orden is not None:
@@ -231,7 +231,7 @@ class Relaciones(DeclarativeBase):
                 padres.remove(padre)
 
         for a in aux:
-            padres.remove(a)       
+            padres.remove(a)
 
         return padres
 
@@ -241,9 +241,9 @@ class Relaciones(DeclarativeBase):
 
     @classmethod
     def matriz_relaciones(self,id_item):
-    """
-    Obtiene una matriz de la relaciones.
-    """
+        """
+        Obtiene una matriz de la relaciones.
+        """
 
         if id_item is not None:
             id_item=int(id_item)
@@ -277,7 +277,7 @@ class Relaciones(DeclarativeBase):
         # Add nodes and edges
         for item in usados:
             gr.add_nodes([item])
-        
+
         # Add relation and edges
 
         for item in relacionados:
@@ -286,9 +286,9 @@ class Relaciones(DeclarativeBase):
                 for padre in padres:
                     gr.add_edge((item.nombre_item, padre.nombre_item))
             else:
-                #remover nodo   
-                print("hola") 
-        
+                #remover nodo
+                print("hola")
+
 
         # Draw as PNG
         dot = write(gr)
@@ -297,18 +297,18 @@ class Relaciones(DeclarativeBase):
         gv.render(gvv,'png','/home/hermann/saip2011/saip2011/public/images/arbol.png')
 
     print matriz_relaciones.__doc__
-    
-        
+
+
 #-------------------------------------------------------------------------------
 
     @classmethod
     def borrar_by_id(self,rel_id):
         """
-        Elimina una relación.         
+        Elimina una relación.
         """
 
         DBSession.delete(DBSession.query(Relaciones).get(rel_id))
-        DBSession.flush()	
+        DBSession.flush()
 
     print borrar_by_id.__doc__
 
